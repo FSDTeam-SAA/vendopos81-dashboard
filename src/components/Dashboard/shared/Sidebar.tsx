@@ -40,7 +40,7 @@ const navigation = [
   { name: "Categories", href: "/categories", icon: FolderTree },
   { name: "Orders", href: "/orders", icon: ShoppingCart },
   { name: "Payments", href: "/payments", icon: NotebookText },
-  { name: "Reviews", href: "/reviews", icon: Star },
+  { name: "Reviews", href: "/review", icon: Star },
   { name: "Reports", href: "/reports", icon: FileText },
   { name: "Subscription", href: "/subscription", icon: MailCheck },
   { name: "Deliveries", href: "/deliveries", icon: Ambulance },
