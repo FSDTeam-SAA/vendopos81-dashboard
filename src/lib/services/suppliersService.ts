@@ -20,3 +20,18 @@ export const getAllSuppliers = async (params?: SupplierParams) => {
     throw error;
   }
 };
+
+
+
+export const deleteSingleSuppliers = async (id:string) => {
+  try {
+    const response = await axiosInstance.delete(
+      `/join-as-supplier/delete-supplier/${id}`
+     
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error Delete suppliers:", error);
+    throw error;
+  }
+};
