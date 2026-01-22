@@ -21,74 +21,58 @@ import {
   Phone,
   MapPin,
   ChevronDown,
+  Loader2,
 } from "lucide-react";
-
-interface Supplier {
-  id: number;
-  name: string;
-  joinDate: string;
-  contact: string;
-  phone: string;
-  location: string;
-  products: number;
-  rating: number;
-  status: "Active" | "Suspend";
-}
-
-const SUPPLIERS: Supplier[] = [
-  {
-    id: 1,
-    name: "TechGear Suppliers",
-    joinDate: "2023-01-15",
-    contact: "contact@techgear.com",
-    phone: "+1 234 567 8900",
-    location: "New York, USA",
-    products: 45,
-    rating: 4.8,
-    status: "Active",
-  },
-  {
-    id: 2,
-    name: "Fashion Hub Co.",
-    joinDate: "2023-03-22",
-    contact: "info@fashionhub.com",
-    phone: "+1 234 567 8901",
-    location: "Los Angeles, USA",
-    products: 128,
-    rating: 4.6,
-    status: "Active",
-  },
-  {
-    id: 3,
-    name: "Organic Foods Ltd",
-    joinDate: "2023-06-10",
-    contact: "sales@organicfoods.com",
-    phone: "+1 234 567 8902",
-    location: "Chicago, USA",
-    products: 67,
-    rating: 4.9,
-    status: "Suspend",
-  },
-  {
-    id: 4,
-    name: "BookWorld Distributors",
-    joinDate: "2022-11-05",
-    contact: "support@bookworld.com",
-    phone: "+1 234 567 8903",
-    location: "Boston, USA",
-    products: 234,
-    rating: 4.7,
-    status: "Active",
-  },
-];
+import { useAllSuppliers, useDeleteSingleSuppliers } from "@/lib/hooks/useSuppliers";
+import { Analytics, Supplier } from "@/lib/types/supplier";
+import SuppliersModal from "./SuppliersModal";
 
 export default function SupplierManagement() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
+  const { mutate } = useDeleteSingleSuppliers();
+  const limit = 10;
 
-  const totalSuppliers = 89;
-  const activeSuppliers = 67;
-  const pendingApproval = 12;
-  const totalProducts = 1247;
+  const { data, isLoading, isError } = useAllSuppliers({
+    page: currentPage,
+    limit: limit,
+  });
+
+  const SupplierManagementData: Analytics | undefined = data?.analytics;
+  const suppliersData = data?.data || [];
+  const meta = data?.meta;
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleDelete = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this supplier?")) {
+      mutate(id);
+    }
+  };
+
+  const handleView = (supplier: Supplier) => {
+    setSelectedSupplier(supplier);
+    setModalOpen(true);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-teal-600" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-600">
+        Error loading suppliers. Please try again later.
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -113,7 +97,7 @@ export default function SupplierManagement() {
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-gray-900">
-                {totalSuppliers}
+                {SupplierManagementData?.totalSupplier || 0}
               </p>
             </CardContent>
           </Card>
@@ -126,7 +110,7 @@ export default function SupplierManagement() {
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-teal-600">
-                {activeSuppliers}
+                {SupplierManagementData?.totalActive || 0}
               </p>
             </CardContent>
           </Card>
@@ -139,7 +123,7 @@ export default function SupplierManagement() {
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-amber-600">
-                {pendingApproval}
+                {SupplierManagementData?.totalPending || 0}
               </p>
             </CardContent>
           </Card>
@@ -152,7 +136,7 @@ export default function SupplierManagement() {
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-gray-900">
-                {totalProducts}
+                {SupplierManagementData?.totalProducts || 0}
               </p>
             </CardContent>
           </Card>
@@ -192,7 +176,7 @@ export default function SupplierManagement() {
                   <TableHead className="font-semibold text-gray-700">
                     Status
                   </TableHead>
-                  <TableHead className="font-semibold text-gray-700">
+                  <TableHead className="font-semibold text-gray-700 text-center">
                     Actions
                   </TableHead>
                   <TableHead className="font-semibold text-gray-700">
@@ -201,18 +185,18 @@ export default function SupplierManagement() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {SUPPLIERS.map((supplier) => (
+                {suppliersData.map((supplier: Supplier) => (
                   <TableRow
-                    key={supplier.id}
+                    key={supplier._id}
                     className="hover:bg-gray-50/50 transition-colors border-b border-gray-100"
                   >
                     <TableCell>
                       <div>
                         <p className="font-medium text-gray-900">
-                          {supplier.name}
+                          {supplier.shopName || supplier.brandName}
                         </p>
                         <p className="text-sm text-gray-500">
-                          Joined {supplier.joinDate}
+                          Joined {new Date(supplier.createdAt).toLocaleDateString()}
                         </p>
                       </div>
                     </TableCell>
@@ -220,18 +204,18 @@ export default function SupplierManagement() {
                       <div className="space-y-1">
                         <p className="text-sm text-gray-700 flex items-center gap-2">
                           <Mail className="w-4 h-4 text-gray-400" />{" "}
-                          {supplier.contact}
+                          {supplier.email}
                         </p>
                         <p className="text-sm text-gray-700 flex items-center gap-2">
                           <Phone className="w-4 h-4 text-gray-400" />{" "}
-                          {supplier.phone}
+                          {supplier.userId?.phone || "N/A"}
                         </p>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2 text-gray-600">
                         <MapPin className="w-4 h-4 text-gray-400" />{" "}
-                        {supplier.location}
+                        {supplier.location || "N/A"}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -245,14 +229,14 @@ export default function SupplierManagement() {
                     <TableCell>
                       <Badge
                         variant={
-                          supplier.status === "Active"
+                          supplier.status === "approved"
                             ? "secondary"
                             : "destructive"
                         }
                         className={
-                          supplier.status === "Active"
-                            ? "bg-green-100 text-green-700 hover:bg-green-100"
-                            : "bg-yellow-100 text-yellow-700 hover:bg-yellow-100"
+                          supplier.status === "approved"
+                            ? "bg-green-100 text-green-700 hover:bg-green-100 capitalize"
+                            : "bg-yellow-100 text-yellow-700 hover:bg-yellow-100 capitalize"
                         }
                       >
                         {supplier.status}
@@ -261,6 +245,7 @@ export default function SupplierManagement() {
                     <TableCell>
                       <div className="flex items-center gap-2 justify-center">
                         <Button
+                          onClick={() => handleDelete(supplier._id)}
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
@@ -274,6 +259,7 @@ export default function SupplierManagement() {
                     </TableCell>
                     <TableCell>
                       <Button
+                        onClick={() => handleView(supplier)}
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
@@ -288,52 +274,51 @@ export default function SupplierManagement() {
           </Card>
 
           {/* Pagination */}
-          <div className="flex items-center justify-center gap-2 mt-6">
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-gray-600 hover:text-gray-900 bg-transparent"
-            >
-              ←
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-gray-600 bg-transparent"
-            >
-              1
-            </Button>
-            <Button
-              size="sm"
-              className="bg-teal-600 text-white hover:bg-teal-700"
-            >
-              2
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-gray-600 bg-transparent"
-            >
-              3
-            </Button>
-            <span className="text-gray-500">...</span>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-gray-600 bg-transparent"
-            >
-              6
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-gray-600 hover:text-gray-900 bg-transparent"
-            >
-              →
-            </Button>
-          </div>
+          {meta && meta.totalPage > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-6">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-gray-600 hover:text-gray-900 bg-transparent"
+                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+              >
+                ←
+              </Button>
+              {Array.from({ length: meta.totalPage }, (_, i) => i + 1).map((page) => (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? "default" : "outline"}
+                  size="sm"
+                  className={
+                    currentPage === page
+                      ? "bg-teal-600 text-white hover:bg-teal-700"
+                      : "text-gray-600 bg-transparent"
+                  }
+                  onClick={() => handlePageChange(page)}
+                >
+                  {page}
+                </Button>
+              ))}
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-gray-600 hover:text-gray-900 bg-transparent"
+                onClick={() => handlePageChange(Math.min(meta.totalPage, currentPage + 1))}
+                disabled={currentPage === meta.totalPage}
+              >
+                →
+              </Button>
+            </div>
+          )}
         </div>
       </div>
+      <SuppliersModal
+        modalOpen={modalOpen}
+        onModalChange={setModalOpen}
+        data={selectedSupplier}
+      />
     </main>
   );
 }
+ 
