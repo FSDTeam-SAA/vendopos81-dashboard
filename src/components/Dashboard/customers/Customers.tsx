@@ -14,22 +14,15 @@ import {
 } from "@/components/ui/table";
 import {
   Eye,
-  Trash2,
-  MoreVertical,
-  Star,
-  Mail,
-  Phone,
-  MapPin,
   ChevronDown,
   Loader2,
-  XCircle,
-  CheckCircle,
 } from "lucide-react";
-import OrdersModal from "./OrdersModal";
+
 import { useAllOrders } from "@/lib/hooks/useOrder";
 import { Order, OrderAnalytics } from "@/lib/types/order";
+import CustomerModal from "./CustomerModal";
 
-export default function Orders() {
+export default function Customers() {
   const [currentPage, setCurrentPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -38,7 +31,7 @@ export default function Orders() {
   const { data, isLoading, isError } = useAllOrders({
     limit: 1000, // Fetch a large number for manual pagination
   });
-  console.log("order data", data);
+
   const orderAnalytics: OrderAnalytics | undefined = data?.analytics;
   const orderData = data?.data || [];
 
@@ -54,7 +47,7 @@ export default function Orders() {
     setCurrentPage(page);
   };
 
-  const viewOrder = (order: Order) => {
+  const handleView = (order: Order) => {
     setSelectedOrder(order);
     setModalOpen(true);
   };
@@ -80,14 +73,16 @@ export default function Orders() {
       <div className="p-6 mx-auto container space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Order Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Customer Management
+          </h1>
           <p className="text-gray-500 mt-1">
-            Manage and monitor customer orders
+            View and manage customer accounts (derived from orders)
           </p>
         </div>
 
         {/* Stat Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-black">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-black">
           <Card className="bg-white border-0 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-gray-600">
@@ -104,7 +99,7 @@ export default function Orders() {
           <Card className="bg-white border-0 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-teal-600">
-                Total Delivered
+                Delivered Orders
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -126,26 +121,13 @@ export default function Orders() {
               </p>
             </CardContent>
           </Card>
-
-          <Card className="bg-white border-0 shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Total Sales
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-gray-900">
-                ${orderAnalytics?.totalSalesAmount?.toFixed(2) || "0.00"}
-              </p>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Table Section */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-gray-900">
-              Recent Orders
+              Customer Orders
             </h2>
             <Button
               variant="ghost"
@@ -156,73 +138,107 @@ export default function Orders() {
             </Button>
           </div>
 
-<Table>
-  <TableHeader>
-    <TableRow>
-      <TableHead>Order ID</TableHead>
-      <TableHead>Customer</TableHead>
-      <TableHead>Products</TableHead>
-      <TableHead>Amount</TableHead>
-      <TableHead>Status</TableHead>
-      <TableHead>Payment</TableHead>
-      <TableHead>Order Date</TableHead>
-      <TableHead>View</TableHead>
-    </TableRow>
-  </TableHeader>
+          <Card className="bg-white border-0 shadow-sm overflow-hidden text-black">
+            <Table>
+              <TableHeader className="bg-gray-50/50">
+                <TableRow>
+                  <TableHead className="font-semibold text-gray-700">
+                    Customer
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700">
+                    Contact
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700">
+                    Order ID
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700">
+                    Total Spent
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700">
+                    Status
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700">
+                    Order Date
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700 text-center">
+                    Actions
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
 
-  <TableBody>
-    {paginatedData.map((order: Order) => (
-      <TableRow key={order._id}>
-        <TableCell>#{order.orderUniqueId}</TableCell>
-        <TableCell>
-          {order.userId.firstName} {order.userId.lastName}
-          <br />
-          <span className="text-sm text-gray-500">{order.userId.email}</span>
-        </TableCell>
-        <TableCell>{order.items.length} items</TableCell>
-        <TableCell>${order.totalPrice.toFixed(2)}</TableCell>
-        <TableCell>
-          <Badge
-            className={`capitalize ${
-              order.orderStatus === "delivered"
-                ? "bg-green-100 text-green-700"
-                : order.orderStatus === "pending"
-                ? "bg-yellow-100 text-yellow-700"
-                : "bg-red-100 text-red-700"
-            }`}
-          >
-            {order.orderStatus}
-          </Badge>
-        </TableCell>
-        <TableCell>
-          <Badge
-            className={`capitalize ${
-              order.paymentStatus === "paid"
-                ? "bg-green-100 text-green-700"
-                : "bg-yellow-100 text-yellow-700"
-            }`}
-          >
-            {order.paymentStatus}
-          </Badge>
-        </TableCell>
-        <TableCell>
-          {new Date(order.purchaseDate).toLocaleDateString()}
-        </TableCell>
-        <TableCell>
-          <Button
-            size="sm"
-            variant="outline"
-            className="bg-white text-black hover:bg-gray-100"
-            onClick={() => viewOrder(order)}
-          >
-            View
-          </Button>
-        </TableCell>
-      </TableRow>
-    ))}
-  </TableBody>
-</Table>
+              <TableBody>
+                {paginatedData.map((order: Order) => (
+                  <TableRow
+                    key={order._id}
+                    className="bg-white hover:bg-gray-50/50 transition-colors border-b border-gray-100"
+                  >
+                    {/* 1. Customer */}
+                    <TableCell>
+                      <div className="font-medium text-gray-900">
+                        {order.userId.firstName} {order.userId.lastName}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {order.userId.email}
+                      </div>
+                    </TableCell>
 
+                    {/* 2. Contact */}
+                    <TableCell>
+                      <div className="text-sm text-gray-700">
+                        {order.billingInfo.phone || "N/A"}
+                      </div>
+                    </TableCell>
+
+                    {/* 3. Order ID */}
+                    <TableCell>
+                      <span className="font-mono text-sm text-gray-600">
+                        #{order.orderUniqueId}
+                      </span>
+                    </TableCell>
+
+                    {/* 4. Amount */}
+                    <TableCell>
+                      <span className="font-semibold text-gray-900">
+                        ${order.totalPrice.toFixed(2)}
+                      </span>
+                    </TableCell>
+
+                    {/* 5. Payment Status */}
+                    <TableCell>
+                      <Badge
+                        className={`capitalize ${
+                          order.paymentStatus === "paid"
+                            ? "bg-green-100 text-green-700 hover:bg-green-100"
+                            : "bg-yellow-100 text-yellow-700 hover:bg-yellow-100"
+                        }`}
+                      >
+                        {order.paymentStatus}
+                      </Badge>
+                    </TableCell>
+
+                    {/* 6. Date */}
+                    <TableCell>
+                      <div className="text-sm text-gray-600">
+                        {new Date(order.purchaseDate).toLocaleDateString()}
+                      </div>
+                    </TableCell>
+
+                    {/* 7. Actions */}
+                    <TableCell className="text-center">
+                      <Button
+                        onClick={() => handleView(order)}
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
 
           {/* Pagination */}
           {totalPage > 1 && (
@@ -267,12 +283,13 @@ export default function Orders() {
             </div>
           )}
         </div>
+        <CustomerModal
+          modalOpen={modalOpen}
+          onModalChange={setModalOpen}
+          data={selectedOrder}
+        />
       </div>
-      <OrdersModal
-        modalOpen={modalOpen}
-        onModalChange={setModalOpen}
-        data={selectedOrder}
-      />
     </main>
   );
 }
+
