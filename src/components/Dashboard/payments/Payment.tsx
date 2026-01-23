@@ -25,11 +25,11 @@ import {
   XCircle,
   CheckCircle,
 } from "lucide-react";
-import OrdersModal from "./OrdersModal";
+
 import { useAllOrders } from "@/lib/hooks/useOrder";
 import { Order, OrderAnalytics } from "@/lib/types/order";
 
-export default function Orders() {
+export default function Payments() {
   const [currentPage, setCurrentPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -80,9 +80,11 @@ export default function Orders() {
       <div className="p-6 mx-auto container space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Order Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Payment & Transactions
+          </h1>
           <p className="text-gray-500 mt-1">
-            Manage and monitor customer orders
+            Monitor payments and financial transactions
           </p>
         </div>
 
@@ -91,7 +93,7 @@ export default function Orders() {
           <Card className="bg-white border-0 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-gray-600">
-                Total Orders
+                Today&apos;s Revenue
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -104,7 +106,7 @@ export default function Orders() {
           <Card className="bg-white border-0 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-teal-600">
-                Total Delivered
+                Completed Payments
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -117,7 +119,7 @@ export default function Orders() {
           <Card className="bg-white border-0 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-amber-600">
-                Pending Orders
+                Pending Payments
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -130,7 +132,7 @@ export default function Orders() {
           <Card className="bg-white border-0 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-gray-600">
-                Total Sales
+                Failed Payments
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -156,73 +158,97 @@ export default function Orders() {
             </Button>
           </div>
 
-<Table>
-  <TableHeader>
-    <TableRow>
-      <TableHead>Order ID</TableHead>
-      <TableHead>Customer</TableHead>
-      <TableHead>Products</TableHead>
-      <TableHead>Amount</TableHead>
-      <TableHead>Status</TableHead>
-      <TableHead>Payment</TableHead>
-      <TableHead>Order Date</TableHead>
-      <TableHead>View</TableHead>
-    </TableRow>
-  </TableHeader>
+          <Card className="bg-white border-0 shadow-sm overflow-hidden text-black">
+            <Table>
+              <TableHeader className="bg-gray-50/50">
+                <TableRow>
+                  <TableHead className="font-semibold text-gray-700">
+                    Transaction ID
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700">
+                    Order ID
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700">
+                    Customer
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700">
+                    Amount
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700">
+                    Payment Status
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700">
+                    Order Status
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700 text-center">
+                    Date
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
 
-  <TableBody>
-    {paginatedData.map((order: Order) => (
-      <TableRow key={order._id}>
-        <TableCell>#{order.orderUniqueId}</TableCell>
-        <TableCell>
-          {order.userId.firstName} {order.userId.lastName}
-          <br />
-          <span className="text-sm text-gray-500">{order.userId.email}</span>
-        </TableCell>
-        <TableCell>{order.items.length} items</TableCell>
-        <TableCell>${order.totalPrice.toFixed(2)}</TableCell>
-        <TableCell>
-          <Badge
-            className={`capitalize ${
-              order.orderStatus === "delivered"
-                ? "bg-green-100 text-green-700"
-                : order.orderStatus === "pending"
-                ? "bg-yellow-100 text-yellow-700"
-                : "bg-red-100 text-red-700"
-            }`}
-          >
-            {order.orderStatus}
-          </Badge>
-        </TableCell>
-        <TableCell>
-          <Badge
-            className={`capitalize ${
-              order.paymentStatus === "paid"
-                ? "bg-green-100 text-green-700"
-                : "bg-yellow-100 text-yellow-700"
-            }`}
-          >
-            {order.paymentStatus}
-          </Badge>
-        </TableCell>
-        <TableCell>
-          {new Date(order.purchaseDate).toLocaleDateString()}
-        </TableCell>
-        <TableCell>
-          <Button
-            size="sm"
-            variant="outline"
-            className="bg-white text-black hover:bg-gray-100"
-            onClick={() => viewOrder(order)}
-          >
-            View
-          </Button>
-        </TableCell>
-      </TableRow>
-    ))}
-  </TableBody>
-</Table>
+              <TableBody>
+                {paginatedData.map((order: Order) => (
+                  <TableRow
+                    key={order._id}
+                    className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition"
+                  >
+                    {/* 1. Transaction ID */}
+                    <TableCell>
+                      #{order?.transactionId || order.orderUniqueId}
+                    </TableCell>
 
+                    {/* 2. Order ID */}
+                    <TableCell>#{order.orderUniqueId}</TableCell>
+
+                    {/* 3. Customer */}
+                    <TableCell>
+                      {order.userId.firstName} {order.userId.lastName}
+                      <br />
+                      <span className="text-sm text-gray-500">
+                        {order.userId.email}
+                      </span>
+                    </TableCell>
+
+                    {/* 4. Amount */}
+                    <TableCell>${order.totalPrice.toFixed(2)}</TableCell>
+
+                    {/* 5. Payment Status */}
+                    <TableCell>
+                      <Badge
+                        className={`capitalize ${
+                          order.paymentStatus === "paid"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-yellow-100 text-yellow-700"
+                        }`}
+                      >
+                        {order.paymentStatus}
+                      </Badge>
+                    </TableCell>
+
+                    {/* 6. Order Status */}
+                    <TableCell>
+                      <Badge
+                        className={`capitalize ${
+                          order.orderStatus === "delivered"
+                            ? "bg-green-100 text-green-700"
+                            : order.orderStatus === "pending"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {order.orderStatus}
+                      </Badge>
+                    </TableCell>
+
+                    {/* 7. Date */}
+                    <TableCell className="text-center">
+                      {new Date(order.purchaseDate).toLocaleDateString()}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
 
           {/* Pagination */}
           {totalPage > 1 && (
@@ -268,11 +294,6 @@ export default function Orders() {
           )}
         </div>
       </div>
-      <OrdersModal
-        modalOpen={modalOpen}
-        onModalChange={setModalOpen}
-        data={selectedOrder}
-      />
     </main>
   );
 }

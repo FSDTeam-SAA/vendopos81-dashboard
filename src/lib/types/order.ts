@@ -83,6 +83,7 @@ export interface Order {
   paymentStatus: string;
   orderStatus: string;
   totalPrice: number;
+  transactionId?: string;
   billingInfo: BillingInfo;
   purchaseDate: string;
   items: OrderItem[];
