@@ -5,24 +5,9 @@ import { Pencil, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Product } from "@/lib/types/product";
 
-// Define the shape of our data based on the API response provided
-export type Product = {
-  _id: string;
-  images: {
-    public_id: string;
-    url: string;
-    _id: string;
-  }[];
-  productName: string;
-  shortDescription: string;
-  productType: string;
-  priceFrom: number;
-  isVendorBrand: boolean;
-  status: string;
-};
-
-export const columns: ColumnDef<Product>[] = [
+export const getColumns = (onEdit: (product: Product) => void): ColumnDef<Product>[] => [
   {
     accessorKey: "images",
     header: "Image",
@@ -78,20 +63,20 @@ export const columns: ColumnDef<Product>[] = [
     },
   },
   {
-    accessorKey: "isVendorBrand",
-    header: "Vendor Brand",
+    accessorKey: "isFeatured", 
+    header: "Featured",
     cell: ({ row }) => {
-      const isVendorBrand = row.getValue<boolean>("isVendorBrand");
+      const isFeatured = row.getValue<boolean>("isFeatured");
       return (
         <Badge
-          variant={isVendorBrand ? "default" : "secondary"}
+          variant={isFeatured ? "default" : "secondary"}
           className={
-            isVendorBrand
-              ? "bg-green-100 text-green-700 hover:bg-green-100 border-green-200 shadow-none"
+            isFeatured
+              ? "bg-purple-100 text-purple-700 hover:bg-purple-100 border-purple-200 shadow-none"
               : "bg-gray-100 text-gray-600 hover:bg-gray-100 border-gray-200 shadow-none"
           }
         >
-          {isVendorBrand ? "Yes" : "No"}
+          {isFeatured ? "Yes" : "No"}
         </Badge>
       );
     },
@@ -125,7 +110,6 @@ export const columns: ColumnDef<Product>[] = [
 
       let badgeStyle = "bg-gray-100 text-gray-600 border-gray-200";
 
-      // Simple status color mapping logic
       if (
         status?.toLowerCase() === "approved" ||
         status?.toLowerCase() === "active"
@@ -154,13 +138,14 @@ export const columns: ColumnDef<Product>[] = [
   {
     id: "actions",
     header: "Action",
-    cell: () => {
+    cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
             className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 cursor-pointer"
+            onClick={() => onEdit(row.original)}
           >
             <Pencil className="h-4 w-4" />
           </Button>
