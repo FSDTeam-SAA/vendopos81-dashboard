@@ -25,3 +25,21 @@ export const getFilterProducts = async () => {
     throw error;
   }
 };
+
+export const createProduct = async (data: FormData) => {
+  const response = await axiosInstance.post("/product/create-product", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
+
+export const updateProduct = async (id: string, data: FormData) => {
+  const response = await axiosInstance.put(`/product/update-product/${id}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
