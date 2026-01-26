@@ -23,15 +23,28 @@ export const getAllSuppliers = async (params?: SupplierParams) => {
 
 
 
-export const deleteSingleSuppliers = async (id:string) => {
+export const deleteSingleSuppliers = async (id: string) => {
   try {
     const response = await axiosInstance.delete(
-      `/join-as-supplier/delete-supplier/${id}`
-     
+      `/join-as-supplier/delete-supplier/${id}`,
     );
     return response.data;
   } catch (error) {
     console.error("Error Delete suppliers:", error);
+    throw error;
+  }
+};
+
+export const updateSupplierStatus = async (id: string, status: string) => {
+  try {
+    const response = await axiosInstance.put(
+      `/join-as-supplier/update-status/${id}`,
+      { status },
+    );
+    console.log('respons data',response.data)
+    return response.data;
+  } catch (error) {
+    console.error("Error updating supplier status:", error);
     throw error;
   }
 };

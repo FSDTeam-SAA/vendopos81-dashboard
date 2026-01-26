@@ -7,13 +7,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Mail, Phone, MapPin, Calendar, User, Hash, CreditCard } from "lucide-react";
+import { Mail, Phone, MapPin, Calendar, Hash, CreditCard, Users } from "lucide-react";
 import { Order } from "@/lib/types/order";
+import { User } from "@/lib/types/users";
 
 interface CustomerModalProps {
   modalOpen: boolean;
   onModalChange: (open: boolean) => void;
-  data: Order | null;
+  data: User | null;
 }
 
 const CustomerModal = ({ modalOpen, onModalChange, data }: CustomerModalProps) => {
@@ -24,7 +25,7 @@ const CustomerModal = ({ modalOpen, onModalChange, data }: CustomerModalProps) =
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-            <User className="w-6 h-6 text-teal-600" />
+            <Users className="w-6 h-6 text-teal-600" />
             Customer Details
           </DialogTitle>
         </DialogHeader>
@@ -33,52 +34,46 @@ const CustomerModal = ({ modalOpen, onModalChange, data }: CustomerModalProps) =
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <p className="text-sm font-medium text-gray-500 flex items-center gap-2">
-                <User className="w-4 h-4" /> Name
+                <Users className="w-4 h-4" /> Name
               </p>
               <p className="text-gray-900 font-semibold">
-                {data.userId.firstName} {data.userId.lastName}
+                {data.firstName} {data.lastName}
               </p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-medium text-gray-500 flex items-center gap-2">
-                <Hash className="w-4 h-4" /> Order ID
+                <Hash className="w-4 h-4" /> Customer ID
               </p>
-              <p className="text-gray-900 font-semibold">{data.orderUniqueId}</p>
+              <p className="text-gray-900 font-semibold">{data._id}</p>
             </div>
           </div>
 
           <div className="space-y-3">
             <div className="flex items-center gap-3 text-gray-700">
               <Mail className="w-5 h-5 text-gray-400" />
-              <span>{data.userId.email}</span>
-            </div>
-            <div className="flex items-center gap-3 text-gray-700">
-              <Phone className="w-5 h-5 text-gray-400" />
-              <span>{data.billingInfo.phone || "N/A"}</span>
-            </div>
-            <div className="flex items-center gap-3 text-gray-700">
-              <MapPin className="w-5 h-5 text-gray-400" />
-              <span>
-                {data.billingInfo.address}, {data.billingInfo.city}, {data.billingInfo.country}
-              </span>
+              <span>{data.email}</span>
             </div>
             <div className="flex items-center gap-3 text-gray-700">
               <Calendar className="w-5 h-5 text-gray-400" />
-              <span>Order Date: {new Date(data.purchaseDate).toLocaleDateString()}</span>
+              <span>Joined Date: {new Date(data.createdAt).toLocaleDateString()}</span>
+            </div>
+            <div className="flex items-center gap-3 text-gray-700">
+              <Hash className="w-5 h-5 text-gray-400" />
+              <span>Total Orders: {data.totalOrder}</span>
             </div>
           </div>
 
           <div className="flex items-center justify-between pt-4 border-t">
             <div className="space-y-1">
-              <p className="text-sm font-medium text-gray-500">Payment Status</p>
+              <p className="text-sm font-medium text-gray-500">Status</p>
               <Badge
                 className={`capitalize ${
-                  data.paymentStatus === "paid"
-                    ? "bg-green-100 text-green-700 hover:bg-green-100"
-                    : "bg-yellow-100 text-yellow-700 hover:bg-yellow-100"
+                  data.isSuspended
+                    ? "bg-red-100 text-red-700 hover:bg-red-100"
+                    : "bg-green-100 text-green-700 hover:bg-green-100"
                 }`}
               >
-                {data.paymentStatus}
+                {data.isSuspended ? "Suspended" : "Active"}
               </Badge>
             </div>
             <div className="space-y-1 text-right">
@@ -86,7 +81,7 @@ const CustomerModal = ({ modalOpen, onModalChange, data }: CustomerModalProps) =
                 <CreditCard className="w-4 h-4" /> Total Spent
               </p>
               <p className="text-lg font-bold text-gray-900">
-                ${data.totalPrice.toFixed(2)}
+                ${data.totalSpent?.toFixed(2) || "0.00"}
               </p>
             </div>
           </div>
