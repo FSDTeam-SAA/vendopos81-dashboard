@@ -58,9 +58,7 @@ cp .env.example .env
 
 npm run dev
 
-## 🧑‍💻 Author
 
-**Rashedul Haque Rasel**
 
 Built with ❤️ using **Next.js**, **TypeScript**, and **Tailwind CSS**.
 
