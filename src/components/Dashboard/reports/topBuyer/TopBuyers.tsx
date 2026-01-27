@@ -1,6 +1,9 @@
 import React from 'react'
 import { Eye } from 'lucide-react'
 import ViewModal from './ViewModal'
+import { useReportTopBuyers } from '@/lib/hooks/useRepost';
+import { TopBuyer } from '@/lib/types/report';
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Buyer {
   rank: number;
@@ -13,53 +16,13 @@ interface Buyer {
 
 const TopBuyers = () => {
   const [viewModalOpen, setViewModalOpen] = React.useState(false)
-  const [selectedBuyer, setSelectedBuyer] = React.useState<Buyer | null>(null)
+  const [selectedBuyer, setSelectedBuyer] = React.useState('')
+const {data, isLoading, isError}=useReportTopBuyers();
+const buyersData= data?.data || [];
 
-  const buyers: Buyer[] = [
-    {
-      rank: 1,
-      name: 'Sarah Johnson',
-      email: 'sarah.j@email.com',
-      totalOrders: 45,
-      totalSpent: '$12,450',
-      icon: '👑'
-    },
-    {
-      rank: 2,
-      name: 'Michael Chen',
-      email: 'michael.c@email.com',
-      totalOrders: 38,
-      totalSpent: '$10,890',
-      icon: '🎭'
-    },
-    {
-      rank: 3,
-      name: 'Emily Davis',
-      email: 'emily.d@email.com',
-      totalOrders: 32,
-      totalSpent: '$9,650',
-      icon: '🍎'
-    },
-    {
-      rank: 4,
-      name: 'James Wilson',
-      email: 'james.w@email.com',
-      totalOrders: 28,
-      totalSpent: '$8,320',
-      icon: '🎪'
-    },
-    {
-      rank: 5,
-      name: 'Lisa Anderson',
-      email: 'lisa.a@email.com',
-      totalOrders: 25,
-      totalSpent: '$7,850',
-      icon: '🍊'
-    }
-  ]
 
-  const handleView = (buyer: Buyer) => {
-    setSelectedBuyer(buyer)
+  const handleView = (id: string) => {
+    setSelectedBuyer(id)
     setViewModalOpen(true)
   }
 
@@ -81,49 +44,73 @@ const TopBuyers = () => {
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-200">
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Rank</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Customer</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 whitespace-nowrap">Rank</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 whitespace-nowrap">Customer</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 whitespace-nowrap">
                 Total Orders
               </th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 whitespace-nowrap">
                 Total Spent
               </th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">View</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 whitespace-nowrap">View</th>
             </tr>
           </thead>
           <tbody>
-            {buyers.map((buyer) => (
-              <tr key={buyer.rank} className="border-b border-gray-100 hover:bg-gray-50">
-                <td className="py-4 px-4 text-sm">
-                  <span className="text-2xl">{buyer.icon}</span>
-                </td>
-                <td className="py-4 px-4">
-                  <div>
-                    <p className="font-medium text-gray-900">{buyer.name}</p>
-                    <p className="text-sm text-gray-500">{buyer.email}</p>
-                  </div>
-                </td>
-                <td className="py-4 px-4">
-                  <span className="inline-block bg-blue-100 text-blue-700 text-sm font-medium px-3 py-1 rounded">
-                    {buyer.totalOrders} orders
-                  </span>
-                </td>
-                <td className="py-4 px-4 text-sm font-medium text-gray-900">{buyer.totalSpent}</td>
-                <td className="py-4 px-4 text-center">
-                  <button onClick={() => handleView(buyer)}>
-                    <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {isLoading ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <tr key={`skeleton-${i}`} className="border-b border-gray-100">
+                  <td className="py-4 px-4 whitespace-nowrap">
+                    <Skeleton className="h-8 w-8 rounded" />
+                  </td>
+                  <td className="py-4 px-4 whitespace-nowrap">
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-3 w-48" />
+                    </div>
+                  </td>
+                  <td className="py-4 px-4 whitespace-nowrap">
+                    <Skeleton className="h-6 w-20 rounded" />
+                  </td>
+                  <td className="py-4 px-4 whitespace-nowrap">
+                    <Skeleton className="h-4 w-16" />
+                  </td>
+                  <td className="py-4 px-4 text-center whitespace-nowrap">
+                    <Skeleton className="h-5 w-5 mx-auto" />
+                  </td>
+                </tr>
+              ))
+            ) : (
+              buyersData?.map((buyer: TopBuyer, index: number) => (
+                <tr key={buyer._id} className="border-b border-gray-100 hover:bg-gray-50">
+                  <td className="py-4 px-4 text-sm whitespace-nowrap">
+                    <span className="text-2xl">{index + 1}</span>
+                  </td>
+                  <td className="py-4 px-4 whitespace-nowrap">
+                    <div>
+                      <p className="font-medium text-gray-900">{buyer.firstName} {buyer.lastName}</p>
+                    </div>
+                  </td>
+                  <td className="py-4 px-4 whitespace-nowrap">
+                    <span className="inline-block bg-blue-100 text-blue-700 text-sm font-medium px-3 py-1 rounded">
+                      {buyer.totalOrder} orders
+                    </span>
+                  </td>
+                  <td className="py-4 px-4 text-sm font-medium text-gray-900 whitespace-nowrap">{buyer.totalSpent}</td>
+                  <td className="py-4 px-4 text-center whitespace-nowrap">
+                    <button onClick={() => handleView(buyer._id)}>
+                      <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
       <ViewModal 
         viewModalOpen={viewModalOpen} 
         setViewModalOpen={setViewModalOpen} 
-        data={selectedBuyer} 
+        id={selectedBuyer} 
       />
     </div>
   )

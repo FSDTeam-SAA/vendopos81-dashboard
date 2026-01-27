@@ -47,7 +47,7 @@ const navigation = [
   { name: "Profile", href: "/profile", icon: UserCog },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: boolean) => void }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -58,7 +58,19 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="flex h-screen w-64 flex-col bg-white border-r border-gray-200 fixed">
+    <>
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      <div className={cn(
+        "flex h-screen w-64 flex-col bg-white border-r border-gray-200 fixed z-40 transition-transform duration-300 transform lg:translate-x-0",
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
       {/* Logo */}
       <div className="flex  items-center py-5 justify-center px-6">
         <Link href="/" className="flex items-center gap-3">
@@ -147,5 +159,6 @@ export default function Sidebar() {
         </Dialog>
       </div>
     </div>
+    </>
   );
 }

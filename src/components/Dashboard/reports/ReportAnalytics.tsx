@@ -19,10 +19,10 @@ const ReportAnalytics = () => {
 
   return (
     <section className="w-full py-8">
-      <div className="mb-8">
+      {/* <div className="mb-8">
         <h2 className="text-2xl font-semibold text-gray-900 mb-2">Reports & Analytics</h2>
         <p className="text-gray-600">Generate and download business reports</p>
-      </div>
+      </div> */}
 
       <div className="mb-8">
         <div className="flex gap-0 border-b border-gray-200">
@@ -30,7 +30,7 @@ const ReportAnalytics = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`py-3 px-4 font-medium text-sm border-b-2 border-gray-900 transition-colors ${
+              className={`py-3 px-4 font-medium text-sm cursor-pointer border-b-2 border-gray-900 transition-colors ${
                 activeTab === tab.id
                   ? 'text-gray-900 border-x-2  border-gray-900'
                   : 'text-gray-600 hover:text-gray-900'

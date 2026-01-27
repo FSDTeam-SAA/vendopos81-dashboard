@@ -20,14 +20,68 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { LogOut, Menu } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
-import { useState } from "react";
+import { use, useState } from "react";
 import HeaderTitle from "../ReusableComponents/HeaderTitle";
+import { usePathname } from "next/navigation";
+import { profile } from "console";
+import Suppliers from "../Suppliers/Suppliers";
 
 export default function DashboardHeader() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const { data: session } = useSession();
+  const pathname = usePathname();
 
+  console.log('pathname',pathname)
+
+  const routeConfig: Record<string, { title: string; subtitle: string }> = {
+    "/dashboard": { 
+      title: "Dashboard Overview", 
+      subtitle: "Welcome back, Admin" 
+    },
+    "/orders": { 
+      title: "Orders Management", 
+      subtitle: "Welcome back, Admin" 
+    },
+    "/products": { 
+      title: "Products Management", 
+      subtitle: "Welcome back, Admin" 
+    },
+    "/customers": { 
+      title: "Customers Management", 
+      subtitle: "Welcome back, Admin" 
+    },
+    "/reports": { 
+      title: "Reports & Analytics", 
+      subtitle: "Welcome back, Admin" 
+    },
+    "/payments": { 
+      title: "Payments Overview", 
+      subtitle: "Welcome back, Admin" 
+    },
+    "/profile": { 
+      title: "Profile", 
+      subtitle: "Welcome back, Admin" 
+    },
+    "/review": { 
+      title: "Reviews Management", 
+      subtitle: "Welcome back, Admin" 
+    },
+    "/subscription": { 
+      title: "Subscription Plans", 
+      subtitle: "Welcome back, Admin" 
+    },
+    "/suppliers": { 
+      title: "Supplier Management",
+      subtitle: "Welcome back, Admin" 
+    },
+    "/categories": { 
+      title: "Categories Management", 
+      subtitle: "Welcome back, Admin" 
+    }
+  };
+
+  const currentHeader = routeConfig[pathname] || routeConfig["/dashboard"];
   const loading = false;
 
   const handleLogout = () => {
@@ -59,8 +113,8 @@ export default function DashboardHeader() {
         </button>
 
         <HeaderTitle
-          title="Dashboard Overview"
-          subtitle="Welcome back, Admin"
+          title={currentHeader.title}
+          subtitle={currentHeader.subtitle}
         />
       </div>
 
