@@ -72,10 +72,10 @@ export default function Products() {
   return (
     <div className="container mx-auto py-10 space-y-6">
     <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-2">
+        {/* <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-bold text-[#101828]">Product Inventory</h1>
         <p className="text-[#4A5565]">Manage your products and update prices</p>
-      </div>
+      </div> */}
       <Button
         variant="outline"
         size="lg"

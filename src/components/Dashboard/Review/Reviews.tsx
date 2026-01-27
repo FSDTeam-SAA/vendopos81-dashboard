@@ -89,14 +89,14 @@ export default function Reviews() {
     <main className="min-h-screen bg-gray-50">
       <div className="p-6 mx-auto container space-y-6">
         {/* Header */}
-        <div>
+        {/* <div>
           <h1 className="text-3xl font-bold text-gray-900">
             Review Management
           </h1>
           <p className="text-gray-500 mt-1">
             Manage and monitor customer reviews
           </p>
-        </div>
+        </div> */}
 
         {/* Stat Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

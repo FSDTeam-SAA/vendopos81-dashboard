@@ -76,12 +76,12 @@ export default function Categories() {
     <div className="container mx-auto py-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
+        {/* <div>
           <h1 className="text-2xl font-bold text-[#101828]">
             Category Management
           </h1>
           <p className="text-[#4A5565]">Organize and manage product categories</p>
-        </div>
+        </div> */}
         <Button
           onClick={handleAddNew}
           className="bg-[#086646] hover:bg-[#065535] text-white gap-2 w-fit"
