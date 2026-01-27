@@ -19,3 +19,21 @@ class UserService {
 }
 
 export const userService = new UserService();
+
+
+// fetch all users
+export async function getAllUsers(params?: {
+  page?: number;
+  limit?: number;
+  isSuspended?: boolean | string;
+}) {
+  try {
+    const response = await axiosInstance.get('/user/all-users', {
+      params,
+    });
+    return response.data;
+  } catch (error) {
+    // console.error("Error fetching all users:", error);
+    throw error;
+  }
+}
