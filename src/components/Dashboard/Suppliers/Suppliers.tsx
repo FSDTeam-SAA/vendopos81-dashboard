@@ -23,20 +23,35 @@ import {
   ChevronDown,
   Loader2,
 } from "lucide-react";
-import { useAllSuppliers, useDeleteSingleSuppliers } from "@/lib/hooks/useSuppliers";
+import {
+  useAllSuppliers,
+  useDeleteSingleSuppliers,
+  useUpdateSupplierStatus,
+} from "@/lib/hooks/useSuppliers";
 import { Analytics, Supplier } from "@/lib/types/supplier";
 import SuppliersModal from "./SuppliersModal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function SupplierManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
-  const { mutate } = useDeleteSingleSuppliers();
+  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(
+    null,
+  );
+  const [isSuspended, setIsSuspended] = useState<string>("all");
+  const { mutate: deleteSupplier } = useDeleteSingleSuppliers();
+  const { mutate: updateStatus } = useUpdateSupplierStatus();
   const limit = 10;
 
   const { data, isLoading, isError } = useAllSuppliers({
     page: currentPage,
     limit: limit,
+    isSuspended: isSuspended === "all" ? undefined : isSuspended,
   });
 
   const SupplierManagementData: Analytics | undefined = data?.analytics;
@@ -49,8 +64,12 @@ export default function SupplierManagement() {
 
   const handleDelete = (id: string) => {
     if (window.confirm("Are you sure you want to delete this supplier?")) {
-      mutate(id);
+      deleteSupplier(id);
     }
+  };
+
+  const handleUpdateStatus = (id: string, status: string) => {
+    updateStatus({ id, status });
   };
 
   const handleView = (supplier: Supplier) => {
@@ -148,13 +167,20 @@ export default function SupplierManagement() {
             <h2 className="text-lg font-semibold text-gray-900">
               All Suppliers
             </h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-gray-600 hover:text-gray-900 border cursor-pointer"
-            >
-              Sort by <ChevronDown />
-            </Button>
+            <div className="flex items-center gap-2">
+              <select
+                className="bg-white border border-gray-200 text-gray-700 text-sm rounded-md focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 outline-none"
+                value={isSuspended}
+                onChange={(e) => {
+                  setIsSuspended(e.target.value);
+                  handlePageChange(1);
+                }}
+              >
+                <option value="all">All Status</option>
+                <option value="false">Active Only</option>
+                <option value="true">Suspended Only</option>
+              </select>
+            </div>
           </div>
 
           <Card className="bg-white border-0 shadow-sm overflow-hidden">
@@ -252,9 +278,35 @@ export default function SupplierManagement() {
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <MoreVertical className="w-4 h-4 text-gray-400" />
-                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                            >
+                              <MoreVertical className="w-4 h-4 text-gray-400" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleUpdateStatus(supplier._id, "approved")
+                              }
+                              className="cursor-pointer"
+                            >
+                              Approved
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleUpdateStatus(supplier._id, "rejected")
+                              }
+                              className="cursor-pointer"
+                            >
+                              Reject
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     </TableCell>
                     <TableCell>

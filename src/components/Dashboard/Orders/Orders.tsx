@@ -36,7 +36,8 @@ export default function Orders() {
   const limit = 5;
 
   const { data, isLoading, isError } = useAllOrders({
-    limit: 1000, // Fetch a large number for manual pagination
+    limit: 10,
+    page: currentPage,
   });
   console.log("order data", data);
   const orderAnalytics: OrderAnalytics | undefined = data?.analytics;
