@@ -70,14 +70,14 @@ export default function Customers() {
     <main className="min-h-screen bg-gray-50">
       <div className="p-6 mx-auto container space-y-6">
         {/* Header */}
-        <div>
+        {/* <div>
           <h1 className="text-3xl font-bold text-gray-900">
             Customer Management
           </h1>
           <p className="text-gray-500 mt-1">
             View and manage customer accounts 
           </p>
-        </div>
+        </div> */}
 
         {/* Stat Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-black">
@@ -142,8 +142,8 @@ Total Customers              </CardTitle>
             </div>
           </div>
 
-          <Card className="bg-white border-0 shadow-sm overflow-hidden text-black">
-            <Table>
+          <Card className="bg-white border-0 pt-0 px-2 shadow-sm overflow-hidden text-black">
+            <Table className="py-2">
               <TableHeader className="bg-gray-50/50">
                 <TableRow>
                   <TableHead className="font-semibold text-gray-700">

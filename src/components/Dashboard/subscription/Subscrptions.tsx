@@ -36,12 +36,12 @@ const Subscriptions = () => {
   return (
     <div className="w-full bg-white rounded-lg p-6">
       <div className="flex justify-between items-center mb-6">
-        <div>
+        {/* <div>
           <h2 className="text-2xl font-semibold text-gray-900">Subscription</h2>
           <p className="text-sm text-gray-500 mt-1">
             Manage your newsletter subscribers
           </p>
-        </div>
+        </div> */}
         <Button
           onClick={() => handleOpenModal(null)}
           className="bg-green-700 hover:bg-green-800 text-white"
@@ -91,7 +91,7 @@ const Subscriptions = () => {
               subscribers.map((subscriber) => (
                 <tr
                   key={subscriber._id}
-                  className="border-b border-gray-200 hover:bg-gray-50 transition"
+                  className="border-b border-gray-200   hover:bg-gray-50 transition"
                 >
                   <td className="px-6 py-4 text-sm text-gray-600">
                     {subscriber.email}
