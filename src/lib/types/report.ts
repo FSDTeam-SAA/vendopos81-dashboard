@@ -1,3 +1,4 @@
+import BestSellingProduct from "@/components/Dashboard/reports/bestSelling/BestSellingProduct";
 
 
 export interface TopBuyer {
@@ -38,4 +39,41 @@ export interface BuyerDetailApiResponse {
     message: string;
     statusCode: number;
     data: BuyerDetail;
+}
+
+
+export interface TopSupplier {
+  id: string;
+  shopName: string;
+  brandName: string;
+  logo: string;
+  totalOrders: number;
+  totalValue: number;
+  rating: number;
+}
+
+export interface GetTopSuppliersResponse {
+  success: boolean;
+  message: string;
+  statusCode: number;
+  data: TopSupplier[];
+}
+
+
+
+// BestSellingProduct
+
+export interface BestsellingProduct {
+  id: string;
+  title: string;
+  categoryRegion: string | null;
+  totalSold: number;
+  rating: number;
+}
+
+export interface GetBestsellingProductsResponse {
+  success: boolean;
+  message: string;
+  statusCode: number;
+  data: BestsellingProduct[];
 }

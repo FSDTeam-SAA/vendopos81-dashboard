@@ -41,7 +41,7 @@ export interface Category {
 export interface Product {
   _id: string;
   userId: string;
-  categoryId: Category | string; // Adjusted to allow string ID or object
+  categoryId: Category | string; 
   supplierId: string;
   title: string;
   slug: string;

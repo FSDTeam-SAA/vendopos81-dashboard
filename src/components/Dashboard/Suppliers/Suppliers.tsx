@@ -36,6 +36,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import SuppliersModels from "./SuppliersModal";
 
 export default function SupplierManagement() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -365,10 +366,10 @@ export default function SupplierManagement() {
           )}
         </div>
       </div>
-      <SuppliersModal
-        modalOpen={modalOpen}
-        onModalChange={setModalOpen}
-        data={selectedSupplier}
+      <SuppliersModels
+        viewModalOpen={modalOpen}
+        setViewModalOpen={setModalOpen}
+        id={selectedSupplier?._id || ""}
       />
     </main>
   );
