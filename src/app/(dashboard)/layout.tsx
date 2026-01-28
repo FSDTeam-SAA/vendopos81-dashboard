@@ -20,7 +20,7 @@ export default function RootLayout({
       <div className="flex-1 flex flex-col lg:ml-64 transition-all duration-300">
         {/* Header */}
         <div className="sticky top-0 z-20">
-          <Header setSidebarOpen={setSidebarOpen} />
+          <Header />
         </div>
 
         {/* Page Content */}
