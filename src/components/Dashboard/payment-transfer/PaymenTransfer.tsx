@@ -93,6 +93,11 @@ const PaymenTransfer = () => {
       )
     : settlements;
 
+  const handleTransaction = (settlement: Settlement) => {
+    // Implement the logic to handle transaction details view
+    console.log("Transaction details for settlement:", settlement);
+  };
+
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="p-6 mx-auto container space-y-6">
@@ -209,16 +214,17 @@ const PaymenTransfer = () => {
                 <TableHeader className="bg-gray-50/50">
                   <TableRow>
                     <TableHead className="font-semibold text-gray-700 whitespace-nowrap">
-                      Transfer ID
-                    </TableHead>
-                    <TableHead className="font-semibold text-gray-700 whitespace-nowrap">
-                      Order ID
-                    </TableHead>
-                    <TableHead className="font-semibold text-gray-700 whitespace-nowrap">
                       Supplier
                     </TableHead>
                     <TableHead className="font-semibold text-gray-700 whitespace-nowrap">
-                      Amount
+                      Brand Name
+                    </TableHead>
+
+                    <TableHead className="font-semibold text-gray-700 whitespace-nowrap">
+                      Admin Fee
+                    </TableHead>
+                    <TableHead className="font-semibold text-gray-700 whitespace-nowrap">
+                      Payable Amount
                     </TableHead>
                     <TableHead className="font-semibold text-gray-700 whitespace-nowrap text-center">
                       Transfer Status
@@ -238,17 +244,7 @@ const PaymenTransfer = () => {
                       key={settlement._id}
                       className="bg-white hover:bg-gray-50 transition"
                     >
-                      {/* 1. Transfer ID */}
-                      <TableCell className="whitespace-nowrap font-mono text-xs">
-                        {settlement._id.substring(0, 8)}...
-                      </TableCell>
-
-                      {/* 2. Order ID */}
-                      <TableCell className="whitespace-nowrap font-medium">
-                        #{settlement.orderId?._id.substring(0, 8)}...
-                      </TableCell>
-
-                      {/* 3. Supplier */}
+                      {/* 1. Supplier */}
                       <TableCell className="whitespace-nowrap">
                         <div className="flex flex-col">
                           <span className="font-medium text-gray-900">
@@ -261,13 +257,31 @@ const PaymenTransfer = () => {
                         </div>
                       </TableCell>
 
+                      {/* 2. ShopName/Brand Name */}
+                      <TableCell className="whitespace-nowrap">
+                        <div className="flex flex-col">
+                          <span className="font-medium text-gray-900">
+                            {settlement.supplierId?.brandName}
+                          </span>
+                        </div>
+                      </TableCell>
+
+                      {/* 4. Amount */}
+                      <TableCell className="font-semibold text-gray-900 whitespace-nowrap">
+                        <div className="flex flex-col">
+                          <span>${settlement.adminCommission}</span>
+                          {/* <span className="text-[10px] text-gray-400">
+                            Total: ${settlement.adminCommission}
+                          </span> */}
+                        </div>
+                      </TableCell>
                       {/* 4. Amount */}
                       <TableCell className="font-semibold text-gray-900 whitespace-nowrap">
                         <div className="flex flex-col">
                           <span>${settlement.payableAmount}</span>
-                          <span className="text-[10px] text-gray-400">
-                            Total: ${settlement.totalAmount}
-                          </span>
+                          {/* <span className="text-[10px] text-gray-400">
+                            Total: ${settlement.adminCommission}
+                          </span> */}
                         </div>
                       </TableCell>
 
@@ -292,16 +306,28 @@ const PaymenTransfer = () => {
                           variant="outline"
                           className="capitalize pointer-events-none font-normal whitespace-nowrap"
                         >
-                          {settlement.orderId?.orderStatus}
+                          {settlement.orderId?.paymentStatus}
                         </Badge>
                       </TableCell>
 
                       {/* 7. Action */}
-                      <TableCell className="text-center whitespace-nowrap">
-                        <Button size="sm" variant="outline" className="h-8">
-                          Details
-                        </Button>
-                      </TableCell>
+                      {settlement.orderId.paymentStatus === "paid" ? (
+                        <TableCell className="text-center whitespace-nowrap">
+                          <span className="text-gray-500">N/A</span>
+                        </TableCell>
+                      ) : (
+                        <TableCell className="text-center whitespace-nowrap">
+                          <Button
+                            onClick={() => handleTransaction(settlement)}
+                            size="sm"
+                            // variant="outline"
+                            className="h-8 bg-[#086646] text-white hover:bg-[#06543f]    "
+                          >
+                            {/* <DollarSign className="w-4 h-4 mr-2" /> */}
+                            Transaction Now
+                          </Button>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                   {filteredSettlements.length === 0 && (
