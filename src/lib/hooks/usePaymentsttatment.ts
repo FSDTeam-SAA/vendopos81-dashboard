@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllPaymentSttatment } from "../services/paymentSttatment";
+import { getAllPaymentSettlements } from "../services/paymentSttatment";
 
 export const useAllSettlements = () => {
   return useQuery({
     queryKey: ["all-settlements",],
-    queryFn: () => getAllPaymentSttatment(),
+    queryFn: () => getAllPaymentSettlements(),
   });
 };
 
