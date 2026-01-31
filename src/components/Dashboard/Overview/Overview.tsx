@@ -139,7 +139,7 @@ export default function Overview() {
               Recent Orders
             </h2>
             <Link
-              href="/dashboard/orders"
+              href="/orders"
               className="text-sm text-teal-600 hover:text-teal-700"
             >
               View All

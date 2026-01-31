@@ -45,7 +45,7 @@ const navigation = [
   { name: "Reviews", href: "/review", icon: Star },
   { name: "Reports", href: "/reports", icon: FileText },
   { name: "Subscription", href: "/subscription", icon: MailCheck },
-  { name: "Deliveries", href: "/deliveries", icon: Ambulance },
+  // { name: "Deliveries", href: "/deliveries", icon: Ambulance },
   { name: "Profile", href: "/profile", icon: UserCog },
   { name: "Notifications", href: "/notifications", icon: MailCheck },
 ];

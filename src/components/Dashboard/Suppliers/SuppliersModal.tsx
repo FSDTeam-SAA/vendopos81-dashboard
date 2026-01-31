@@ -4,9 +4,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Mail, ShoppingBag, DollarSign, Building2, Phone, MapPin, FileText, Store, BadgeCheck, AlertCircle } from "lucide-react";
+import { Mail, ShoppingBag, DollarSign, Building2, Phone, MapPin, FileText, Store, BadgeCheck, AlertCircle, Trash2, AlertTriangle } from "lucide-react";
 import { useReportTopSuppliersSingle } from "@/lib/hooks/useReport";
 import { Supplier } from "@/lib/types/singleSupplier";
+import { useDeleteUser, useSuspendUser } from "@/lib/hooks/useUsers";
+import { Button } from "@/components/ui/button";
 
 interface ViewModalProps {
   viewModalOpen: boolean;
@@ -17,6 +19,25 @@ interface ViewModalProps {
 const SuppliersModels = ({ viewModalOpen, setViewModalOpen, id }: ViewModalProps) => {
   const { data, isLoading } = useReportTopSuppliersSingle(id);
   const supplier: Supplier | undefined = data?.data;
+
+  const { mutate: suspendUser, isPending: isSuspending } = useSuspendUser();
+  const { mutate: deleteUser, isPending: isDeleting } = useDeleteUser();
+
+  const handleSuspend = () => {
+    if (!supplier?.userId?._id) return;
+    suspendUser(supplier.userId._id, {
+      onSuccess: () => setViewModalOpen(false),
+    });
+  };
+
+  const handleDelete = () => {
+    if (!supplier?.userId?._id) return;
+    if (!window.confirm("Are you sure you want to delete this supplier account?"))
+      return;
+    deleteUser(supplier.userId._id, {
+      onSuccess: () => setViewModalOpen(false),
+    });
+  };
 
   if (!id) return null;
 
@@ -166,12 +187,36 @@ const SuppliersModels = ({ viewModalOpen, setViewModalOpen, id }: ViewModalProps
                 </div>
             )}
             
-            {supplier.isSuspended && (
-                 <div className="flex items-center gap-2 p-3 bg-red-50 text-red-700 rounded-lg text-sm font-medium border border-red-100">
-                    <AlertCircle className="w-5 h-5" />
-                    Checking this supplier account is currently suspended.
-                 </div>
-            )}
+             {supplier.isSuspended && (
+                  <div className="flex items-center gap-2 p-3 bg-red-50 text-red-700 rounded-lg text-sm font-medium border border-red-100">
+                     <AlertCircle className="w-5 h-5" />
+                     Checking this supplier account is currently suspended.
+                  </div>
+             )}
+
+             {/* Actions */}
+             <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
+               {!supplier.isSuspended && (
+                 <Button
+                   variant="destructive"
+                   onClick={handleSuspend}
+                   disabled={isSuspending || isDeleting}
+                   className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+                 >
+                   <AlertTriangle className="w-4 h-4 mr-2" />
+                   Suspend Supplier
+                 </Button>
+               )}
+               {/* <Button
+                 variant="destructive"
+                 onClick={handleDelete}
+                 disabled={isSuspending || isDeleting}
+                 className="flex-1"
+               >
+                 <Trash2 className="w-4 h-4 mr-2" />
+                 Delete Account
+               </Button> */}
+             </div>
           </div>
         ) : (
           <div className="text-center py-8 text-gray-500">

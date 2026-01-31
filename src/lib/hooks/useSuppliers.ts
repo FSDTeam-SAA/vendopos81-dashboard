@@ -27,8 +27,12 @@ export const useDeleteSingleSuppliers = () => {
   return useMutation({
     mutationKey: ["delete-supplier"],
     mutationFn: (id: string) => deleteSingleSuppliers(id),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      toast.success(data?.message || "Supplier deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["all-suppliers"] });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || error?.message || "Failed to delete supplier");
     },
   });
 };
@@ -43,9 +47,9 @@ export const useUpdateSupplierStatus = () => {
       toast.success(data?.message || "Supplier status updated successfully");
       queryClient.invalidateQueries({ queryKey: ["all-suppliers"] });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       // console.error("Error updating supplier status:", error);
-      toast.error(error?.message || "Failed to update supplier status");
+      toast.error(error?.response?.data?.message || error?.message || "Failed to update supplier status");
     }
   });
 };
