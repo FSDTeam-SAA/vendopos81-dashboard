@@ -12,14 +12,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Eye,
-  ChevronDown,
-  Loader2,
-} from "lucide-react";
+import { Eye, Loader2 } from "lucide-react";
 
-import { useAllOrders } from "@/lib/hooks/useOrder";
-import { Order, OrderAnalytics } from "@/lib/types/order";
 import CustomerModal from "./CustomerModal";
 import { useAllUsers } from "@/lib/hooks/useUsers";
 import { Analytics, User } from "@/lib/types/users";
@@ -81,10 +75,11 @@ export default function Customers() {
 
         {/* Stat Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-black">
-          <Card className="bg-white border-0 shadow-sm">
-            <CardHeader className="pb-3">
+          <Card className="bg-white gap-2 border-0 shadow-sm">
+            <CardHeader className="">
               <CardTitle className="text-sm font-medium text-[#6C757D]">
-Total Customers              </CardTitle>
+                Total Customers{" "}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-gray-900">
@@ -93,10 +88,10 @@ Total Customers              </CardTitle>
             </CardContent>
           </Card>
 
-          <Card className="bg-white border-0 shadow-sm">
-            <CardHeader className="pb-3">
+          <Card className="bg-white gap-2 border-0 shadow-sm">
+            <CardHeader className="">
               <CardTitle className="text-sm font-medium text-[#6C757D]">
-          Active Customers
+                Active Customers
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -106,10 +101,10 @@ Total Customers              </CardTitle>
             </CardContent>
           </Card>
 
-          <Card className="bg-white border-0 shadow-sm">
-            <CardHeader className="pb-3">
+          <Card className="bg-white gap-2 border-0 shadow-sm">
+            <CardHeader className="">
               <CardTitle className="text-sm font-medium text-[#6C757D]">
-            New This Month
+                New This Month
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -190,8 +185,8 @@ Total Customers              </CardTitle>
                       <TableCell>
                         <div className="text-sm text-gray-700">
                           <div className="text-sm text-gray-500">
-                          {user.email}
-                        </div>
+                            {user.email}
+                          </div>
                         </div>
                       </TableCell>
 
@@ -244,7 +239,10 @@ Total Customers              </CardTitle>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-10 text-gray-500">
+                    <TableCell
+                      colSpan={7}
+                      className="text-center py-10 text-gray-500"
+                    >
                       No customers found
                     </TableCell>
                   </TableRow>
@@ -305,4 +303,3 @@ Total Customers              </CardTitle>
     </main>
   );
 }
-
