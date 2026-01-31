@@ -16,6 +16,22 @@ class UserService {
     );
     return response.data.data;
   }
+
+  /**
+   * Suspend a supplier/user
+   */
+  async suspendUser(userId: string){
+    const response = await axiosInstance.put(`${this.baseUrl}/suspend-supplier/${userId}`);
+    return response.data;
+  }
+
+  /**
+   * Delete a user
+   */
+  async deleteUser(userId: string) {
+    const response = await axiosInstance.delete(`${this.baseUrl}/delete/${userId}`);
+    return response.data;
+  }
 }
 
 export const userService = new UserService();

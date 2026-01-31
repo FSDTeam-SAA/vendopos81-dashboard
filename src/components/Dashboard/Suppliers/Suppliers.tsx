@@ -28,8 +28,8 @@ import {
   useDeleteSingleSuppliers,
   useUpdateSupplierStatus,
 } from "@/lib/hooks/useSuppliers";
+import { useDeleteUser, useSuspendUser } from "@/lib/hooks/useUsers";
 import { Analytics, Supplier } from "@/lib/types/supplier";
-import SuppliersModal from "./SuppliersModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,6 +46,8 @@ export default function SupplierManagement() {
   );
   const [isSuspended, setIsSuspended] = useState<string>("all");
   const { mutate: deleteSupplier } = useDeleteSingleSuppliers();
+  const { mutate: deleteUser } = useDeleteUser();
+  const { mutate: suspendUser } = useSuspendUser();
   const { mutate: updateStatus } = useUpdateSupplierStatus();
   const limit = 10;
 
@@ -63,9 +65,19 @@ export default function SupplierManagement() {
     setCurrentPage(page);
   };
 
-  const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this supplier?")) {
-      deleteSupplier(id);
+  const handleDelete = (supplier: Supplier) => {
+    if (window.confirm("Are you sure you want to delete this supplier account?")) {
+      if (supplier.userId?._id) {
+        deleteUser(supplier.userId._id);
+      } else {
+        deleteSupplier(supplier._id);
+      }
+    }
+  };
+
+  const handleSuspend = (userId: string) => {
+    if (window.confirm("Are you sure you want to suspend this supplier?")) {
+      suspendUser(userId);
     }
   };
 
@@ -272,7 +284,7 @@ export default function SupplierManagement() {
                     <TableCell>
                       <div className="flex items-center gap-2 justify-center">
                         <Button
-                          onClick={() => handleDelete(supplier._id)}
+                          onClick={() => handleDelete(supplier)}
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
@@ -306,6 +318,14 @@ export default function SupplierManagement() {
                             >
                               Reject
                             </DropdownMenuItem>
+                            {supplier.userId?._id && !supplier.isSuspended && (
+                              <DropdownMenuItem
+                                onClick={() => handleSuspend(supplier.userId!._id)}
+                                className="cursor-pointer text-orange-600 focus:text-orange-600"
+                              >
+                                Suspend
+                              </DropdownMenuItem>
+                            )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
