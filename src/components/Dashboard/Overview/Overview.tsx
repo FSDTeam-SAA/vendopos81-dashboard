@@ -1,13 +1,6 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Renvenue from "./Renvenue";
-import SalesByRegion from "./SalesByRegion";
-import { useAnalytics } from "@/lib/hooks/useOverView";
-import { DashboardAnalyticsApiResponse } from "@/lib/types/overall";
-import { Loader2, ShoppingCart, DollarSign, Users, Truck } from "lucide-react";
-import { useAllOrders } from "@/lib/hooks/useOrder";
-import { Order } from "@/lib/types/order";
 import {
   Table,
   TableBody,
@@ -16,10 +9,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useAllOrders } from "@/lib/hooks/useOrder";
+import { useAnalytics } from "@/lib/hooks/useOverView";
+import { Order } from "@/lib/types/order";
+import { DashboardAnalyticsApiResponse } from "@/lib/types/overall";
+import {
+  DollarSign,
+  Loader2,
+  ShoppingCart,
+  Truck,
+  UserRoundCheck,
+  Users,
+} from "lucide-react";
+import Renvenue from "./Renvenue";
+import SalesByRegion from "./SalesByRegion";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
 import Link from "next/link";
 
 export default function Overview() {
@@ -69,7 +74,7 @@ export default function Overview() {
             <CardTitle className="text-lg font-medium text-gray-600">
               Total Orders
             </CardTitle>
-            <ShoppingCart className="w-16 h-16 bg-[#eefbf7] text-2xl! rounded-xl p-2 text-[#34D399]" />
+            <ShoppingCart className="w-16 h-16 bg-[#ebf7f4] text-2xl! rounded-xl p-2 text-[#10a37f]" />
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-gray-900">
@@ -84,7 +89,7 @@ export default function Overview() {
             <CardTitle className="text-lg font-medium text-gray-600">
               Total Revenue
             </CardTitle>
-            <DollarSign className="w-16 h-16 bg-[#eefbf7] text-2xl! rounded-xl p-2 text-[#34D399]" />
+            <DollarSign className="w-16 h-16 bg-[#ebf7f4] text-2xl! rounded-xl p-2 text-[#10a37f]" />
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-gray-900">
@@ -99,7 +104,7 @@ export default function Overview() {
             <CardTitle className="text-sm font-medium text-gray-600">
               Total Customers
             </CardTitle>
-            <Users className="w-16 h-16 bg-[#eefbf7] text-2xl! p-2 rounded-xl text-[#34D399]" />
+            <Users className="w-16 h-16 bg-[#ebf7f4] text-2xl! p-2 rounded-xl text-[#10a37f]" />
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-gray-900">
@@ -114,7 +119,7 @@ export default function Overview() {
             <CardTitle className="text-sm font-medium text-gray-600">
               Total Suppliers
             </CardTitle>
-            <Truck className="w-16 h-16 bg-[#eefbf7] rounded-xl text-2xl! p-2 text-[#34D399]" />
+            <UserRoundCheck className="w-16 h-16 bg-[#ebf7f4] rounded-xl text-2xl! p-2 text-[#10a37f]" />
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-gray-900">
