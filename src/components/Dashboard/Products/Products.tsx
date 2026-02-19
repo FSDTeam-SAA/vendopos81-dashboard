@@ -199,6 +199,7 @@ export default function Products() {
               product={selectedViewProduct}
               isOpen={isViewModalOpen}
               onClose={handleCloseViewModal}
+              handleEdit={handleEdit}
             />
           )}
 
