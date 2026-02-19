@@ -15,6 +15,16 @@ export const getAllProducts = async (params?: ProductParams) => {
   }
 };
 
+export const getSingleProduct = async (id: string) => {
+  try {
+    const response = await axiosInstance.get(`/product/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    throw error;
+  }
+};
+
 // Get Filter Products
 export const getFilterProducts = async () => {
   try {
@@ -36,10 +46,14 @@ export const createProduct = async (data: FormData) => {
 };
 
 export const updateProduct = async (id: string, data: FormData) => {
-  const response = await axiosInstance.put(`/product/update-product/${id}`, data, {
-    headers: {
-      "Content-Type": "multipart/form-data",
+  const response = await axiosInstance.put(
+    `/product/update-product/${id}`,
+    data,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     },
-  });
+  );
   return response.data;
 };
