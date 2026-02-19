@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export interface ProductParams {
   page?: number;
@@ -39,6 +40,9 @@ export interface Category {
 }
 
 export interface Product {
+  supplier: any;
+  // supplier: import("react/jsx-runtime").JSX.Element;
+  category: any;
   _id: string;
   userId: string;
   categoryId: Category | string; 
@@ -66,6 +70,11 @@ export interface Product {
   quantity: number;
   sales?: number;
   revenue?: number | string;
+  isVendorBrand: boolean;
+  isPallet: boolean;
+  isCase: boolean;
+  averageRating: number;
+  totalRatings: number;
 }
 
 export interface GetProductsResponse {
