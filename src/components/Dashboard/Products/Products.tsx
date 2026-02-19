@@ -1,5 +1,7 @@
 "use client";
 
+import Loading from "@/components/shared/Loading";
+import Pagination from "@/components/shared/Pagination";
 import { ViewProductModal } from "@/components/shared/ViewProductModal";
 import { Button } from "@/components/ui/button";
 import {
@@ -104,7 +106,7 @@ export default function Products() {
       </div>
 
       {/* Filters and Search Bar */}
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 rounded-lg border shadow-sm">
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 rounded-lg border">
         {/* <div className="relative w-full md:w-1/3">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
           <Input
@@ -179,9 +181,10 @@ export default function Products() {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center h-40">
-          Loading products...
-        </div>
+        // <div className="flex justify-center items-center h-40">
+        //   Loading products...
+        // </div>
+        <Loading message="Loading products..." />
       ) : error ? (
         <div className="text-red-500 text-center py-10">
           Error loading products. Please try again.
@@ -204,35 +207,12 @@ export default function Products() {
           )}
 
           {/* Pagination Controls */}
-          <div className="flex items-center justify-between py-4">
-            <div className="text-sm text-gray-500">
-              Page {meta.page || params.page} of {meta.totalPage || 1}
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setParams((prev) => ({
-                    ...prev,
-                    page: Math.max(1, prev.page - 1),
-                  }))
-                }
-                disabled={params.page === 1}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setParams((prev) => ({ ...prev, page: prev.page + 1 }))
-                } // Assuming API handles upper bound or we use meta.totalPage
-                disabled={meta.page >= meta.totalPage}
-              >
-                Next
-              </Button>
-            </div>
+          <div className="flex items-center justify-center">
+            <Pagination
+              currentPage={params.page}
+              totalPages={meta.totalPage || 1}
+              onPageChange={(page) => setParams((prev) => ({ ...prev, page }))}
+            />
           </div>
         </>
       )}

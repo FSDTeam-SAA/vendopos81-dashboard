@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/lib/types/product";
 import { ColumnDef } from "@tanstack/react-table";
-import { Eye, ImageIcon, Pencil, Trash2 } from "lucide-react";
+import { Eye, ImageIcon } from "lucide-react";
 import Image from "next/image";
 
 export const getColumns = (
@@ -147,30 +147,4 @@ export const getColumns = (
       );
     },
   },
-
-  // {
-  //   id: "actions",
-  //   header: "Action",
-  //   cell: ({ row }) => {
-  //     return (
-  //       <div className="flex items-center gap-2">
-  //         <Button
-  //           variant="ghost"
-  //           size="icon"
-  //           className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 cursor-pointer"
-  //           onClick={() => onEdit(row.original)}
-  //         >
-  //           <Pencil className="h-4 w-4" />
-  //         </Button>
-  //         <Button
-  //           variant="ghost"
-  //           size="icon"
-  //           className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer"
-  //         >
-  //           <Trash2 className="h-4 w-4" />
-  //         </Button>
-  //       </div>
-  //     );
-  //   },
-  // },
 ];

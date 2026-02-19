@@ -59,6 +59,7 @@ export const ViewProductModal = ({
           <DialogHeader className="pb-2 mt-3 relative top-0 bg-white z-10">
             <DialogTitle className="text-xl font-bold text-gray-800 pr-24">
               {product.productName}
+
             </DialogTitle>
 
             <DialogDescription className="text-sm text-gray-600">
@@ -198,7 +199,7 @@ export const ViewProductModal = ({
                     variant="outline"
                     className="border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1.5 text-xs font-medium gap-1"
                   >
-                    <span className="text-blue-600">✡️</span> Kosher
+                    <span className="text-blue-600"></span> Kosher
                   </Badge>
                 )}
 
@@ -310,14 +311,14 @@ export const ViewProductModal = ({
                                 <span
                                   className={`inline-flex items-center gap-1 ${
                                     v.stock > 0
-                                      ? "text-green-600"
+                                      ? "text-green-800"
                                       : "text-red-600"
                                   }`}
                                 >
                                   <span
                                     className={`w-1.5 h-1.5 rounded-full ${
                                       v.stock > 0
-                                        ? "bg-green-500"
+                                        ? "bg-green-700"
                                         : "bg-red-500"
                                     }`}
                                   ></span>
@@ -361,8 +362,16 @@ export const ViewProductModal = ({
               {/* Debug Info - Hidden by default, only shown if needed */}
               {product.isVendorBrand &&
                 process.env.NODE_ENV === "development" && (
-                  <div className="mt-2 text-xs text-gray-400 p-2 border border-dashed border-gray-200 rounded">
-                    <strong>Debug:</strong> Vendor Brand: Yes
+                  <div className="mt-3 p-3 rounded-xl border border-dashed border-green-800 bg-amber-50 shadow-sm">
+                    <div className="flex items-start gap-2">
+                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-green-800 text-amber-700 text-xs font-bold"></div>
+
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-green-700">
+                          Vendor Brand
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 )}
             </div>
