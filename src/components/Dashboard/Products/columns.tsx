@@ -1,34 +1,41 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { Pencil, Trash2 } from "lucide-react";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Product } from "@/lib/types/product";
+import { ColumnDef } from "@tanstack/react-table";
+import { Eye, ImageIcon } from "lucide-react";
+import Image from "next/image";
 
-export const getColumns = (onEdit: (product: Product) => void): ColumnDef<Product>[] => [
+export const getColumns = (
+  onEdit: (product: Product) => void,
+  onView: (product: Product) => void,
+): ColumnDef<Product>[] => [
   {
     accessorKey: "images",
     header: "Image",
     cell: ({ row }) => {
+      console.log("Row Data:", row.original);
       const images = row.getValue<Product["images"]>("images");
       const firstImage = images && images.length > 0 ? images[0].url : null;
-      const productName =
-        row.getValue<string>("productName") || "Product Image";
+      const title = row.getValue<string>("title") || "Product Image";
 
       return (
-        <div className="relative h-12 w-12 overflow-hidden rounded-md border border-gray-200">
+        <div className="relative h-14 w-14 overflow-hidden rounded-lg border border-gray-200 transition-all duration-200 hover:scale-105 hover:border-green-900">
           {firstImage ? (
             <Image
               src={firstImage}
-              alt={productName}
+              alt={title}
               fill
               className="object-cover"
+              sizes="(max-width: 768px) 100vw,
+                 (max-width: 1200px) 50vw,
+                 33vw"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gray-100 text-xs text-gray-400">
-              No Img
+            <div className="flex h-full w-full flex-col items-center justify-center bg-gray-100 text-gray-400 text-xs gap-1">
+              <ImageIcon className="h-5 w-5 text-gray-400" />
+              No Image
             </div>
           )}
         </div>
@@ -36,19 +43,19 @@ export const getColumns = (onEdit: (product: Product) => void): ColumnDef<Produc
     },
   },
   {
-    accessorKey: "productName",
+    accessorKey: "title",
     header: "Product Name",
     cell: ({ row }) => {
-      const productName = row.getValue<string>("productName");
+      const title = row.getValue<string>("title");
       const shortDescription = row.original.shortDescription;
 
       return (
         <div className="flex flex-col gap-1 max-w-[250px]">
           <div
             className="font-medium text-gray-900 line-clamp-1"
-            title={productName}
+            title={title}
           >
-            {productName}
+            {title}
           </div>
           {shortDescription && (
             <div
@@ -62,25 +69,7 @@ export const getColumns = (onEdit: (product: Product) => void): ColumnDef<Produc
       );
     },
   },
-  {
-    accessorKey: "isFeatured", 
-    header: "Featured",
-    cell: ({ row }) => {
-      const isFeatured = row.getValue<boolean>("isFeatured");
-      return (
-        <Badge
-          variant={isFeatured ? "default" : "secondary"}
-          className={
-            isFeatured
-              ? "bg-purple-100 text-purple-700 hover:bg-purple-100 border-purple-200 shadow-none"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-100 border-gray-200 shadow-none"
-          }
-        >
-          {isFeatured ? "Yes" : "No"}
-        </Badge>
-      );
-    },
-  },
+
   {
     accessorKey: "productType",
     header: "Category",
@@ -89,8 +78,17 @@ export const getColumns = (onEdit: (product: Product) => void): ColumnDef<Produc
     },
   },
   {
+    accessorKey: "Region",
+    header: "Region",
+    cell: ({ row }) => {
+      return (
+        <div className="text-gray-700">{row.original?.category?.region}</div>
+      );
+    },
+  },
+  {
     accessorKey: "priceFrom",
-    header: "Price",
+    header: "Price From",
     cell: ({ row }) => {
       const price = parseFloat(row.getValue("priceFrom"));
       const formatted = new Intl.NumberFormat("en-US", {
@@ -142,22 +140,41 @@ export const getColumns = (onEdit: (product: Product) => void): ColumnDef<Produc
       return (
         <div className="flex items-center gap-2">
           <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 cursor-pointer"
-            onClick={() => onEdit(row.original)}
+            variant="outline"
+            className="flex items-center gap-2 px-3 py-1 border border-gray-200 rounded-md text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition"
+            onClick={() => onView(row.original)}
           >
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer"
-          >
-            <Trash2 className="h-4 w-4" />
+            <Eye className="h-4 w-4 text-gray-500" />
+            View
           </Button>
         </div>
       );
     },
   },
+
+  // {
+  //   id: "actions",
+  //   header: "Action",
+  //   cell: ({ row }) => {
+  //     return (
+  //       <div className="flex items-center gap-2">
+  //         <Button
+  //           variant="ghost"
+  //           size="icon"
+  //           className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 cursor-pointer"
+  //           onClick={() => onEdit(row.original)}
+  //         >
+  //           <Pencil className="h-4 w-4" />
+  //         </Button>
+  //         <Button
+  //           variant="ghost"
+  //           size="icon"
+  //           className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer"
+  //         >
+  //           <Trash2 className="h-4 w-4" />
+  //         </Button>
+  //       </div>
+  //     );
+  //   },
+  // },
 ];

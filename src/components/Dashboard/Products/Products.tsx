@@ -1,23 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { useAllProducts, useFilterProducts } from "@/lib/hooks/useProduct";
-import { DataTable } from "./data-table";
-import { getColumns } from "./columns";
-import { Product } from "@/lib/types/product";
-import { AddProductModal } from "./AddProductModal";
-import { Input } from "@/components/ui/input";
+import { ViewProductModal } from "@/components/shared/ViewProductModal";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuTrigger,
   DropdownMenuSeparator,
-  DropdownMenuCheckboxItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, Plus, Search, X } from "lucide-react";
+import { useAllProducts, useFilterProducts } from "@/lib/hooks/useProduct";
+import { Product } from "@/lib/types/product";
+import { ChevronDown, Plus, X } from "lucide-react";
+import { useState } from "react";
+import { AddProductModal } from "./AddProductModal";
+import { getColumns } from "./columns";
+import { DataTable } from "./data-table";
 
 export default function Products() {
   const [params, setParams] = useState({
@@ -32,16 +32,29 @@ export default function Products() {
 
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedViewProduct, setSelectedViewProduct] =
+    useState<Product | null>(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
   const handleEdit = (product: Product) => {
     setSelectedProduct(product);
     setIsAddProductOpen(true);
   };
-  
+
   const handleCloseModal = () => {
-      setIsAddProductOpen(false);
-      setSelectedProduct(null);
-  }
+    setIsAddProductOpen(false);
+    setSelectedProduct(null);
+  };
+
+  const handleView = (product: Product) => {
+    setSelectedViewProduct(product);
+    setIsViewModalOpen(true);
+  };
+
+  const handleCloseViewModal = () => {
+    setSelectedViewProduct(null);
+    setIsViewModalOpen(false);
+  };
 
   const { data, isLoading, error } = useAllProducts(params);
   const { data: filterData } = useFilterProducts();
@@ -71,24 +84,24 @@ export default function Products() {
 
   return (
     <div className="container mx-auto py-10 space-y-6">
-    <div className="flex items-center justify-between">
+      <div className="flex items-end justify-between">
         {/* <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-bold text-[#101828]">Product Inventory</h1>
         <p className="text-[#4A5565]">Manage your products and update prices</p>
       </div> */}
-      <Button
-        variant="outline"
-        size="lg"
-        onClick={() => {
+        <Button
+          variant="default"
+          size="lg"
+          onClick={() => {
             setSelectedProduct(null); // Ensure clean state for adding
             setIsAddProductOpen(true);
-        }}
-        className="gap-2 bg-[#086646] text-white"
-      >
-        <Plus className="h-4 w-4" />
-        Add Product
-      </Button>
-    </div>
+          }}
+          className="gap-2 bg-[#086646] text-white hover:bg-green-900"
+        >
+          <Plus className="h-4 w-4" />
+          Add Product
+        </Button>
+      </div>
 
       {/* Filters and Search Bar */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 rounded-lg border shadow-sm">
@@ -175,7 +188,19 @@ export default function Products() {
         </div>
       ) : (
         <>
-          <DataTable columns={getColumns(handleEdit)} data={products} />
+          <DataTable
+            columns={getColumns(handleEdit, handleView)}
+            data={products}
+          />
+
+          {/* Show there single product model */}
+          {isViewModalOpen && selectedViewProduct && (
+            <ViewProductModal
+              product={selectedViewProduct}
+              isOpen={isViewModalOpen}
+              onClose={handleCloseViewModal}
+            />
+          )}
 
           {/* Pagination Controls */}
           <div className="flex items-center justify-between py-4">
@@ -212,12 +237,12 @@ export default function Products() {
       )}
 
       {isAddProductOpen && (
-        <AddProductModal 
-            onClose={handleCloseModal} 
-            product={selectedProduct}
-            onSuccess={() => {
-                // Ideally refresh data here if needed, but react-query usually handles it via invalidation
-            }}
+        <AddProductModal
+          onClose={handleCloseModal}
+          product={selectedProduct}
+          onSuccess={() => {
+            // Ideally refresh data here if needed, but react-query usually handles it via invalidation
+          }}
         />
       )}
     </div>

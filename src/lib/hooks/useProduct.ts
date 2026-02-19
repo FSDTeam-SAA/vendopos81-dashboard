@@ -1,7 +1,13 @@
 // src/lib/hooks/useProduct.ts
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getAllProducts, getFilterProducts, createProduct, updateProduct } from "../services/productService";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  createProduct,
+  getAllProducts,
+  getFilterProducts,
+  getSingleProduct,
+  updateProduct,
+} from "../services/productService";
 import { ProductParams } from "../types/product";
 
 // Get All Products
@@ -10,6 +16,13 @@ export const useAllProducts = (params?: ProductParams) => {
   return useQuery({
     queryKey: ["all-products", params],
     queryFn: () => getAllProducts(params),
+  });
+};
+
+export const useSingleProduct = (id: string) => {
+  return useQuery({
+    queryKey: ["single-product", id],
+    queryFn: () => getSingleProduct(id),
   });
 };
 
