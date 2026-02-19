@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/lib/types/product";
 import { ColumnDef } from "@tanstack/react-table";
-import { Eye, ImageIcon } from "lucide-react";
+import { Eye, ImageIcon, Pencil, Trash2 } from "lucide-react";
 import Image from "next/image";
 
 export const getColumns = (
@@ -15,7 +15,6 @@ export const getColumns = (
     accessorKey: "images",
     header: "Image",
     cell: ({ row }) => {
-      console.log("Row Data:", row.original);
       const images = row.getValue<Product["images"]>("images");
       const firstImage = images && images.length > 0 ? images[0].url : null;
       const title = row.getValue<string>("title") || "Product Image";
@@ -51,10 +50,7 @@ export const getColumns = (
 
       return (
         <div className="flex flex-col gap-1 max-w-[250px]">
-          <div
-            className="font-medium text-gray-900 line-clamp-1"
-            title={title}
-          >
+          <div className="font-medium text-gray-900 line-clamp-1" title={title}>
             {title}
           </div>
           {shortDescription && (
