@@ -75,6 +75,7 @@ export interface Product {
   isCase: boolean;
   averageRating: number;
   totalRatings: number;
+  region: string;
 }
 
 export interface GetProductsResponse {
