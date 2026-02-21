@@ -1,7 +1,11 @@
 // src/lib/services/categoryService.ts
 
 import axiosInstance from "../instance/axios-instance";
-import { CategoryParams, CreateCategoryPayload, UpdateCategoryPayload } from "../types/category";
+import {
+  CategoryParams,
+  CreateCategoryPayload,
+  UpdateCategoryPayload,
+} from "../types/category";
 
 // Get All Categories
 export const getAllCategories = async (params?: CategoryParams) => {
@@ -73,11 +77,21 @@ export const updateCategory = async (payload: UpdateCategoryPayload) => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }
+      },
     );
     return response.data;
   } catch (error) {
     console.error("Error updating category:", error);
+    throw error;
+  }
+};
+
+export const getAllRegions = async () => {
+  try {
+    const response = await axiosInstance.get("category/get-region");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching regions:", error);
     throw error;
   }
 };

@@ -29,6 +29,10 @@ export interface CategoryResponse {
   success: boolean;
   message: string;
   statusCode: number;
+  filters?: {
+    productNames: string[];
+    productTypes: string[];
+  };
   data: Category[];
   meta: CategoryMeta;
 }
@@ -37,6 +41,8 @@ export interface CategoryParams {
   page?: number;
   limit?: number;
   search?: string;
+  region?: string;
+  productType?: string;
 }
 
 export interface CreateCategoryPayload {
