@@ -1,7 +1,12 @@
 // src/lib/hooks/useCategory.ts
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getAllCategories, createCategory, updateCategory } from "../services/categoryService";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  createCategory,
+  getAllCategories,
+  getAllRegions,
+  updateCategory,
+} from "../services/categoryService";
 import {
   CategoryParams,
   CategoryResponse,
@@ -41,5 +46,12 @@ export const useUpdateCategory = () => {
       // Invalidate and refetch categories list
       queryClient.invalidateQueries({ queryKey: ["all-categories"] });
     },
+  });
+};
+
+export const useGetAllRegions = () => {
+  return useQuery({
+    queryKey: ["all-regions"],
+    queryFn: () => getAllRegions(),
   });
 };
