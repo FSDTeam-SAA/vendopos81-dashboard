@@ -66,6 +66,7 @@ export function AddProductModal({
         originCountry: "",
         shelfLife: "",
         region: "", // added region to form
+        country: "",
       },
     });
 
@@ -89,12 +90,11 @@ export function AddProductModal({
   );
 
   const { data: categoriesData } = useAllCategories(params);
-  console.log("category data", categoriesData);
 
   const createMutation = useCreateProduct();
   const updateMutation = useUpdateProduct();
 
-  const defaultCategoryId = useMemo(() => { 
+  const defaultCategoryId = useMemo(() => {
     if (!product?.categoryId) return "";
     if (
       typeof product.categoryId === "object" &&
@@ -122,6 +122,7 @@ export function AddProductModal({
         isFrozen: product.isFrozen || false,
         isKosher: product.isKosher || false,
         isFeatured: product.isFeatured || false,
+        country: product.country || "",
         variants: product.variants?.length
           ? product.variants.map((v) => ({
               label: v.label,
@@ -167,8 +168,11 @@ export function AddProductModal({
     setExistingImages((prev) => prev.filter((_, i) => i !== index));
   };
 
+  //! There are issue when i selected any category [region] then i want to need to store those category _id. But here i don't store it. It's just a bug. Also there are product create error. I need to fix it.
+
   // Submit handler
   const onSubmit = async (data: CreateProductFormValues) => {
+    console.log("Form Data:", data);
     setIsSubmitting(true);
     try {
       const formData = new FormData();
@@ -179,6 +183,7 @@ export function AddProductModal({
       formData.append("categoryId", data.categoryId);
       formData.append("productType", data.productType);
       formData.append("originCountry", data.originCountry);
+      formData.append("country", data.country || "");
       formData.append("shelfLife", data.shelfLife);
       formData.append("region", data.region || "");
       formData.append("isHalal", String(data.isHalal));
@@ -332,7 +337,7 @@ export function AddProductModal({
                   Select Country
                 </label>
                 <select
-                  {...register("productName")}
+                  {...register("country")}
                   disabled={!categoriesData?.data?.[0]?.country?.length}
                   className="w-full h-11 px-4 rounded-lg border border-gray-200 focus:border-[#1B7D6E] focus:ring-2 focus:ring-[#1B7D6E]/10 transition disabled:bg-gray-100"
                 >

@@ -76,6 +76,7 @@ export interface Product {
   averageRating: number;
   totalRatings: number;
   region: string;
+  country: string;
 }
 
 export interface GetProductsResponse {
