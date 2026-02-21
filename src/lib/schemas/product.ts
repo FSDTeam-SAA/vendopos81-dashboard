@@ -25,6 +25,7 @@ export const createProductSchema = z.object({
   variants: z.array(variantSchema).min(1, "At least one variant is required"),
   images: z.any().optional(),
   region: z.string().optional(),
+  country: z.string().min(1, "Country is required"),
 });
 
 export type CreateProductFormValues = z.infer<typeof createProductSchema>;
