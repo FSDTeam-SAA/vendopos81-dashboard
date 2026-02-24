@@ -15,7 +15,7 @@ export const createProductSchema = z.object({
   shortDescription: z.string().min(1, "Short Description is required"),
   categoryId: z.string().min(1, "Category is required"),
   productType: z.string().min(1, "Product Type is required"),
-  originCountry: z.string().min(1, "Region/Country is required"),
+  originCountry: z.string().min(1, "Origin Country is required"),
   shelfLife: z.string().min(1, "Shelf Life is required"),
   isHalal: z.boolean(),
   isOrganic: z.boolean(),
@@ -24,8 +24,8 @@ export const createProductSchema = z.object({
   isFeatured: z.boolean(),
   variants: z.array(variantSchema).min(1, "At least one variant is required"),
   images: z.any().optional(),
-  region: z.string().optional(),
-  country: z.string().min(1, "Country is required"),
+  // region: z.string().optional(),
+  // country: z.string().min(1, "Country is required"),
 });
 
 export type CreateProductFormValues = z.infer<typeof createProductSchema>;

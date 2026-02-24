@@ -6,6 +6,7 @@ export interface CategoryImage {
 }
 
 export interface Category {
+  categories: any;
   _id: string;
   region: string;
   slug: string;
