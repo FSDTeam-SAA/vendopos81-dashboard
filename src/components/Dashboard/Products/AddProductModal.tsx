@@ -39,7 +39,7 @@ export function AddProductModal({
     else setExistingImages([]);
   }, [product]);
 
-  // Fetch regions
+  // Fetch regions-----------------------------------
   const { data: allRegion } = useGetAllRegions();
 
   // Form setup
@@ -50,7 +50,7 @@ export function AddProductModal({
       ) as Resolver<CreateProductFormValues>,
       defaultValues: {
         variants: [
-          { label: "Default", price: 0, stock: 0, unit: "pcs", discount: 0 },
+          { label: "", price: 0, stock: 0, unit: "", discount: 0 },
         ],
         isHalal: false,
         isOrganic: false,
@@ -65,15 +65,13 @@ export function AddProductModal({
         productType: "",
         originCountry: "",
         shelfLife: "",
-        region: "", // added region to form
-        country: "",
       },
     });
 
   const { errors } = formState;
 
   // Watch region and productType
-  const selectedRegion = watch("region");
+  const selectedRegion = watch("categoryId");
   const selectedProductType = watch("productType");
 
   useEffect(() => {
@@ -88,6 +86,8 @@ export function AddProductModal({
     }),
     [selectedRegion, selectedProductType],
   );
+
+  console.log({ selectedProductType, selectedRegion });
 
   const { data: categoriesData } = useAllCategories(params);
 
@@ -122,7 +122,6 @@ export function AddProductModal({
         isFrozen: product.isFrozen || false,
         isKosher: product.isKosher || false,
         isFeatured: product.isFeatured || false,
-        country: product.country || "",
         variants: product.variants?.length
           ? product.variants.map((v) => ({
               label: v.label,
@@ -140,7 +139,7 @@ export function AddProductModal({
                 discount: 0,
               },
             ],
-        region: product.region || "",
+        // region: product.region || "",
       });
     }
   }, [product, reset, defaultCategoryId]);
@@ -168,8 +167,6 @@ export function AddProductModal({
     setExistingImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  //! There are issue when i selected any category [region] then i want to need to store those category _id. But here i don't store it. It's just a bug. Also there are product create error. I need to fix it.
-
   // Submit handler
   const onSubmit = async (data: CreateProductFormValues) => {
     console.log("Form Data:", data);
@@ -183,9 +180,7 @@ export function AddProductModal({
       formData.append("categoryId", data.categoryId);
       formData.append("productType", data.productType);
       formData.append("originCountry", data.originCountry);
-      formData.append("country", data.country || "");
       formData.append("shelfLife", data.shelfLife);
-      formData.append("region", data.region || "");
       formData.append("isHalal", String(data.isHalal));
       formData.append("isOrganic", String(data.isOrganic));
       formData.append("isFrozen", String(data.isFrozen));
@@ -206,19 +201,25 @@ export function AddProductModal({
       imageFiles.forEach((file) => formData.append("images", file));
 
       if (product) {
+        console.log("Updating product...");
         await updateMutation.mutateAsync({ id: product._id, formData });
         toast.success("Product updated successfully");
       } else {
+        console.log("Creating product...");
         await createMutation.mutateAsync(formData);
         toast.success("Product created successfully");
       }
       onClose();
       if (onSuccess) onSuccess();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Submission error:", error);
-      toast.error(
-        product ? "Failed to update product" : "Failed to create product",
-      );
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong";
+
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -271,19 +272,21 @@ export function AddProductModal({
                 )}
               </div>
 
-              {/* Region */}
+              {/*=========================== Region=================== */}
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wide text-gray-600 mb-2">
                   Region
                 </label>
+
                 <select
-                  {...register("region")}
+                  {...register("categoryId")}
                   className="w-full h-11 px-4 rounded-lg border border-gray-200 focus:border-[#1B7D6E] focus:ring-2 focus:ring-[#1B7D6E]/10 transition"
                 >
                   <option value="">Select Region</option>
-                  {allRegion?.data?.map((region: string, index: number) => (
-                    <option key={index} value={region}>
-                      {region}
+
+                  {allRegion?.data?.map((item: any) => (
+                    <option key={item._id} value={item._id}>
+                      {item.region.trim()}
                     </option>
                   ))}
                 </select>
@@ -294,18 +297,27 @@ export function AddProductModal({
                 <label className="block text-xs font-semibold uppercase tracking-wide text-gray-600 mb-2">
                   Category
                 </label>
+
                 <select
                   {...register("productType")}
                   disabled={!categoriesData?.filters?.productTypes?.length}
                   className="w-full h-11 px-4 rounded-lg border border-gray-200 focus:border-[#1B7D6E] focus:ring-2 focus:ring-[#1B7D6E]/10 transition disabled:bg-gray-100"
                 >
                   <option value="">Select Category</option>
+
                   {categoriesData?.filters?.productTypes?.map(
-                    (type: string) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ),
+                    (type: string) => {
+                      const category =
+                        categoriesData?.data?.[0]?.categories?.find(
+                          (c: any) => c.productType === type,
+                        );
+
+                      return (
+                        <option key={category?._id} value={category?._id}>
+                          {type}
+                        </option>
+                      );
+                    },
                   )}
                 </select>
               </div>
@@ -337,7 +349,7 @@ export function AddProductModal({
                   Select Country
                 </label>
                 <select
-                  {...register("country")}
+                  {...register("originCountry")}
                   disabled={!categoriesData?.data?.[0]?.country?.length}
                   className="w-full h-11 px-4 rounded-lg border border-gray-200 focus:border-[#1B7D6E] focus:ring-2 focus:ring-[#1B7D6E]/10 transition disabled:bg-gray-100"
                 >
