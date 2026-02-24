@@ -336,9 +336,9 @@ export const ViewProductModal = ({
 
               {/* Supplier Information */}
               {product.supplier && (
-                <div className="mt-4 p-4 bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl">
+                <div className="mt-4 p-4 bg-gradient-to-br from-green-200 to-white border border-gray-200 rounded-xl">
                   <h4 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <span className="w-1 h-5 bg-primary rounded-full"></span>
+                    <span className="w-1 h-5 bg-green-600 rounded-full"></span>
                     Supplier Information
                   </h4>
 
