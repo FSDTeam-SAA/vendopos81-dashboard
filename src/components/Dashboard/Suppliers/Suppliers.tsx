@@ -1,9 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import Loading from "@/components/shared/Loading";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -13,17 +19,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  Eye,
-  Trash2,
-  MoreVertical,
-  Star,
-  Mail,
-  Phone,
-  MapPin,
-  ChevronDown,
-  Loader2,
-} from "lucide-react";
-import {
   useAllSuppliers,
   useDeleteSingleSuppliers,
   useUpdateSupplierStatus,
@@ -31,12 +26,17 @@ import {
 import { useDeleteUser, useSuspendUser } from "@/lib/hooks/useUsers";
 import { Analytics, Supplier } from "@/lib/types/supplier";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Eye,
+  Mail,
+  MapPin,
+  MoreVertical,
+  Phone,
+  Star,
+  Trash2,
+} from "lucide-react";
+import { useState } from "react";
 import SuppliersModels from "./SuppliersModal";
+import Pagination from "@/components/shared/Pagination";
 
 export default function SupplierManagement() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -61,12 +61,16 @@ export default function SupplierManagement() {
   const suppliersData = data?.data || [];
   const meta = data?.meta;
 
+  // console.log("suppliers", suppliersData);
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
   const handleDelete = (supplier: Supplier) => {
-    if (window.confirm("Are you sure you want to delete this supplier account?")) {
+    if (
+      window.confirm("Are you sure you want to delete this supplier account?")
+    ) {
       if (supplier.userId?._id) {
         deleteUser(supplier.userId._id);
       } else {
@@ -91,11 +95,7 @@ export default function SupplierManagement() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-teal-600" />
-      </div>
-    );
+    return <Loading message="Loading suppliers..." />;
   }
 
   if (isError) {
@@ -235,7 +235,8 @@ export default function SupplierManagement() {
                           {supplier.shopName || supplier.brandName}
                         </p>
                         <p className="text-sm text-gray-500">
-                          Joined {new Date(supplier.createdAt).toLocaleDateString()}
+                          Joined{" "}
+                          {new Date(supplier.createdAt).toLocaleDateString()}
                         </p>
                       </div>
                     </TableCell>
@@ -316,12 +317,14 @@ export default function SupplierManagement() {
                               }
                               className="cursor-pointer"
                             >
-                              Reject
+                              Rejected
                             </DropdownMenuItem>
                             {supplier.userId?._id && !supplier.isSuspended && (
                               <DropdownMenuItem
-                                onClick={() => handleSuspend(supplier.userId!._id)}
-                                className="cursor-pointer text-orange-600 focus:text-orange-600"
+                                onClick={() =>
+                                  handleSuspend(supplier.userId!._id)
+                                }
+                                className="cursor-pointer text-red-600 focus:text-red-700"
                               >
                                 Suspend
                               </DropdownMenuItem>
@@ -347,43 +350,13 @@ export default function SupplierManagement() {
           </Card>
 
           {/* Pagination */}
-          {meta && meta.totalPage > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-6">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-gray-600 hover:text-gray-900 bg-transparent"
-                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-              >
-                ←
-              </Button>
-              {Array.from({ length: meta.totalPage }, (_, i) => i + 1).map((page) => (
-                <Button
-                  key={page}
-                  variant={currentPage === page ? "default" : "outline"}
-                  size="sm"
-                  className={
-                    currentPage === page
-                      ? "bg-teal-600 text-white hover:bg-teal-700"
-                      : "text-gray-600 bg-transparent"
-                  }
-                  onClick={() => handlePageChange(page)}
-                >
-                  {page}
-                </Button>
-              ))}
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-gray-600 hover:text-gray-900 bg-transparent"
-                onClick={() => handlePageChange(Math.min(meta.totalPage, currentPage + 1))}
-                disabled={currentPage === meta.totalPage}
-              >
-                →
-              </Button>
-            </div>
-          )}
+          <div className="flex items-center justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={meta?.totalPage || 1}
+              onPageChange={handlePageChange}
+            />
+          </div>
         </div>
       </div>
       <SuppliersModels
@@ -394,4 +367,3 @@ export default function SupplierManagement() {
     </main>
   );
 }
- 

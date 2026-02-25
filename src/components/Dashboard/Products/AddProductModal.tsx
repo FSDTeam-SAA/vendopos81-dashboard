@@ -113,7 +113,7 @@ export function AddProductModal({
         productName: product.productName || "",
         description: product.description || "",
         shortDescription: product.shortDescription || "",
-        categoryId: defaultCategoryId,
+        categoryId: product.categoryId || defaultCategoryId,
         productType: product.productType || "",
         originCountry: product.originCountry || "",
         shelfLife: product.shelfLife || "",
@@ -122,6 +122,7 @@ export function AddProductModal({
         isFrozen: product.isFrozen || false,
         isKosher: product.isKosher || false,
         isFeatured: product.isFeatured || false,
+        // productType: product.productType || "",
         variants: product.variants?.length
           ? product.variants.map((v) => ({
               label: v.label,
