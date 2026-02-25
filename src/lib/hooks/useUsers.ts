@@ -19,11 +19,11 @@ export const useSuspendUser = () => {
   return useMutation({
     mutationFn: (userId: string) => userService.suspendUser(userId),
     onSuccess: (data) => {
-      toast.success(data?.message || "User suspended successfully");
-      queryClient.invalidateQueries({ queryKey: ["all-users"] });
+      toast.success(data?.message || "Supplier suspended successfully");
+      queryClient.invalidateQueries({ queryKey: ["all-suppliers"] });
     },
     onError: (error) => {
-      toast.error(error?.message || error?.message || "Failed to suspend user");
+      toast.error(error?.message || error?.message || "Failed to suspend");
     },
   });
 };

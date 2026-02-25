@@ -1,6 +1,8 @@
 "use client";
 
+import ConfirmModal from "@/components/shared/ConfirmModal";
 import Loading from "@/components/shared/Loading";
+import Pagination from "@/components/shared/Pagination";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,7 +25,7 @@ import {
   useDeleteSingleSuppliers,
   useUpdateSupplierStatus,
 } from "@/lib/hooks/useSuppliers";
-import { useDeleteUser, useSuspendUser } from "@/lib/hooks/useUsers";
+import { useSuspendUser } from "@/lib/hooks/useUsers";
 import { Analytics, Supplier } from "@/lib/types/supplier";
 import {
   Eye,
@@ -36,7 +38,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import SuppliersModels from "./SuppliersModal";
-import Pagination from "@/components/shared/Pagination";
 
 export default function SupplierManagement() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,8 +46,13 @@ export default function SupplierManagement() {
     null,
   );
   const [isSuspended, setIsSuspended] = useState<string>("all");
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<() => void>(() => {});
+  const [confirmTitle, setConfirmTitle] = useState("");
+  const [confirmDescription, setConfirmDescription] = useState("");
+
   const { mutate: deleteSupplier } = useDeleteSingleSuppliers();
-  const { mutate: deleteUser } = useDeleteUser();
+  // const { mutate: deleteUser } = useDeleteUser();
   const { mutate: suspendUser } = useSuspendUser();
   const { mutate: updateStatus } = useUpdateSupplierStatus();
   const limit = 10;
@@ -61,28 +67,41 @@ export default function SupplierManagement() {
   const suppliersData = data?.data || [];
   const meta = data?.meta;
 
-  // console.log("suppliers", suppliersData);
-
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
+  // Delete a supplier ==================================
   const handleDelete = (supplier: Supplier) => {
-    if (
-      window.confirm("Are you sure you want to delete this supplier account?")
-    ) {
-      if (supplier.userId?._id) {
-        deleteUser(supplier.userId._id);
-      } else {
+    // console.log("this is deleted supplier data", supplier._id);
+    setConfirmTitle("Delete Supplier?");
+    setConfirmDescription(
+      "This will permanently delete this supplier account.",
+    );
+
+    setConfirmAction(() => () => {
+      if (supplier._id) {
         deleteSupplier(supplier._id);
       }
-    }
+      setConfirmOpen(false);
+    });
+
+    setConfirmOpen(true);
   };
 
+  // Suspend a supplier ==================================
   const handleSuspend = (userId: string) => {
-    if (window.confirm("Are you sure you want to suspend this supplier?")) {
+    setConfirmTitle("Suspend Supplier?");
+    setConfirmDescription(
+      "This supplier will not be able to access their account.",
+    );
+
+    setConfirmAction(() => () => {
       suspendUser(userId);
-    }
+      setConfirmOpen(false);
+    });
+
+    setConfirmOpen(true);
   };
 
   const handleUpdateStatus = (id: string, status: string) => {
@@ -109,16 +128,6 @@ export default function SupplierManagement() {
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="p-6 mx-auto container space-y-6">
-        {/* Header */}
-        {/* <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            Supplier Management
-          </h1>
-          <p className="text-gray-500 mt-1">
-            Manage and monitor your suppliers
-          </p>
-        </div> */}
-
         {/* Stat Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="bg-white border-0 shadow-sm">
@@ -267,20 +276,23 @@ export default function SupplierManagement() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant={
-                          supplier.status === "approved"
-                            ? "secondary"
-                            : "destructive"
-                        }
-                        className={
-                          supplier.status === "approved"
-                            ? "bg-green-100 text-green-700 hover:bg-green-100 capitalize"
-                            : "bg-yellow-100 text-yellow-700 hover:bg-yellow-100 capitalize"
-                        }
-                      >
-                        {supplier.status}
-                      </Badge>
+                      {supplier.isSuspended ? (
+                        <Badge className="bg-red-100 text-red-700 hover:bg-red-100 capitalize">
+                          Suspended
+                        </Badge>
+                      ) : (
+                        <Badge
+                          className={
+                            supplier.status === "approved"
+                              ? "bg-green-100 text-green-700 hover:bg-green-100 capitalize"
+                              : supplier.status === "pending"
+                                ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-100 capitalize"
+                                : "bg-gray-100 text-gray-700 hover:bg-gray-100 capitalize"
+                          }
+                        >
+                          {supplier.status}
+                        </Badge>
+                      )}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2 justify-center">
@@ -358,6 +370,15 @@ export default function SupplierManagement() {
             />
           </div>
         </div>
+        <ConfirmModal
+          open={confirmOpen}
+          onClose={() => setConfirmOpen(false)}
+          onConfirm={confirmAction}
+          title={confirmTitle}
+          description={confirmDescription}
+          confirmText="Yes, Continue"
+          variant="destructive"
+        />
       </div>
       <SuppliersModels
         viewModalOpen={modalOpen}
