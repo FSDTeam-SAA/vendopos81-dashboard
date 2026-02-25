@@ -104,8 +104,13 @@ export default function SupplierManagement() {
     setConfirmOpen(true);
   };
 
-  const handleUpdateStatus = (id: string, status: string) => {
-    updateStatus({ id, status });
+  const handleUpdateStatus = (supplier: Supplier, status: string) => {
+    // console.log({ id: supplier._id, status });
+
+    updateStatus({
+      id: supplier._id,
+      status,
+    });
   };
 
   const handleView = (supplier: Supplier) => {
@@ -317,7 +322,7 @@ export default function SupplierManagement() {
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem
                               onClick={() =>
-                                handleUpdateStatus(supplier._id, "approved")
+                                handleUpdateStatus(supplier, "approved")
                               }
                               className="cursor-pointer"
                             >
@@ -325,7 +330,7 @@ export default function SupplierManagement() {
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() =>
-                                handleUpdateStatus(supplier._id, "rejected")
+                                handleUpdateStatus(supplier, "rejected")
                               }
                               className="cursor-pointer"
                             >

@@ -21,8 +21,6 @@ export const getAllSuppliers = async (params?: SupplierParams) => {
   }
 };
 
-
-
 export const deleteSingleSuppliers = async (id: string) => {
   try {
     const response = await axiosInstance.delete(
@@ -41,7 +39,7 @@ export const updateSupplierStatus = async (id: string, status: string) => {
       `/join-as-supplier/update-status/${id}`,
       { status },
     );
-    console.log('respons data',response.data)
+    // console.log("respons data", response.data);
     return response.data;
   } catch (error) {
     console.error("Error updating supplier status:", error);
