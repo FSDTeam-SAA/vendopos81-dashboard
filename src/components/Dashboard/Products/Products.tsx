@@ -68,6 +68,8 @@ export default function Products() {
   //   setParams((prev) => ({ ...prev, search: e.target.value, page: 1 }));
   // };
 
+  console.log(selectedProduct);
+
   const handleFilterChange = (key: string, value: string) => {
     setParams((prev) => ({ ...prev, [key]: value, page: 1 }));
   };

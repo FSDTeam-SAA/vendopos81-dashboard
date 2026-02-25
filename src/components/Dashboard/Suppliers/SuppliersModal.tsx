@@ -1,14 +1,30 @@
+"use client";
+
+import Loading from "@/components/shared/Loading";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Mail, ShoppingBag, DollarSign, Building2, Phone, MapPin, FileText, Store, BadgeCheck, AlertCircle, Trash2, AlertTriangle } from "lucide-react";
 import { useReportTopSuppliersSingle } from "@/lib/hooks/useReport";
+import { useSuspendUser } from "@/lib/hooks/useUsers";
 import { Supplier } from "@/lib/types/singleSupplier";
-import { useDeleteUser, useSuspendUser } from "@/lib/hooks/useUsers";
-import { Button } from "@/components/ui/button";
+import {
+  AlertCircle,
+  AlertTriangle,
+  BadgeCheck,
+  Building2,
+  FileText,
+  Mail,
+  MapPin,
+  Phone,
+  ShieldCheck,
+  ShieldX,
+  Store,
+  Warehouse,
+} from "lucide-react";
 
 interface ViewModalProps {
   viewModalOpen: boolean;
@@ -16,12 +32,15 @@ interface ViewModalProps {
   id: string;
 }
 
-const SuppliersModels = ({ viewModalOpen, setViewModalOpen, id }: ViewModalProps) => {
+const SuppliersModels = ({
+  viewModalOpen,
+  setViewModalOpen,
+  id,
+}: ViewModalProps) => {
   const { data, isLoading } = useReportTopSuppliersSingle(id);
   const supplier: Supplier | undefined = data?.data;
 
   const { mutate: suspendUser, isPending: isSuspending } = useSuspendUser();
-  const { mutate: deleteUser, isPending: isDeleting } = useDeleteUser();
 
   const handleSuspend = () => {
     if (!supplier?.userId?._id) return;
@@ -30,20 +49,11 @@ const SuppliersModels = ({ viewModalOpen, setViewModalOpen, id }: ViewModalProps
     });
   };
 
-  const handleDelete = () => {
-    if (!supplier?.userId?._id) return;
-    if (!window.confirm("Are you sure you want to delete this supplier account?"))
-      return;
-    deleteUser(supplier.userId._id, {
-      onSuccess: () => setViewModalOpen(false),
-    });
-  };
-
   if (!id) return null;
 
   return (
     <Dialog open={viewModalOpen} onOpenChange={setViewModalOpen}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <Building2 className="w-5 h-5 text-teal-600" />
@@ -52,174 +62,248 @@ const SuppliersModels = ({ viewModalOpen, setViewModalOpen, id }: ViewModalProps
         </DialogHeader>
 
         {isLoading ? (
-          <div className="flex justify-center items-center py-10">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
-          </div>
+          <Loading message="Loading supplier details, please wait..." />
         ) : supplier ? (
-          <div className="space-y-6 py-4">
-            {/* Header Section */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-gray-50 p-4 rounded-lg">
-              <div className="w-20 h-20 flex-shrink-0 flex items-center justify-center rounded-full bg-white shadow-sm overflow-hidden border border-gray-100">
-                {supplier.logo?.url ? (
-                  <img
-                    src={supplier.logo.url}
-                    alt={supplier.shopName}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <Store className="w-8 h-8 text-gray-400" />
-                )}
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="font-bold text-xl text-gray-900">{supplier.shopName}</h3>
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${
-                      supplier.status === "approved"
-                        ? "bg-green-100 text-green-700"
-                        : supplier.status === "pending"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {supplier.status}
-                  </span>
+          <div className="space-y-8 py-4">
+            {/* ================= HEADER ================= */}
+            <div className="bg-gradient-to-r from-green-100 to-white border rounded-2xl p-6">
+              <div className="flex flex-col sm:flex-row gap-6">
+                <div className="w-24 h-24 rounded-2xl bg-white flex items-center justify-center overflow-hidden border">
+                  {supplier.logo?.url ? (
+                    <img
+                      src={supplier.logo.url}
+                      alt={supplier.shopName}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Store className="w-10 h-10 text-gray-400" />
+                  )}
                 </div>
-                <p className="text-gray-600 font-medium">{supplier.brandName}</p>
-                <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
-                    <span className="font-semibold text-yellow-600 flex items-center">
-                        {supplier.rating} ★
+
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <h3 className="text-2xl font-bold text-gray-900">
+                      {supplier.shopName}
+                    </h3>
+
+                    <span
+                      className={`px-3 py-1 text-xs font-semibold rounded-full capitalize ${
+                        supplier.status === "approved"
+                          ? "bg-green-100 text-green-700"
+                          : supplier.status === "pending"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {supplier.status}
+                    </span>
+                  </div>
+
+                  <p className="text-gray-600 font-medium mt-1">
+                    {supplier.brandName}
+                  </p>
+
+                  <div className="flex items-center gap-4 text-sm text-gray-500 mt-3">
+                    <span className="font-semibold text-yellow-600">
+                      ⭐ {supplier.rating}
                     </span>
                     <span>• {supplier.location}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Contact Information */}
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Contact Info</h4>
-                <div className="space-y-2">
-                    <div className="flex items-center gap-3 text-sm">
-                        <Mail className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-600">{supplier.userId?.email || supplier.email}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm">
-                        <Phone className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-600">{supplier.userId?.phone || "N/A"}</span>
-                    </div>
-                </div>
-              </div>
-
-              {/* Business Stats */}
-              <div className="space-y-3">
-                 <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Performance</h4>
-                 <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
-                        <p className="text-xs text-blue-600 font-medium uppercase">Orders</p>
-                        <p className="text-lg font-bold text-blue-900">{supplier.totalOrders}</p>
-                    </div>
-                    <div className="bg-green-50 p-3 rounded-lg border border-green-100">
-                        <p className="text-xs text-green-600 font-medium uppercase">Sales</p>
-                        <p className="text-lg font-bold text-green-900">${supplier.totalSales?.toLocaleString() || supplier.totalOrders /* Fallback if sales missing in one view */}</p>
-                    </div>
-                 </div>
-              </div>
-            </div>
-
-            {/* Address Details */}
-            <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Location & Address</h4>
-                <div className="bg-white border rounded-lg p-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                    <div>
-                        <p className="text-gray-500 text-xs">Street Address</p>
-                        <p className="font-medium text-gray-900">{supplier.street || supplier.address}</p>
-                    </div>
-                    <div>
-                        <p className="text-gray-500 text-xs">City / Location</p>
-                        <p className="font-medium text-gray-900">{supplier.location}</p>
-                    </div>
-                    <div>
-                        <p className="text-gray-500 text-xs">Postal Code</p>
-                        <p className="font-medium text-gray-900">{supplier.postalCode}</p>
-                    </div>
-                    <div>
-                        <p className="text-gray-500 text-xs">Warehouse</p>
-                        <p className="font-medium text-gray-900">{supplier.warehouseLocation}</p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Description */}
-            {supplier.description && (
-                <div className="space-y-2">
-                    <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">About</h4>
-                    <p className="text-sm text-gray-600 leading-relaxed bg-gray-50 p-3 rounded-lg border">
-                        {supplier.description}
-                    </p>
-                </div>
-            )}
-
-            {/* Documents */}
-            {supplier.documentUrl && supplier.documentUrl.length > 0 && (
-                <div className="space-y-3">
-                    <h4 className="flex items-center gap-2 text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                        <FileText className="w-4 h-4" /> Documents
-                    </h4>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                        {supplier.documentUrl.map((doc, idx) => (
-                            <a 
-                                key={idx} 
-                                href={doc.url} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="block group relative aspect-video bg-gray-100 rounded-lg overflow-hidden border hover:border-teal-500 transition-colors"
-                            >
-                                <img src={doc.url} alt={`Document ${idx + 1}`} className="w-full h-full object-cover" />
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                                    <div className="bg-white/90 p-1.5 rounded-full shadow-sm">
-                                        <BadgeCheck className="w-4 h-4 text-teal-600" />
-                                    </div>
-                                </div>
-                            </a>
-                        ))}
-                    </div>
-                </div>
-            )}
-            
-             {supplier.isSuspended && (
-                  <div className="flex items-center gap-2 p-3 bg-red-50 text-red-700 rounded-lg text-sm font-medium border border-red-100">
-                     <AlertCircle className="w-5 h-5" />
-                     Checking this supplier account is currently suspended.
                   </div>
-             )}
+                </div>
+              </div>
+            </div>
 
-             {/* Actions */}
-             <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
-               {!supplier.isSuspended && (
-                 <Button
-                   variant="destructive"
-                   onClick={handleSuspend}
-                   disabled={isSuspending || isDeleting}
-                   className="flex-1 bg-red-500 hover:bg-red-600 text-white"
-                 >
-                   <AlertTriangle className="w-4 h-4 mr-2" />
-                   Suspend Supplier
-                 </Button>
-               )}
-               {/* <Button
-                 variant="destructive"
-                 onClick={handleDelete}
-                 disabled={isSuspending || isDeleting}
-                 className="flex-1"
-               >
-                 <Trash2 className="w-4 h-4 mr-2" />
-                 Delete Account
-               </Button> */}
-             </div>
+            {/* ================= METRICS ================= */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-white border rounded-xl p-4">
+                <p className="text-xs uppercase text-gray-500 font-medium">
+                  Total Orders
+                </p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">
+                  {supplier.totalOrders}
+                </p>
+              </div>
+
+              <div className="bg-white border rounded-xl p-4">
+                <p className="text-xs uppercase text-gray-500 font-medium">
+                  Total Sales
+                </p>
+                <p className="text-2xl font-bold text-green-700 mt-1">
+                  ৳ {supplier.totalSales?.toLocaleString()}
+                </p>
+              </div>
+
+              <div
+                className={`rounded-xl p-4 border transition-all ${
+                  supplier.isSuspended
+                    ? "bg-red-50 border-red-200"
+                    : "bg-green-100  border-green-200"
+                }`}
+              >
+                <p className="text-xs uppercase font-medium text-gray-500">
+                  Account Status
+                </p>
+
+                <div className="flex items-center gap-2 mt-2">
+                  {supplier.isSuspended ? (
+                    <ShieldX className="w-5 h-5 text-red-600" />
+                  ) : (
+                    <ShieldCheck className="w-5 h-5 text-green-600" />
+                  )}
+
+                  <span
+                    className={`text-sm font-semibold ${
+                      supplier.isSuspended ? "text-red-700" : "text-green-700"
+                    }`}
+                  >
+                    {supplier.isSuspended ? "Suspended" : "Active"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* ================= CONTACT INFO ================= */}
+            <div className="bg-white border rounded-2xl p-6 space-y-6">
+              <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-600">
+                Contact Information
+              </h4>
+
+              <div className="grid sm:grid-cols-2 gap-5">
+                {/* Email */}
+                <div className="flex items-start gap-4 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition">
+                  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-teal-100">
+                    <Mail className="w-5 h-5 text-teal-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase">Email</p>
+                    <p className="font-semibold text-gray-800 break-all">
+                      {supplier.userId?.email || supplier.email}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Phone */}
+                <div className="flex items-start gap-4 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition">
+                  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-100">
+                    <Phone className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase">Phone</p>
+                    <p className="font-semibold text-gray-800">
+                      {supplier.userId?.phone || "N/A"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Warehouse */}
+                <div className="flex items-start gap-4 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition">
+                  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-purple-100">
+                    <Warehouse className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase">Warehouse</p>
+                    <p className="font-semibold text-gray-800">
+                      {supplier.warehouseLocation || "N/A"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Postal Code */}
+                <div className="flex items-start gap-4 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition">
+                  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-orange-100">
+                    <MapPin className="w-5 h-5 text-orange-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase">
+                      Postal Code
+                    </p>
+                    <p className="font-semibold text-gray-800">
+                      {supplier.postalCode || "N/A"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ================= ADDRESS ================= */}
+            <div className="bg-white border flex gap-2 rounded-xl p-5 space-y-1">
+              <h4 className="text-sm font-semibold uppercase text-gray-700">
+                Location :
+              </h4>
+
+              <p className="text-sm text-gray-600">
+                {supplier.street || supplier.address}, {supplier.location}
+              </p>
+            </div>
+
+            {/* ================= DESCRIPTION ================= */}
+            {supplier.description && (
+              <div className="bg-gray-50 border rounded-xl p-5 space-y-2">
+                <h4 className="text-sm font-semibold uppercase text-gray-700">
+                  About Supplier
+                </h4>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  {supplier.description}
+                </p>
+              </div>
+            )}
+
+            {/* ================= DOCUMENTS ================= */}
+            {supplier.documentUrl && supplier.documentUrl.length > 0 && (
+              <div className="space-y-4">
+                <h4 className="flex items-center gap-2 text-sm font-semibold uppercase text-gray-700">
+                  <FileText className="w-4 h-4" />
+                  Documents
+                </h4>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  {supplier.documentUrl.map((doc, idx) => (
+                    <a
+                      key={idx}
+                      href={doc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="relative group rounded-xl overflow-hidden border hover:border-teal-500 transition"
+                    >
+                      <img
+                        src={doc.url}
+                        alt={`Document ${idx + 1}`}
+                        className="w-full h-32 object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                        <BadgeCheck className="w-6 h-6 text-white" />
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* ================= SUSPENDED ALERT ================= */}
+            {supplier.isSuspended && (
+              <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-medium">
+                <AlertCircle className="w-5 h-5" />
+                This supplier account is currently suspended.
+              </div>
+            )}
+
+            {/* ================= ACTION FOOTER ================= */}
+            <div className="sticky bottom-0 bg-white pt-4 border-t flex gap-3">
+              {!supplier.isSuspended && (
+                <Button
+                  variant="destructive"
+                  onClick={handleSuspend}
+                  disabled={isSuspending}
+                  className="flex-1"
+                >
+                  <AlertTriangle className="w-4 h-4 mr-2" />
+                  Suspend Supplier
+                </Button>
+              )}
+            </div>
           </div>
         ) : (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-10 text-gray-500">
             No details available for this supplier.
           </div>
         )}
