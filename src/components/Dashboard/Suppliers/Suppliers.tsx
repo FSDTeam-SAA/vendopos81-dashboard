@@ -1,9 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import ConfirmModal from "@/components/shared/ConfirmModal";
+import Loading from "@/components/shared/Loading";
+import Pagination from "@/components/shared/Pagination";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -13,29 +21,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  Eye,
-  Trash2,
-  MoreVertical,
-  Star,
-  Mail,
-  Phone,
-  MapPin,
-  ChevronDown,
-  Loader2,
-} from "lucide-react";
-import {
   useAllSuppliers,
   useDeleteSingleSuppliers,
   useUpdateSupplierStatus,
 } from "@/lib/hooks/useSuppliers";
-import { useDeleteUser, useSuspendUser } from "@/lib/hooks/useUsers";
+import { useSuspendUser } from "@/lib/hooks/useUsers";
 import { Analytics, Supplier } from "@/lib/types/supplier";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Eye,
+  Mail,
+  MapPin,
+  MoreVertical,
+  Phone,
+  Star,
+  Trash2,
+} from "lucide-react";
+import { useState } from "react";
 import SuppliersModels from "./SuppliersModal";
 
 export default function SupplierManagement() {
@@ -45,8 +46,13 @@ export default function SupplierManagement() {
     null,
   );
   const [isSuspended, setIsSuspended] = useState<string>("all");
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<() => void>(() => {});
+  const [confirmTitle, setConfirmTitle] = useState("");
+  const [confirmDescription, setConfirmDescription] = useState("");
+
   const { mutate: deleteSupplier } = useDeleteSingleSuppliers();
-  const { mutate: deleteUser } = useDeleteUser();
+  // const { mutate: deleteUser } = useDeleteUser();
   const { mutate: suspendUser } = useSuspendUser();
   const { mutate: updateStatus } = useUpdateSupplierStatus();
   const limit = 10;
@@ -65,24 +71,46 @@ export default function SupplierManagement() {
     setCurrentPage(page);
   };
 
+  // Delete a supplier ==================================
   const handleDelete = (supplier: Supplier) => {
-    if (window.confirm("Are you sure you want to delete this supplier account?")) {
-      if (supplier.userId?._id) {
-        deleteUser(supplier.userId._id);
-      } else {
+    // console.log("this is deleted supplier data", supplier._id);
+    setConfirmTitle("Delete Supplier?");
+    setConfirmDescription(
+      "This will permanently delete this supplier account.",
+    );
+
+    setConfirmAction(() => () => {
+      if (supplier._id) {
         deleteSupplier(supplier._id);
       }
-    }
+      setConfirmOpen(false);
+    });
+
+    setConfirmOpen(true);
   };
 
+  // Suspend a supplier ==================================
   const handleSuspend = (userId: string) => {
-    if (window.confirm("Are you sure you want to suspend this supplier?")) {
+    setConfirmTitle("Suspend Supplier?");
+    setConfirmDescription(
+      "This supplier will not be able to access their account.",
+    );
+
+    setConfirmAction(() => () => {
       suspendUser(userId);
-    }
+      setConfirmOpen(false);
+    });
+
+    setConfirmOpen(true);
   };
 
-  const handleUpdateStatus = (id: string, status: string) => {
-    updateStatus({ id, status });
+  const handleUpdateStatus = (supplier: Supplier, status: string) => {
+    // console.log({ id: supplier._id, status });
+
+    updateStatus({
+      id: supplier._id,
+      status,
+    });
   };
 
   const handleView = (supplier: Supplier) => {
@@ -91,11 +119,7 @@ export default function SupplierManagement() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-teal-600" />
-      </div>
-    );
+    return <Loading message="Loading suppliers..." />;
   }
 
   if (isError) {
@@ -109,16 +133,6 @@ export default function SupplierManagement() {
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="p-6 mx-auto container space-y-6">
-        {/* Header */}
-        {/* <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            Supplier Management
-          </h1>
-          <p className="text-gray-500 mt-1">
-            Manage and monitor your suppliers
-          </p>
-        </div> */}
-
         {/* Stat Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="bg-white border-0 shadow-sm">
@@ -235,7 +249,8 @@ export default function SupplierManagement() {
                           {supplier.shopName || supplier.brandName}
                         </p>
                         <p className="text-sm text-gray-500">
-                          Joined {new Date(supplier.createdAt).toLocaleDateString()}
+                          Joined{" "}
+                          {new Date(supplier.createdAt).toLocaleDateString()}
                         </p>
                       </div>
                     </TableCell>
@@ -266,20 +281,23 @@ export default function SupplierManagement() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant={
-                          supplier.status === "approved"
-                            ? "secondary"
-                            : "destructive"
-                        }
-                        className={
-                          supplier.status === "approved"
-                            ? "bg-green-100 text-green-700 hover:bg-green-100 capitalize"
-                            : "bg-yellow-100 text-yellow-700 hover:bg-yellow-100 capitalize"
-                        }
-                      >
-                        {supplier.status}
-                      </Badge>
+                      {supplier.isSuspended ? (
+                        <Badge className="bg-red-100 text-red-700 hover:bg-red-100 capitalize">
+                          Suspended
+                        </Badge>
+                      ) : (
+                        <Badge
+                          className={
+                            supplier.status === "approved"
+                              ? "bg-green-100 text-green-700 hover:bg-green-100 capitalize"
+                              : supplier.status === "pending"
+                                ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-100 capitalize"
+                                : "bg-gray-100 text-gray-700 hover:bg-gray-100 capitalize"
+                          }
+                        >
+                          {supplier.status}
+                        </Badge>
+                      )}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2 justify-center">
@@ -304,7 +322,7 @@ export default function SupplierManagement() {
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem
                               onClick={() =>
-                                handleUpdateStatus(supplier._id, "approved")
+                                handleUpdateStatus(supplier, "approved")
                               }
                               className="cursor-pointer"
                             >
@@ -312,16 +330,18 @@ export default function SupplierManagement() {
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() =>
-                                handleUpdateStatus(supplier._id, "rejected")
+                                handleUpdateStatus(supplier, "rejected")
                               }
                               className="cursor-pointer"
                             >
-                              Reject
+                              Rejected
                             </DropdownMenuItem>
                             {supplier.userId?._id && !supplier.isSuspended && (
                               <DropdownMenuItem
-                                onClick={() => handleSuspend(supplier.userId!._id)}
-                                className="cursor-pointer text-orange-600 focus:text-orange-600"
+                                onClick={() =>
+                                  handleSuspend(supplier.userId!._id)
+                                }
+                                className="cursor-pointer text-red-600 focus:text-red-700"
                               >
                                 Suspend
                               </DropdownMenuItem>
@@ -347,44 +367,23 @@ export default function SupplierManagement() {
           </Card>
 
           {/* Pagination */}
-          {meta && meta.totalPage > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-6">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-gray-600 hover:text-gray-900 bg-transparent"
-                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-              >
-                ←
-              </Button>
-              {Array.from({ length: meta.totalPage }, (_, i) => i + 1).map((page) => (
-                <Button
-                  key={page}
-                  variant={currentPage === page ? "default" : "outline"}
-                  size="sm"
-                  className={
-                    currentPage === page
-                      ? "bg-teal-600 text-white hover:bg-teal-700"
-                      : "text-gray-600 bg-transparent"
-                  }
-                  onClick={() => handlePageChange(page)}
-                >
-                  {page}
-                </Button>
-              ))}
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-gray-600 hover:text-gray-900 bg-transparent"
-                onClick={() => handlePageChange(Math.min(meta.totalPage, currentPage + 1))}
-                disabled={currentPage === meta.totalPage}
-              >
-                →
-              </Button>
-            </div>
-          )}
+          <div className="flex items-center justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={meta?.totalPage || 1}
+              onPageChange={handlePageChange}
+            />
+          </div>
         </div>
+        <ConfirmModal
+          open={confirmOpen}
+          onClose={() => setConfirmOpen(false)}
+          onConfirm={confirmAction}
+          title={confirmTitle}
+          description={confirmDescription}
+          confirmText="Yes, Continue"
+          variant="destructive"
+        />
       </div>
       <SuppliersModels
         viewModalOpen={modalOpen}
@@ -394,4 +393,3 @@ export default function SupplierManagement() {
     </main>
   );
 }
- 

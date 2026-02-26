@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   deleteSingleSuppliers,
@@ -32,24 +33,53 @@ export const useDeleteSingleSuppliers = () => {
       queryClient.invalidateQueries({ queryKey: ["all-suppliers"] });
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || error?.message || "Failed to delete supplier");
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to delete supplier",
+      );
     },
   });
 };
 
+// export const useUpdateSupplierStatus = () => {
+//   const queryClient = useQueryClient();
+//   return useMutation({
+//     mutationKey: ["update-supplier-status"],
+//     mutationFn: ({ id, status }: { id: string; status: string }) =>
+//       updateSupplierStatus(id, status),
+//     onSuccess: (data) => {
+//       toast.success(data?.message || "Supplier status updated successfully");
+//       queryClient.invalidateQueries({ queryKey: ["all-suppliers"] });
+//     },
+//     onError: (error: any) => {
+//       console.error("Error updating supplier status:", error);
+//       toast.error(error?.response?.data?.message || error?.message || "Failed to update supplier status");
+//     }
+//   });
+// };
+
 export const useUpdateSupplierStatus = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationKey: ["update-supplier-status"],
     mutationFn: ({ id, status }: { id: string; status: string }) =>
       updateSupplierStatus(id, status),
+
     onSuccess: (data) => {
-      toast.success(data?.message || "Supplier status updated successfully");
+      toast.success(data?.message || "Supplier status updated");
+
+      // real-time update
       queryClient.invalidateQueries({ queryKey: ["all-suppliers"] });
     },
+
     onError: (error: any) => {
-      // console.error("Error updating supplier status:", error);
-      toast.error(error?.response?.data?.message || error?.message || "Failed to update supplier status");
-    }
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to update supplier status",
+      );
+    },
   });
 };
