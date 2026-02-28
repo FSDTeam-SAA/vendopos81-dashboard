@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -12,11 +11,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Eye, Loader2 } from "lucide-react";
+import { DollarSign, Eye, Mail, ShoppingCart } from "lucide-react";
+import { useState } from "react";
 
-import CustomerModal from "./CustomerModal";
+import Loading from "@/components/shared/Loading";
+import Pagination from "@/components/shared/Pagination";
 import { useAllUsers } from "@/lib/hooks/useUsers";
 import { Analytics, User } from "@/lib/types/users";
+import CustomerModal from "./CustomerModal";
 
 export default function Customers() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,11 +47,7 @@ export default function Customers() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-black">
-        <Loader2 className="w-10 h-10 animate-spin text-teal-600" />
-      </div>
-    );
+    return <Loading message="Loading Customers..." />;
   }
 
   if (isError) {
@@ -63,54 +61,42 @@ export default function Customers() {
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="p-6 mx-auto container space-y-6">
-        {/* Header */}
-        {/* <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            Customer Management
-          </h1>
-          <p className="text-gray-500 mt-1">
-            View and manage customer accounts 
-          </p>
-        </div> */}
-
         {/* Stat Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-black">
-          <Card className="bg-white gap-2 border-0 shadow-sm">
+          <Card className="bg-white gap-2 border-0">
             <CardHeader className="">
-              <CardTitle className="text-sm font-medium text-[#6C757D]">
+              <CardTitle className="text-md font-medium text-[#6C757D]">
                 Total Customers{" "}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-gray-900">
+              <p className="text-3xl  text-gray-900">
                 {usersAnalytics?.totalCustomer || 0}
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white gap-2 border-0 shadow-sm">
+          <Card className="bg-white gap-2 border-0 ">
             <CardHeader className="">
-              <CardTitle className="text-sm font-medium text-[#6C757D]">
+              <CardTitle className="text-md font-medium text-[#6C757D]">
                 Active Customers
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <h5 className="text-3xl font-bold text-[#086646]">
+              <h5 className="text-3xl  text-[#086646]">
                 {usersAnalytics?.totalActive || 0}
               </h5>
             </CardContent>
           </Card>
 
-          <Card className="bg-white gap-2 border-0 shadow-sm">
+          <Card className="bg-white gap-2 border-0">
             <CardHeader className="">
-              <CardTitle className="text-sm font-medium text-[#6C757D]">
+              <CardTitle className="text-md font-medium text-[#6C757D]">
                 New This Month
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold ">
-                {usersAnalytics?.totalSuspended || 0}
-              </p>
+              <p className="text-3xl ">{usersAnalytics?.totalSuspended || 0}</p>
             </CardContent>
           </Card>
         </div>
@@ -119,7 +105,7 @@ export default function Customers() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-gray-900">
-              Customer Orders
+              Customer List
             </h2>
             <div className="flex items-center gap-2">
               <select
@@ -137,7 +123,7 @@ export default function Customers() {
             </div>
           </div>
 
-          <Card className="bg-white border-0 pt-0 px-2 shadow-sm overflow-hidden text-black">
+          <Card className="bg-white border-0 pt-0 px-2 overflow-hidden text-black">
             <Table className="py-2">
               <TableHeader className="bg-gray-50/50">
                 <TableRow>
@@ -178,30 +164,34 @@ export default function Customers() {
                           {user.firstName} {user.lastName}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {user.email}
+                          Member since{" "}
+                          {new Date(user.createdAt).toLocaleDateString()}
                         </div>
                       </TableCell>
 
                       <TableCell>
-                        <div className="text-sm text-gray-700">
-                          <div className="text-sm text-gray-500">
-                            {user.email}
-                          </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <Mail className="w-4 h-4 text-gray-500" />
+                          <span className="text-gray-500">{user.email}</span>
                         </div>
                       </TableCell>
 
                       {/* 3. Order ID */}
                       <TableCell>
-                        <span className="font-mono text-sm text-gray-600">
-                          {user.totalOrder}
-                        </span>
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <ShoppingCart className="w-4 h-4 text-gray-500" />
+                          <span>{user.totalOrder}</span>
+                        </div>
                       </TableCell>
 
                       {/* 4. Amount */}
                       <TableCell>
-                        <span className="font-semibold text-gray-900">
-                          ${user.totalSpent?.toFixed(2) || "0.00"}
-                        </span>
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <DollarSign className="w-4 h-4 text-gray-500" />
+                          <span className="font-semibold text-green-700">
+                            ${user.totalSpent?.toFixed(2) || "0.00"}
+                          </span>
+                        </div>
                       </TableCell>
 
                       {/* 5. Payment Status */}
@@ -209,8 +199,8 @@ export default function Customers() {
                         <Badge
                           className={`capitalize ${
                             user.isSuspended
-                              ? "bg-red-100 text-red-700 hover:bg-red-100"
-                              : "bg-green-100 text-green-700 hover:bg-green-100"
+                              ? "bg-red-100 text-red-900 hover:bg-red-100"
+                              : "bg-green-100 text-green-900 hover:bg-green-100"
                           }`}
                         >
                           {user.isSuspended ? "Suspended" : "Active"}
@@ -251,48 +241,13 @@ export default function Customers() {
             </Table>
           </Card>
 
-          {/* Pagination */}
-          {meta && meta.totalPage > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-6">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-gray-600 hover:text-gray-900 bg-transparent"
-                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-              >
-                ←
-              </Button>
-              {Array.from({ length: meta.totalPage }, (_, i) => i + 1).map(
-                (page) => (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "default" : "outline"}
-                    size="sm"
-                    className={
-                      currentPage === page
-                        ? "bg-teal-600 text-white hover:bg-teal-700"
-                        : "text-gray-600 bg-transparent"
-                    }
-                    onClick={() => handlePageChange(page)}
-                  >
-                    {page}
-                  </Button>
-                ),
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-gray-600 hover:text-gray-900 bg-transparent"
-                onClick={() =>
-                  handlePageChange(Math.min(meta.totalPage, currentPage + 1))
-                }
-                disabled={currentPage === meta.totalPage}
-              >
-                →
-              </Button>
-            </div>
-          )}
+          <div className="flex items-center justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={meta?.totalPage || 1}
+              onPageChange={handlePageChange}
+            />
+          </div>
         </div>
         <CustomerModal
           modalOpen={modalOpen}

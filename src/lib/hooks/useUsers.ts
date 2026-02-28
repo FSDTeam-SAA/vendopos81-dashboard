@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getAllUsers, userService } from "../services/userService";
 import { toast } from "sonner";
-
+import { getAllUsers, userService } from "../services/userService";
+import { getSingleCustomer } from "./../services/userService";
 
 export const useAllUsers = (params?: {
   page?: number;
@@ -14,6 +14,7 @@ export const useAllUsers = (params?: {
   });
 };
 
+//! This is a custom hook for suspending a supplier
 export const useSuspendUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -24,6 +25,22 @@ export const useSuspendUser = () => {
     },
     onError: (error) => {
       toast.error(error?.message || error?.message || "Failed to suspend");
+    },
+  });
+};
+
+export const useSuspendCustomer = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (userId: string) => userService.suspendCustomer(userId),
+    onSuccess: (data) => {
+      toast.success(data?.message || "User suspended successfully");
+
+      queryClient.invalidateQueries({ queryKey: ["all-users"] });
+    },
+    onError: (error) => {
+      toast.error(error?.message || "Failed to suspend");
     },
   });
 };
@@ -39,5 +56,13 @@ export const useDeleteUser = () => {
     onError: (error) => {
       toast.error(error?.message || error?.message || "Failed to delete user");
     },
+  });
+};
+
+export const useGetSingleCustomerData = (id?: string) => {
+  return useQuery({
+    queryKey: ["single-customer", id],
+    queryFn: () => getSingleCustomer(id as string),
+    enabled: !!id, // ✅ only run when id exists
   });
 };

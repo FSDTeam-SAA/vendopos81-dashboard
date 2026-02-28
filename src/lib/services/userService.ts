@@ -18,10 +18,21 @@ class UserService {
   }
 
   /**
-   * Suspend a supplier/user
+   * Suspend a supplier
    */
-  async suspendUser(userId: string){
-    const response = await axiosInstance.put(`${this.baseUrl}/suspend-supplier/${userId}`);
+  async suspendUser(userId: string) {
+    const response = await axiosInstance.put(
+      `${this.baseUrl}/suspend-supplier/${userId}`,
+    );
+    return response.data;
+  }
+
+
+  // this is for customer
+  async suspendCustomer(userId: string) {
+    const response = await axiosInstance.put(
+      `${this.baseUrl}/suspend/${userId}`,
+    );
     return response.data;
   }
 
@@ -29,13 +40,14 @@ class UserService {
    * Delete a user
    */
   async deleteUser(userId: string) {
-    const response = await axiosInstance.delete(`${this.baseUrl}/delete/${userId}`);
+    const response = await axiosInstance.delete(
+      `${this.baseUrl}/delete/${userId}`,
+    );
     return response.data;
   }
 }
 
 export const userService = new UserService();
-
 
 // fetch all users
 export async function getAllUsers(params?: {
@@ -44,7 +56,7 @@ export async function getAllUsers(params?: {
   isSuspended?: boolean | string;
 }) {
   try {
-    const response = await axiosInstance.get('/user/all-users', {
+    const response = await axiosInstance.get("/user/all-users", {
       params,
     });
     return response.data;
@@ -53,3 +65,13 @@ export async function getAllUsers(params?: {
     throw error;
   }
 }
+
+export const getSingleCustomer = async (id: string) => {
+  try {
+    const response = await axiosInstance.get(`/user/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    throw error;
+  }
+};
