@@ -1,7 +1,7 @@
+import { getSingleCustomer } from "./../services/userService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getAllUsers, userService } from "../services/userService";
 import { toast } from "sonner";
-
+import { getAllUsers, userService } from "../services/userService";
 
 export const useAllUsers = (params?: {
   page?: number;
@@ -39,5 +39,13 @@ export const useDeleteUser = () => {
     onError: (error) => {
       toast.error(error?.message || error?.message || "Failed to delete user");
     },
+  });
+};
+
+export const useGetSingleCustomerData = (id?: string) => {
+  return useQuery({
+    queryKey: ["single-customer", id],
+    queryFn: () => getSingleCustomer(id as string),
+    enabled: !!id, // ✅ only run when id exists
   });
 };
