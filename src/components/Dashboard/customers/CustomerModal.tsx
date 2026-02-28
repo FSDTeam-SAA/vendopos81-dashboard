@@ -1,23 +1,11 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-
-} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import {
-  Mail,
-  Calendar,
-  Hash,
-  MapPin,
-  X,
-  Trash2,
-  AlertTriangle,
-} from "lucide-react";
-import { User } from "@/lib/types/users";
-import { useDeleteUser, useSuspendUser } from "@/lib/hooks/useUsers";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useDeleteUser, useSuspendUser } from "@/lib/hooks/useUsers";
+import { User } from "@/lib/types/users";
+import { AlertTriangle, Calendar, Hash, Mail, Trash2 } from "lucide-react";
 
 interface CustomerModalProps {
   modalOpen: boolean;
@@ -120,8 +108,7 @@ const CustomerModal = ({
 
               <div className="flex items-center gap-3 text-gray-700">
                 <Calendar className="w-4 h-4 text-gray-400" />
-                Join Date:{" "}
-                {new Date(data.createdAt).toLocaleDateString()}
+                Join Date: {new Date(data.createdAt).toLocaleDateString()}
               </div>
 
               <div className="flex items-center gap-3 text-gray-700">
@@ -164,9 +151,9 @@ const CustomerModal = ({
                   Suspend
                 </Button>
               )}
-              
-              <Button 
-                variant="destructive" 
+
+              <Button
+                variant="destructive"
                 size="sm"
                 onClick={handleDelete}
                 disabled={isSuspending || isDeleting}
