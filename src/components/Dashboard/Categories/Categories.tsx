@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { useAllCategories } from "@/lib/hooks/useCategory";
 import { Category } from "@/lib/types/category";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Plus, Loader2, FolderTree, Package, TrendingUp } from "lucide-react";
-import CategoryCard from "./CategoryCard";
+import { FolderTree, Package, Plus, TrendingUp } from "lucide-react";
+import { useState } from "react";
 import CategoryModal from "./AddCategoryModal";
+import CategoryCard from "./CategoryCard";
 import CategorySkeleton from "./CategorySkeleton";
 
 export default function Categories() {
@@ -16,7 +16,9 @@ export default function Categories() {
     limit: 10,
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
 
   const { data, isLoading, error } = useAllCategories(params);
 
@@ -28,14 +30,14 @@ export default function Categories() {
   const activeCategories = categories.length;
   const totalProducts = categories.reduce(
     (sum, cat) => sum + (cat.productName?.length || 0),
-    0
+    0,
   );
   const topCategory = categories.reduce(
     (top, cat) =>
       (cat.productName?.length || 0) > (top?.productName?.length || 0)
         ? cat
         : top,
-    categories[0]
+    categories[0],
   );
 
   const handleAddNew = () => {
