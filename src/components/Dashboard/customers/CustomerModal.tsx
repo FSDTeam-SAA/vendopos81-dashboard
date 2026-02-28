@@ -3,7 +3,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { useGetSingleCustomerData, useSuspendUser } from "@/lib/hooks/useUsers";
+import {
+  useGetSingleCustomerData,
+  useSuspendCustomer,
+} from "@/lib/hooks/useUsers";
 import { User } from "@/lib/types/users";
 import { AlertTriangle, Calendar, Mail, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
@@ -19,7 +22,7 @@ const CustomerModal = ({
   onModalChange,
   data,
 }: CustomerModalProps) => {
-  const { mutate: suspendUser, isPending: isSuspending } = useSuspendUser();
+  const { mutate: suspendCustomer, isPending: isSuspending } = useSuspendCustomer();
 
   const customerId = data?._id;
   const { data: customerResponse } = useGetSingleCustomerData(customerId);
@@ -28,6 +31,12 @@ const CustomerModal = ({
 
   const customer = customerResponse?.data || data;
   const initials = customer.firstName?.charAt(0) + customer.lastName?.charAt(0);
+
+  // suspend handler with console.log
+  const handleSuspend = () => {
+    console.log("Suspending user ID:", customer._id);
+    suspendCustomer(customer._id);
+  };
 
   return (
     <Dialog open={modalOpen} onOpenChange={onModalChange}>
@@ -85,7 +94,9 @@ const CustomerModal = ({
                 <Mail className="w-4 h-4 text-gray-400" />
                 <div>
                   <p className="text-sm text-gray-400">Email</p>
-                  <p className="text-sm text-gray-900">{customer.email || "N/A"}</p>
+                  <p className="text-sm text-gray-900">
+                    {customer.email || "N/A"}
+                  </p>
                 </div>
               </div>
 
@@ -93,7 +104,9 @@ const CustomerModal = ({
                 <Phone className="w-4 h-4 text-gray-400 mt-1" />
                 <div>
                   <p className="text-sm text-gray-400">Phone</p>
-                  <p className="text-sm text-gray-900">{customer?.phone || "N/A"}</p>
+                  <p className="text-sm text-gray-900">
+                    {customer?.phone || "N/A"}
+                  </p>
                 </div>
               </div>
 
@@ -126,10 +139,20 @@ const CustomerModal = ({
               </p>
             </div>
 
-            {!customer.isSuspended && (
+            {customer.isSuspended ? (
               <Button
                 size="sm"
-                onClick={() => suspendUser(customer._id)}
+                onClick={handleSuspend}
+                disabled={isSuspending}
+                className="bg-green-800 hover:bg-green-900 text-white"
+              >
+                <AlertTriangle className="w-4 h-4 mr-1" />
+                Unsuspend
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                onClick={handleSuspend}
                 disabled={isSuspending}
                 className="bg-red-500 hover:bg-red-600 text-white"
               >

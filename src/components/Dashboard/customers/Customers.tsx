@@ -11,9 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CreditCard, DollarSign, Eye, Loader2, Mail, ShoppingCart } from "lucide-react";
+import { DollarSign, Eye, Mail, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 
+import Loading from "@/components/shared/Loading";
 import Pagination from "@/components/shared/Pagination";
 import { useAllUsers } from "@/lib/hooks/useUsers";
 import { Analytics, User } from "@/lib/types/users";
@@ -46,11 +47,7 @@ export default function Customers() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-black">
-        <Loader2 className="w-10 h-10 animate-spin text-teal-600" />
-      </div>
-    );
+    return <Loading message="Loading Customers..." />;
   }
 
   if (isError) {

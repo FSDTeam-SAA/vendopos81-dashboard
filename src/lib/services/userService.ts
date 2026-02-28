@@ -18,11 +18,20 @@ class UserService {
   }
 
   /**
-   * Suspend a supplier/user
+   * Suspend a supplier
    */
   async suspendUser(userId: string) {
     const response = await axiosInstance.put(
       `${this.baseUrl}/suspend-supplier/${userId}`,
+    );
+    return response.data;
+  }
+
+
+  // this is for customer
+  async suspendCustomer(userId: string) {
+    const response = await axiosInstance.put(
+      `${this.baseUrl}/suspend/${userId}`,
     );
     return response.data;
   }
