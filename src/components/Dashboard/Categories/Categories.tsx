@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAllCategories } from "@/lib/hooks/useCategory";
 import { Category } from "@/lib/types/category";
-import { FolderTree, Package, Plus, TrendingUp } from "lucide-react";
+import { FolderTree, Package, Plus } from "lucide-react";
 import { useState } from "react";
 import CategoryModal from "./AddCategoryModal";
 import CategoryCard from "./CategoryCard";
@@ -25,9 +25,10 @@ export default function Categories() {
   const categories = data?.data || [];
   const meta = data?.meta || { page: 1, limit: 10, total: 0, totalPage: 1 };
 
+  console.log("this is categories", categories);
+
   // Calculate stats
   const totalCategories = meta.total || categories.length;
-  const activeCategories = categories.length;
   const totalProducts = categories.reduce(
     (sum, cat) => sum + (cat.productName?.length || 0),
     0,
@@ -55,11 +56,6 @@ export default function Categories() {
     setSelectedCategory(null);
   };
 
-  const handleDelete = (category: Category) => {
-    // TODO: Implement delete functionality
-    console.log("Delete category:", category);
-  };
-
   const handlePageChange = (page: number) => {
     setParams((prev) => ({ ...prev, page }));
   };
@@ -78,12 +74,6 @@ export default function Categories() {
     <div className="container mx-auto py-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        {/* <div>
-          <h1 className="text-2xl font-bold text-[#101828]">
-            Category Management
-          </h1>
-          <p className="text-[#4A5565]">Organize and manage product categories</p>
-        </div> */}
         <Button
           onClick={handleAddNew}
           className="bg-[#086646] hover:bg-[#065535] text-white gap-2 w-fit"
@@ -95,6 +85,7 @@ export default function Categories() {
 
       {/* Category Modal (Create/Edit) */}
       <CategoryModal
+        key={selectedCategory?._id ?? "create"}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         category={selectedCategory}
@@ -112,22 +103,6 @@ export default function Categories() {
                 <p className="text-sm text-gray-500">Total Categories</p>
                 <p className="text-2xl font-bold text-gray-900">
                   {isLoading ? "-" : totalCategories}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-emerald-100 rounded-lg">
-                <TrendingUp className="h-5 w-5 text-emerald-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Active Categories</p>
-                <p className="text-2xl font-bold text-emerald-600">
-                  {isLoading ? "-" : activeCategories}
                 </p>
               </div>
             </div>
@@ -189,7 +164,7 @@ export default function Categories() {
                 key={category._id}
                 category={category}
                 onEdit={handleEdit}
-                onDelete={handleDelete}
+                // onDelete={handleDelete}
               />
             ))}
           </div>
