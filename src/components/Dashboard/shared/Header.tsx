@@ -96,7 +96,7 @@ export default function DashboardHeader() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  console.log("pathname", pathname);
+  // console.log("pathname", pathname);
 
   const routeConfig: Record<string, { title: string; subtitle: string }> = {
     "/dashboard": {

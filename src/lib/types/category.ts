@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Category Types
 
 export interface CategoryImage {
@@ -46,13 +47,13 @@ export interface CategoryParams {
   productType?: string;
 }
 
-export interface CreateCategoryPayload {
-  region: string;
-  productType: string;
-  productName: string[];
-  productImage?: File;
-  regionImage?: File;
-}
+// export interface CreateCategoryPayload {
+//   region: string;
+//   productType: string;
+//   productName: string[];
+//   productImage?: File;
+//   regionImage?: File;
+// }
 
 export interface CreateCategoryResponse {
   success: boolean;
@@ -61,6 +62,28 @@ export interface CreateCategoryResponse {
   data: Category;
 }
 
-export interface UpdateCategoryPayload extends CreateCategoryPayload {
+// export interface UpdateCategoryPayload extends CreateCategoryPayload {
+//   _id: string;
+// }
+
+export interface CreateRegionPayload {
+  region: string;
+  regionImage?: File;
+  categories: {
+    productType: string;
+    productImage?: File;
+    productName: string[];
+  }[];
+}
+
+export interface UpdateCategoryPayload {
   _id: string;
+  region: string;
+  regionImage?: File;
+
+  categories: {
+    productType: string;
+    productImage?: File;
+    productName: string[];
+  }[];
 }
