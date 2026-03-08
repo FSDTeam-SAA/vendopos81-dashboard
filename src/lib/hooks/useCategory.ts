@@ -2,7 +2,8 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  createCategory,
+  createRegionWithCategories,
+  // createCategory,
   getAllCategories,
   getAllRegions,
   updateCategory,
@@ -10,8 +11,9 @@ import {
 import {
   CategoryParams,
   CategoryResponse,
-  CreateCategoryPayload,
+  // CreateCategoryPayload,
   CreateCategoryResponse,
+  CreateRegionPayload,
   UpdateCategoryPayload,
 } from "../types/category";
 
@@ -23,19 +25,20 @@ export const useAllCategories = (params?: CategoryParams) => {
   });
 };
 
-// Create Category
 export const useCreateCategory = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<CreateCategoryResponse, Error, CreateCategoryPayload>({
-    mutationFn: createCategory,
+  return useMutation<CreateCategoryResponse, Error, CreateRegionPayload>({
+    mutationFn: createRegionWithCategories,
     onSuccess: () => {
       // Invalidate and refetch categories list
       queryClient.invalidateQueries({ queryKey: ["all-categories"] });
     },
+    onError: (error) => {
+      console.error("Failed to create region with categories:", error);
+    },
   });
 };
-
 // Update Category
 export const useUpdateCategory = () => {
   const queryClient = useQueryClient();
@@ -43,8 +46,11 @@ export const useUpdateCategory = () => {
   return useMutation<CreateCategoryResponse, Error, UpdateCategoryPayload>({
     mutationFn: updateCategory,
     onSuccess: () => {
-      // Invalidate and refetch categories list
+      // Refetch categories list after update
       queryClient.invalidateQueries({ queryKey: ["all-categories"] });
+    },
+    onError: (error) => {
+      console.error("Failed to update category:", error);
     },
   });
 };

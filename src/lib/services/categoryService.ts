@@ -3,7 +3,7 @@
 import axiosInstance from "../instance/axios-instance";
 import {
   CategoryParams,
-  CreateCategoryPayload,
+  CreateRegionPayload,
   UpdateCategoryPayload,
 } from "../types/category";
 
@@ -18,34 +18,49 @@ export const getAllCategories = async (params?: CategoryParams) => {
   }
 };
 
-// Create Category
-export const createCategory = async (payload: CreateCategoryPayload) => {
+export const createRegionWithCategories = async (
+  payload: CreateRegionPayload,
+) => {
   try {
     const formData = new FormData();
+
+    // Add region info
     formData.append("region", payload.region);
-    formData.append("productType", payload.productType);
 
-    // Append each product name with array notation
-    payload.productName.forEach((name, index) => {
-      formData.append(`productName[${index}]`, name);
-    });
-
-    // Append images if provided
-    if (payload.productImage) {
-      formData.append("productImage", payload.productImage);
-    }
     if (payload.regionImage) {
       formData.append("regionImage", payload.regionImage);
     }
+
+    // Add multiple categories
+    payload.categories.forEach((cat, catIndex) => {
+      formData.append(`categories[${catIndex}][productType]`, cat.productType);
+
+      // product names array
+      cat.productName.forEach((name, nameIndex) => {
+        formData.append(
+          `categories[${catIndex}][productName][${nameIndex}]`,
+          name,
+        );
+      });
+
+      // category image
+      if (cat.productImage) {
+        formData.append(
+          `categories[${catIndex}][productImage]`,
+          cat.productImage,
+        );
+      }
+    });
 
     const response = await axiosInstance.post("/category/create", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
+
     return response.data;
   } catch (error) {
-    console.error("Error creating category:", error);
+    console.error("Error creating region with categories:", error);
     throw error;
   }
 };
@@ -54,21 +69,34 @@ export const createCategory = async (payload: CreateCategoryPayload) => {
 export const updateCategory = async (payload: UpdateCategoryPayload) => {
   try {
     const formData = new FormData();
+
+    // region info
     formData.append("region", payload.region);
-    formData.append("productType", payload.productType);
 
-    // Append each product name with array notation
-    payload.productName.forEach((name, index) => {
-      formData.append(`productName[${index}]`, name);
-    });
-
-    // Append images if provided
-    if (payload.productImage) {
-      formData.append("productImage", payload.productImage);
-    }
     if (payload.regionImage) {
       formData.append("regionImage", payload.regionImage);
     }
+
+    // categories (multi)
+    payload.categories.forEach((cat, catIndex) => {
+      formData.append(`categories[${catIndex}][productType]`, cat.productType);
+
+      // product names array
+      cat.productName.forEach((name, nameIndex) => {
+        formData.append(
+          `categories[${catIndex}][productName][${nameIndex}]`,
+          name,
+        );
+      });
+
+      // category image
+      if (cat.productImage) {
+        formData.append(
+          `categories[${catIndex}][productImage]`,
+          cat.productImage,
+        );
+      }
+    });
 
     const response = await axiosInstance.put(
       `/category/update/${payload._id}`,
@@ -79,6 +107,7 @@ export const updateCategory = async (payload: UpdateCategoryPayload) => {
         },
       },
     );
+
     return response.data;
   } catch (error) {
     console.error("Error updating category:", error);
