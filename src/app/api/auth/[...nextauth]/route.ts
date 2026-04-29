@@ -86,9 +86,27 @@ const handler = NextAuth({
             lastName: user.lastName,
             image: user.image || null,
           };
-        } catch (err) {
+        } catch (err: unknown) {
+          // Log full error server-side for debugging
           console.log("Authorize Error:", err);
-          throw new Error("Invalid email or password");
+
+          // Safely extract message from unknown error
+          let message = "Invalid email or password";
+          if (err instanceof Error && err.message) {
+            message = err.message;
+          } else if (typeof err === "string") {
+            message = err;
+          } else if (
+            typeof err === "object" &&
+            err !== null &&
+            "message" in err
+          ) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const e = err as any;
+            if (typeof e.message === "string") message = e.message;
+          }
+
+          throw new Error(message);
         }
       },
     }),
