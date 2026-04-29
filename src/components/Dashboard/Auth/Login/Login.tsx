@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
-import Link from "next/link";
-import { signIn } from "next-auth/react";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { signIn } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -28,14 +28,17 @@ export default function Login() {
         password,
         redirect: false,
       });
+      console.log("password", password);
+      console.debug("signIn result:", result);
 
       if (result?.ok) {
         toast.success("Logged in successfully!");
         router.push("/");
       } else {
+        console.debug("signIn error payload:", result?.error);
         toast.error(result?.error || "Login failed. Please try again.");
       }
-    } catch (err) {
+    } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);

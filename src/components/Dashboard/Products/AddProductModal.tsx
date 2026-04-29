@@ -87,7 +87,7 @@ export function AddProductModal({
     [selectedRegion, selectedProductType],
   );
 
-  console.log({ selectedProductType, selectedRegion });
+  // console.log({ selectedProductType, selectedRegion });
 
   const { data: categoriesData } = useAllCategories(params);
 
@@ -170,7 +170,7 @@ export function AddProductModal({
 
   // Submit handler
   const onSubmit = async (data: CreateProductFormValues) => {
-    console.log("Form Data:", data);
+    // console.log("Form Data:", data);
     setIsSubmitting(true);
     try {
       const formData = new FormData();

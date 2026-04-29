@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
