@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import Loading from "@/components/shared/Loading";
-import Pagination from "@/components/shared/Pagination";
-import { ViewProductModal } from "@/components/shared/ViewProductModal";
-import { Button } from "@/components/ui/button";
+import Loading from '@/components/shared/Loading';
+import Pagination from '@/components/shared/Pagination';
+import { ViewProductModal } from '@/components/shared/ViewProductModal';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -12,30 +12,29 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useAllProducts, useFilterProducts } from "@/lib/hooks/useProduct";
-import { Product } from "@/lib/types/product";
-import { ChevronDown, Plus, X } from "lucide-react";
-import { useState } from "react";
-import { AddProductModal } from "./AddProductModal";
-import { getColumns } from "./columns";
-import { DataTable } from "./data-table";
+} from '@/components/ui/dropdown-menu';
+import { useAllProducts, useFilterProducts } from '@/lib/hooks/useProduct';
+import { Product } from '@/lib/types/product';
+import { ChevronDown, Plus, X } from 'lucide-react';
+import { useState } from 'react';
+import { AddProductModal } from './AddProductModal';
+import { getColumns } from './columns';
+import { DataTable } from './data-table';
 
 export default function Products() {
   const [params, setParams] = useState({
     page: 1,
     limit: 10,
-    search: "",
-    categoryRegion: "",
-    originCountry: "",
-    supplierBrand: "",
-    sort: "az",
+    search: '',
+    categoryRegion: '',
+    originCountry: '',
+    supplierBrand: '',
+    sort: 'az',
   });
 
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [selectedViewProduct, setSelectedViewProduct] =
-    useState<Product | null>(null);
+  const [selectedViewProduct, setSelectedViewProduct] = useState<Product | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
   const handleEdit = (product: Product) => {
@@ -76,11 +75,11 @@ export default function Products() {
     setParams({
       page: 1,
       limit: 10,
-      search: "",
-      categoryRegion: "",
-      originCountry: "",
-      supplierBrand: "",
-      sort: "az",
+      search: '',
+      categoryRegion: '',
+      originCountry: '',
+      supplierBrand: '',
+      sort: 'az',
     });
   };
 
@@ -107,23 +106,13 @@ export default function Products() {
 
       {/* Filters and Search Bar */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 rounded-lg border">
-        {/* <div className="relative w-full md:w-1/3">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-          <Input
-            placeholder="Search products..."
-            className="pl-9"
-            value={params.search}
-            onChange={handleSearchChange}
-          />
-        </div> */}
-
         <div className="flex gap-2 flex-wrap items-center w-full md:w-auto">
           {/* Brand Filter */}
           <FilterDropdown
             label="Brand"
             value={params.supplierBrand}
             options={filterData?.data?.allBrands || []}
-            onChange={(val) => handleFilterChange("supplierBrand", val)}
+            onChange={(val) => handleFilterChange('supplierBrand', val)}
           />
 
           {/* Region Filter */}
@@ -131,7 +120,7 @@ export default function Products() {
             label="Region"
             value={params.categoryRegion}
             options={filterData?.data?.allRegion || []}
-            onChange={(val) => handleFilterChange("categoryRegion", val)}
+            onChange={(val) => handleFilterChange('categoryRegion', val)}
           />
 
           {/* Country Filter */}
@@ -139,26 +128,22 @@ export default function Products() {
             label="Country"
             value={params.originCountry}
             options={filterData?.data?.allOriginCountry || []}
-            onChange={(val) => handleFilterChange("originCountry", val)}
+            onChange={(val) => handleFilterChange('originCountry', val)}
           />
 
           {/* Sort Filter */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="h-10 gap-2">
-                Sort: {params.sort === "az" ? "A-Z" : "Z-A"}{" "}
+                Sort: {params.sort === 'az' ? 'A-Z' : 'Z-A'}{' '}
                 <ChevronDown className="h-4 w-4 opacity-50" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={() => handleFilterChange("sort", "az")}
-              >
+              <DropdownMenuItem onClick={() => handleFilterChange('sort', 'az')}>
                 Name (A-Z)
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleFilterChange("sort", "za")}
-              >
+              <DropdownMenuItem onClick={() => handleFilterChange('sort', 'za')}>
                 Name (Z-A)
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -168,12 +153,7 @@ export default function Products() {
             params.categoryRegion ||
             params.originCountry ||
             params.search) && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={clearFilters}
-              title="Clear Filters"
-            >
+            <Button variant="ghost" size="icon" onClick={clearFilters} title="Clear Filters">
               <X className="h-4 w-4 text-gray-500" />
             </Button>
           )}
@@ -191,10 +171,7 @@ export default function Products() {
         </div>
       ) : (
         <>
-          <DataTable
-            columns={getColumns(handleEdit, handleView)}
-            data={products}
-          />
+          <DataTable columns={getColumns(handleEdit, handleView)} data={products} />
 
           {/* Show there single product model */}
           {isViewModalOpen && selectedViewProduct && (
@@ -244,10 +221,7 @@ function FilterDropdown({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className="h-10 gap-2 bg-white min-w-[100px] justify-between"
-        >
+        <Button variant="outline" className="h-10 gap-2 bg-white min-w-[100px] justify-between">
           <span className="truncate max-w-[120px]">{value || label}</span>
           <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
         </Button>
@@ -255,7 +229,7 @@ function FilterDropdown({
       <DropdownMenuContent className="w-48 max-h-60 overflow-y-auto">
         <DropdownMenuLabel>Select {label}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => onChange("")}>All</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onChange('')}>All</DropdownMenuItem>
         {options.map((option) => (
           <DropdownMenuCheckboxItem
             key={option}
