@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+'use client';
 
 import {
   Dialog,
@@ -7,20 +8,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { useEffect, useRef, useState } from "react";
+} from '@/components/ui/dialog';
+import { useEffect, useRef, useState } from 'react';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
-import { useCreateCategory, useUpdateCategory } from "@/lib/hooks/useCategory";
-import { ImageIcon, Loader2, Plus, Trash2, X } from "lucide-react";
-
-interface UploadImage {
-  public_id: string;
-  url: string;
-}
+import { useCreateCategory, useUpdateCategory } from '@/lib/hooks/useCategory';
+import { ImageIcon, Loader2, Plus, Trash2, X } from 'lucide-react';
 
 interface CategoryItem {
   productType: string;
@@ -35,16 +31,13 @@ interface Props {
   category?: any;
 }
 
-export default function CategoryModal({
-  isOpen,
-  onClose,
-  category: categoryData,
-}: Props) {
-  const [region, setRegion] = useState("");
+export default function CategoryModal({ isOpen, onClose, category: categoryData }: Props) {
+  const [region, setRegion] = useState('');
   const [regionImage, setRegionImage] = useState<File | null>(null);
   const [regionPreview, setRegionPreview] = useState<string | null>(null);
+
   const [categories, setCategories] = useState<CategoryItem[]>([
-    { productType: "", productName: [""], productImage: null, preview: null },
+    { productType: '', productName: [''], productImage: null, preview: null },
   ]);
 
   const regionInputRef = useRef<HTMLInputElement>(null);
@@ -55,45 +48,46 @@ export default function CategoryModal({
   const isEditMode = !!categoryData;
   const loading = creating || updating;
 
-  // Prefill form for editing
+  /* =========================
+     RESET WHEN OPEN
+  ==========================*/
   useEffect(() => {
-    if (!categoryData) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setRegion("");
+    if (!isOpen) return;
+
+    if (!categoryData?._id) {
+      setRegion('');
       setRegionImage(null);
       setRegionPreview(null);
-      setCategories([
-        {
-          productType: "",
-          productName: [""],
-          productImage: null,
-          preview: null,
-        },
-      ]);
-      return;
+      setCategories([{ productType: '', productName: [''], productImage: null, preview: null }]);
     }
+  }, [isOpen, categoryData]);
 
-    const timer = setTimeout(() => {
-      setRegion(categoryData.region || "");
-      setRegionPreview(categoryData.regionImage?.url || null);
+  /* =========================
+     PREFILL EDIT DATA
+  ==========================*/
+  useEffect(() => {
+    if (!categoryData?._id) return;
 
-      setCategories(
-        categoryData.categories?.map((cat: any) => ({
-          productType: cat.productType || "",
-          productName: cat.productName || [""],
-          productImage: null,
-          preview: cat.productImage?.url || null,
-        })) || [],
-      );
-    }, 0);
+    setRegion(categoryData.region || '');
+    setRegionPreview(categoryData.regionImage?.url || null);
 
-    return () => clearTimeout(timer);
+    setCategories(
+      (categoryData.categories || []).map((cat: any) => ({
+        productType: cat.productType || '',
+        productName: cat.productName || [''],
+        productImage: null,
+        preview: cat.productImage?.url || null,
+      })),
+    );
   }, [categoryData]);
 
-  /* IMAGE HANDLERS */
+  /* =========================
+     IMAGE HANDLERS
+  ==========================*/
   const handleRegionImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     const reader = new FileReader();
     reader.onloadend = () => {
       setRegionImage(file);
@@ -102,12 +96,10 @@ export default function CategoryModal({
     reader.readAsDataURL(file);
   };
 
-  const handleCategoryImage = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
-  ) => {
+  const handleCategoryImage = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     const reader = new FileReader();
     reader.onloadend = () => {
       const updated = [...categories];
@@ -118,16 +110,17 @@ export default function CategoryModal({
     reader.readAsDataURL(file);
   };
 
-  /* CATEGORY HANDLERS */
+  /* =========================
+     CATEGORY HANDLERS
+  ==========================*/
   const addCategory = () =>
-    setCategories([
-      ...categories,
-      { productType: "", productName: [""], productImage: null, preview: null },
+    setCategories((prev) => [
+      ...prev,
+      { productType: '', productName: [''], productImage: null, preview: null },
     ]);
 
   const removeCategory = (index: number) =>
-    categories.length > 1 &&
-    setCategories(categories.filter((_, i) => i !== index));
+    setCategories((prev) => prev.filter((_, i) => i !== index));
 
   const updateProductType = (index: number, value: string) => {
     const updated = [...categories];
@@ -137,7 +130,7 @@ export default function CategoryModal({
 
   const addProductName = (catIndex: number) => {
     const updated = [...categories];
-    updated[catIndex].productName.push("");
+    updated[catIndex].productName.push('');
     setCategories(updated);
   };
 
@@ -148,87 +141,98 @@ export default function CategoryModal({
     setCategories(updated);
   };
 
-  const updateProductName = (
-    catIndex: number,
-    nameIndex: number,
-    value: string,
-  ) => {
+  const updateProductName = (catIndex: number, nameIndex: number, value: string) => {
     const updated = [...categories];
     updated[catIndex].productName[nameIndex] = value;
     setCategories(updated);
   };
 
-  /* CLOUDINARY UPLOAD */
-  const uploadToCloudinary = async (
-    file: File,
-    folder: string,
-  ): Promise<UploadImage> => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "YOUR_CLOUDINARY_PRESET");
-    formData.append("folder", folder);
-
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload`,
-      {
-        method: "POST",
-        body: formData,
-      },
-    );
-
-    if (!res.ok) throw new Error("Image upload failed");
-
-    const data = await res.json();
-    return { public_id: data.public_id, url: data.secure_url };
-  };
-
-  /* SUBMIT */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
-      // Upload region image if new
-      let uploadedRegion: UploadImage | undefined = categoryData?.regionImage;
-      if (regionImage)
-        uploadedRegion = await uploadToCloudinary(regionImage, "region-img");
+      const formData = new FormData();
 
-      // Upload category images
-      const uploadedCategories = await Promise.all(
-        categories.map(async (cat) => {
-          if (!cat.productImage && !cat.preview)
-            throw new Error(
-              `Product image missing for ${cat.productType || "Unnamed"}`,
-            );
+      // Add region - CRITICAL: Ensure this is always added
+      if (region && region.trim()) {
+        formData.append('region', region.trim());
+      } else {
+        console.error('Region is required');
+        return;
+      }
 
-          let uploadedImage: UploadImage | undefined = undefined;
-          if (cat.productImage)
-            uploadedImage = await uploadToCloudinary(
-              cat.productImage,
-              "product-type-img",
-            );
-          else if (cat.preview)
-            uploadedImage = { public_id: "", url: cat.preview };
+      // Add region image if it's a new file
+      if (regionImage instanceof File) {
+        formData.append('regionImage', regionImage, regionImage.name);
+      }
 
-          return {
-            productType: cat.productType,
-            productImage: uploadedImage,
-            productName: cat.productName.filter((p) => p.trim() !== ""),
-          };
-        }),
-      );
+      // Add categories
+      categories.forEach((cat, catIndex) => {
+        // Add product type
+        if (cat.productType && cat.productType.trim()) {
+          formData.append(`categories[${catIndex}][productType]`, cat.productType.trim());
+        }
 
-      const payload = {
-        _id: categoryData?._id,
-        region,
-        regionImage: uploadedRegion,
-        categories: uploadedCategories,
-      };
+        // Add product names - ensure they're filtered and not empty
+        const validProductNames = cat.productName.filter((name) => name && name.trim());
+        validProductNames.forEach((name, nameIndex) => {
+          formData.append(`categories[${catIndex}][productName][${nameIndex}]`, name.trim());
+        });
 
-      if (isEditMode)
-        updateRegion(payload as any, { onSuccess: () => onClose() });
-      else createRegion(payload as any, { onSuccess: () => onClose() });
+        // Add category image if it's a new file
+        if (cat.productImage instanceof File) {
+          formData.append(
+            `categories[${catIndex}][productTypeImage]`,
+            cat.productImage,
+            cat.productImage.name,
+          );
+        }
+      });
+
+      // Log the form data for debugging
+      for (const pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+
+      if (isEditMode && categoryData?._id) {
+        // Pass all data to the update function
+        // Ensure formData contains identifiers the API may expect
+        if (formData instanceof FormData) {
+          formData.append('_id', categoryData._id);
+          if (categoryData.slug) formData.append('slug', categoryData.slug);
+        }
+
+        updateRegion(
+          {
+            _id: categoryData._id,
+            region: region.trim(),
+            categories: categories.map((cat) => ({
+              productType: cat.productType,
+              productName: cat.productName.filter((name) => name && name.trim()),
+              productImage: cat.productImage instanceof File ? cat.productImage : cat.preview,
+            })),
+            regionImage: regionImage instanceof File ? regionImage : null,
+            formData, // Include the formData for the API call
+          },
+          { onSuccess: onClose },
+        );
+      } else {
+        // Build payload expected by createRegion hook
+        createRegion(
+          {
+            region: region.trim(),
+            regionImage: regionImage instanceof File ? regionImage : undefined,
+            categories: categories.map((cat) => ({
+              productType: cat.productType,
+              productName: cat.productName.filter((name) => name && name.trim()),
+              productImage: cat.productImage instanceof File ? cat.productImage : undefined,
+            })),
+          },
+          { onSuccess: onClose },
+        );
+      }
     } catch (error) {
-      console.error(error);
-      alert(error instanceof Error ? error.message : "Something went wrong");
+      console.error('Error in handleSubmit:', error);
     }
   };
 
@@ -237,16 +241,14 @@ export default function CategoryModal({
       <DialogContent className="w-full max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
-            {isEditMode ? "Edit Category" : "Create New Category"}
+            {isEditMode ? 'Edit Category' : 'Create New Category'}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* REGION */}
           <div className="border rounded-xl p-5 space-y-4 bg-muted/20">
-            <h3 className="font-semibold text-sm text-muted-foreground">
-              Region Information
-            </h3>
+            <h3 className="font-semibold text-sm text-muted-foreground">Region Information</h3>
 
             <div className="space-y-2">
               <Label>Region Name</Label>
@@ -273,6 +275,7 @@ export default function CategoryModal({
                 {regionPreview ? (
                   <img
                     src={regionPreview}
+                    alt="Region preview"
                     className="w-full h-36 object-cover rounded-lg"
                   />
                 ) : (
@@ -288,10 +291,7 @@ export default function CategoryModal({
           {/* CATEGORIES */}
           <div className="space-y-5">
             {categories.map((cat, catIndex) => (
-              <div
-                key={catIndex}
-                className="border rounded-xl p-5 space-y-4 bg-white shadow-sm"
-              >
+              <div key={catIndex} className="border rounded-xl p-5 space-y-4 bg-white shadow-sm">
                 <div className="flex justify-between items-center">
                   <h4 className="font-semibold">Category {catIndex + 1}</h4>
                   <Button
@@ -309,9 +309,7 @@ export default function CategoryModal({
                   <Input
                     placeholder="Cooking Oils"
                     value={cat.productType}
-                    onChange={(e) =>
-                      updateProductType(catIndex, e.target.value)
-                    }
+                    onChange={(e) => updateProductType(catIndex, e.target.value)}
                   />
                 </div>
 
@@ -326,14 +324,13 @@ export default function CategoryModal({
                   />
 
                   <div
-                    onClick={() =>
-                      document.getElementById(`cat-img-${catIndex}`)?.click()
-                    }
+                    onClick={() => document.getElementById(`cat-img-${catIndex}`)?.click()}
                     className="border-2 border-dashed rounded-lg p-5 text-center cursor-pointer"
                   >
                     {cat.preview ? (
                       <img
                         src={cat.preview}
+                        alt="Category preview"
                         className="w-full h-32 object-cover rounded-lg"
                       />
                     ) : (
@@ -353,13 +350,7 @@ export default function CategoryModal({
                         <Input
                           value={name}
                           placeholder="Product name"
-                          onChange={(e) =>
-                            updateProductName(
-                              catIndex,
-                              nameIndex,
-                              e.target.value,
-                            )
-                          }
+                          onChange={(e) => updateProductName(catIndex, nameIndex, e.target.value)}
                         />
                         <Button
                           type="button"
@@ -404,12 +395,12 @@ export default function CategoryModal({
               {loading ? (
                 <>
                   <Loader2 className="animate-spin mr-2" size={16} />
-                  {isEditMode ? "Updating..." : "Creating..."}
+                  {isEditMode ? 'Updating...' : 'Creating...'}
                 </>
               ) : isEditMode ? (
-                "Update Category"
+                'Update Category'
               ) : (
-                "Create Category"
+                'Create Category'
               )}
             </Button>
           </DialogFooter>
