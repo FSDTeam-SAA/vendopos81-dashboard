@@ -1,14 +1,13 @@
 // axios-instance.ts
 
-import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
-import { getSession } from "next-auth/react";
+import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import { getSession } from 'next-auth/react';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 
 export const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_BASE,
   timeout: 30000,
-  headers: { "Content-Type": "application/json" },
 });
 
 // Request interceptor
@@ -24,11 +23,11 @@ axiosInstance.interceptors.request.use(
 
       // 2) Otherwise use NextAuth session token
       const session = await getSession();
-      if (session && "accessToken" in session && config.headers) {
+      if (session && 'accessToken' in session && config.headers) {
         config.headers.Authorization = `Bearer ${session.accessToken}`;
       }
     } catch (error) {
-      console.error("Failed to get session:", error);
+      console.error('Failed to get session:', error);
     }
 
     return config;

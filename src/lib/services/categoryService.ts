@@ -71,7 +71,7 @@ export const updateCategory = async (payload: unknown) => {
     if (!(p.formData instanceof FormData)) {
       // IMPORTANT: Ensure region is added correctly
       if (p.region) {
-        formData.append('region', payload.region);
+        formData.append('region', p.region);
       }
 
       // SAFE GUARD - ensure categories exists
@@ -116,24 +116,42 @@ export const updateCategory = async (payload: unknown) => {
       }
     }
 
-    // Debug: log whether regionImage exists in formData and list keys (temporary)
+    // Debug: explicitly check for regionImage in formData and log details
     try {
-      console.debug('updateCategory - formData keys:');
-      // Note: iterating formData.entries() can be expensive for large files, keep minimal
+      let foundRegionImage = false;
+      console.log('updateCategory - list formData keys (non-binary info):');
       for (const e of formData.entries()) {
-        // Only log key and type for value to avoid dumping binary
+        const key = String(e[0]);
         const val = e[1];
-        console.debug(e[0], val instanceof File ? `File(${val.name})` : String(val));
+        if (key === 'regionImage') {
+          foundRegionImage = true;
+          if (val instanceof File) {
+            console.log('updateCategory - regionImage File found in formData ->', {
+              name: val.name,
+              size: val.size,
+              type: val.type,
+            });
+          } else {
+            console.log('updateCategory - regionImage present but not a File:', val);
+          }
+        } else {
+          console.log(
+            'formData key:',
+            key,
+            val instanceof File ? `File(${(val as File).name})` : String(val),
+          );
+        }
       }
+      console.log('updateCategory - regionImage present in formData?', foundRegionImage);
     } catch (err) {
-      console.debug('Failed to enumerate formData', err);
+      console.log('updateCategory - Failed to enumerate formData', err);
     }
 
-    const response = await axiosInstance.put(`/category/update/${p._id}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    // Clear Content-Type for this request so the browser can set the multipart boundary.
+    // axiosInstance has a default Content-Type of application/json; passing
+    // undefined ensures axios does not override the header and the browser
+    // will add the correct multipart/form-data; boundary automatically.
+    const response = await axiosInstance.put(`/category/update/${p._id}`, formData);
 
     // Return the API body for consistency with other service functions
     return response.data;
