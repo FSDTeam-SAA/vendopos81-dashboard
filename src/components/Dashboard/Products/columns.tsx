@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Product } from "@/lib/types/product";
-import { ColumnDef } from "@tanstack/react-table";
-import { Eye, ImageIcon } from "lucide-react";
-import Image from "next/image";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Product } from '@/lib/types/product';
+import { ColumnDef } from '@tanstack/react-table';
+import { Eye, ImageIcon } from 'lucide-react';
+import Image from 'next/image';
 
 export const getColumns = (
   onEdit: (product: Product) => void,
   onView: (product: Product) => void,
 ): ColumnDef<Product>[] => [
   {
-    accessorKey: "images",
-    header: "Image",
+    accessorKey: 'images',
+    header: 'Image',
     cell: ({ row }) => {
-      const images = row.getValue<Product["images"]>("images");
+      const images = row.getValue<Product['images']>('images');
       const firstImage = images && images.length > 0 ? images[0].url : null;
-      const title = row.getValue<string>("title") || "Product Image";
+      const title = row.getValue<string>('title') || 'Product Image';
 
       return (
         <div className="relative h-14 w-14 overflow-hidden rounded-lg border border-gray-200 transition-all duration-200 hover:scale-105 hover:border-green-900">
@@ -42,10 +42,10 @@ export const getColumns = (
     },
   },
   {
-    accessorKey: "title",
-    header: "Product Name",
+    accessorKey: 'title',
+    header: 'Product Name',
     cell: ({ row }) => {
-      const title = row.getValue<string>("title");
+      const title = row.getValue<string>('title');
       const shortDescription = row.original.shortDescription;
 
       return (
@@ -54,10 +54,7 @@ export const getColumns = (
             {title}
           </div>
           {shortDescription && (
-            <div
-              className="text-xs text-gray-500 line-clamp-2"
-              title={shortDescription}
-            >
+            <div className="text-xs text-gray-500 line-clamp-2" title={shortDescription}>
               {shortDescription}
             </div>
           )}
@@ -67,29 +64,27 @@ export const getColumns = (
   },
 
   {
-    accessorKey: "productType",
-    header: "Category",
+    accessorKey: 'productType',
+    header: 'Category',
     cell: ({ row }) => {
-      return <div className="text-gray-700">{row.getValue("productType")}</div>;
+      return <div className="text-gray-700">{row.getValue('productType')}</div>;
     },
   },
   {
-    accessorKey: "Region",
-    header: "Region",
+    accessorKey: 'Region',
+    header: 'Region',
     cell: ({ row }) => {
-      return (
-        <div className="text-gray-700">{row.original?.category?.region}</div>
-      );
+      return <div className="text-gray-700">{row.original?.category?.region}</div>;
     },
   },
   {
-    accessorKey: "priceFrom",
-    header: "Price From",
+    accessorKey: 'priceFrom',
+    header: 'Price From',
     cell: ({ row }) => {
-      const price = parseFloat(row.getValue("priceFrom"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
+      const price = parseFloat(row.getValue('priceFrom'));
+      const formatted = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
       }).format(price);
 
       return <div className="font-medium text-gray-900">{formatted}</div>;
@@ -97,41 +92,35 @@ export const getColumns = (
   },
 
   {
-    accessorKey: "status",
-    header: "Status",
+    accessorKey: 'status',
+    header: 'Status',
     cell: ({ row }) => {
-      const status = row.getValue<string>("status");
+      const status = row.getValue<string>('status');
 
-      let badgeStyle = "bg-gray-100 text-gray-600 border-gray-200";
+      let badgeStyle = 'bg-gray-100 text-gray-600 border-gray-200';
 
-      if (
-        status?.toLowerCase() === "approved" ||
-        status?.toLowerCase() === "active"
-      ) {
-        badgeStyle = "bg-green-100 text-green-700 border-green-200";
-      } else if (status?.toLowerCase() === "pending") {
-        badgeStyle = "bg-yellow-100 text-yellow-700 border-yellow-200";
-      } else if (
-        status?.toLowerCase() === "rejected" ||
-        status?.toLowerCase() === "inactive"
-      ) {
-        badgeStyle = "bg-red-100 text-red-700 border-red-200";
+      if (status?.toLowerCase() === 'approved' || status?.toLowerCase() === 'active') {
+        badgeStyle = 'bg-green-100 text-green-700 border-green-200';
+      } else if (status?.toLowerCase() === 'pending') {
+        badgeStyle = 'bg-yellow-100 text-yellow-700 border-yellow-200';
+      } else if (status?.toLowerCase() === 'rejected' || status?.toLowerCase() === 'inactive') {
+        badgeStyle = 'bg-red-100 text-red-700 border-red-200';
       }
 
       return (
         <Badge
           variant="outline"
-          className={`${badgeStyle} shadow-none capitalize hover:${badgeStyle.split(" ")[0]}`}
+          className={`${badgeStyle} shadow-none capitalize hover:${badgeStyle.split(' ')[0]}`}
         >
-          {status || "N/A"}
+          {status || 'N/A'}
         </Badge>
       );
     },
   },
 
   {
-    id: "actions",
-    header: "Action",
+    id: 'actions',
+    header: 'Action',
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">

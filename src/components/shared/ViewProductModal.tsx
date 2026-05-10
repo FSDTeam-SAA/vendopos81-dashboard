@@ -1,19 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+'use client';
 
-import { Badge } from "@/components/ui/badge";
+import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Product } from "@/lib/types/product";
-import { Pencil, Trash2 } from "lucide-react";
-import { useSession } from "next-auth/react";
-import Image from "next/image";
-import { useState } from "react";
+} from '@/components/ui/dialog';
+import { Product } from '@/lib/types/product';
+import { Pencil, Trash2 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
+import { useState } from 'react';
+import StatusDropdown from './StatusDropdown';
+import { useUpdateProductStatus } from '../../lib/hooks/useProduct';
 
 interface ViewProductModalProps {
   product: Product | null;
@@ -32,15 +34,15 @@ export const ViewProductModal = ({
   const [imageError, setImageError] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const { data: session } = useSession();
+  const { mutate: updateProductStatus } = useUpdateProductStatus();
 
   if (!product) return null;
-  const isAdmin = session?.user?.role === "admin";
-
+  const isAdmin = session?.user?.role === 'admin';
   const canEdit = isAdmin && product.isVendorBrand === true;
   const canDelete = isAdmin;
 
   const handleDelete = () => {
-    console.log("Delete Product:", product._id);
+    console.log('Delete Product:', product._id);
     setIsDeleteOpen(false);
     onClose();
   };
@@ -59,7 +61,6 @@ export const ViewProductModal = ({
           <DialogHeader className="pb-2 mt-3 relative top-0 bg-white z-10">
             <DialogTitle className="text-xl font-bold text-gray-800 pr-24">
               {product.productName}
-
             </DialogTitle>
 
             <DialogDescription className="text-sm text-gray-600">
@@ -101,18 +102,16 @@ export const ViewProductModal = ({
               <div className="flex flex-col gap-2">
                 {/* Main Image */}
                 <div className="relative w-full h-50 rounded-lg overflow-hidden">
-                  {product.images &&
-                  product.images.length > 0 &&
-                  !imageError ? (
+                  {product.images && product.images.length > 0 && !imageError ? (
                     <Image
-                      src={product.images[selectedImageIndex]?.url || ""}
+                      src={product.images[selectedImageIndex]?.url || ''}
                       alt={product.productName}
                       fill
                       sizes="(max-width: 768px) 100vw, 800px"
                       className="object-contain"
                       priority
                       onError={() => setImageError(true)}
-                      unoptimized={process.env.NODE_ENV === "development"}
+                      unoptimized={process.env.NODE_ENV === 'development'}
                     />
                   ) : (
                     <div className="flex h-full w-full flex-col items-center justify-center bg-gray-100 text-gray-400">
@@ -143,8 +142,8 @@ export const ViewProductModal = ({
                         onClick={() => handleImageIndexChange(idx)}
                         className={`relative w-20 h-20 rounded-md overflow-hidden border-2 cursor-pointer transition-all flex-shrink-0 ${
                           selectedImageIndex === idx
-                            ? "border-primary ring-2 ring-primary/20"
-                            : "border-gray-200 hover:border-gray-400"
+                            ? 'border-primary ring-2 ring-primary/20'
+                            : 'border-gray-200 hover:border-gray-400'
                         }`}
                       >
                         <Image
@@ -155,7 +154,7 @@ export const ViewProductModal = ({
                           className="object-cover"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
-                            target.style.display = "none";
+                            target.style.display = 'none';
                           }}
                         />
                       </div>
@@ -217,17 +216,23 @@ export const ViewProductModal = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
                 <div>
                   <p className="text-sm text-gray-500">Region</p>
-                  <p className="font-medium text-gray-900">
-                    {product.category?.region || "N/A"}
-                  </p>
+                  <p className="font-medium text-gray-900">{product.category?.region || 'N/A'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Origin Country</p>
-                  <p className="font-medium text-gray-900">
-                    {product.originCountry || "N/A"}
-                  </p>
+                  <p className="font-medium text-gray-900">{product.originCountry || 'N/A'}</p>
                 </div>
-                <div className="flex items-center gap-2">
+
+                <StatusDropdown
+                  product={product}
+                  onStatusChange={(newStatus) => {
+                    updateProductStatus({
+                      id: product._id,
+                      status: newStatus,
+                    });
+                  }}
+                />
+                {/* <div className="flex items-center gap-2">
                   <p className="text-sm text-gray-500">Status :</p>
                   <span
                     className={`inline-block mt-1 px-3 py-1 rounded-full text-xs font-semibold ${
@@ -238,7 +243,7 @@ export const ViewProductModal = ({
                   >
                     {product.status?.toUpperCase() || "N/A"}
                   </span>
-                </div>
+                </div> */}
               </div>
 
               {/* Variants Section */}
@@ -272,16 +277,9 @@ export const ViewProductModal = ({
                         </thead>
                         <tbody className="divide-y divide-gray-200">
                           {product.variants.map((v: any) => (
-                            <tr
-                              key={v._id}
-                              className="hover:bg-gray-50 transition-colors"
-                            >
-                              <td className="px-4 py-3 font-medium text-gray-900">
-                                {v.label}
-                              </td>
-                              <td className="px-4 py-3 text-gray-600">
-                                {v.unit}
-                              </td>
+                            <tr key={v._id} className="hover:bg-gray-50 transition-colors">
+                              <td className="px-4 py-3 font-medium text-gray-900">{v.label}</td>
+                              <td className="px-4 py-3 text-gray-600">{v.unit}</td>
                               <td className="px-4 py-3">
                                 {v.discount > 0 ? (
                                   <div className="flex items-center gap-2">
@@ -293,9 +291,7 @@ export const ViewProductModal = ({
                                     </span>
                                   </div>
                                 ) : (
-                                  <span className="font-semibold">
-                                    ${v.price}
-                                  </span>
+                                  <span className="font-semibold">${v.price}</span>
                                 )}
                               </td>
                               <td className="px-4 py-3">
@@ -310,19 +306,15 @@ export const ViewProductModal = ({
                               <td className="px-4 py-3">
                                 <span
                                   className={`inline-flex items-center gap-1 ${
-                                    v.stock > 0
-                                      ? "text-green-800"
-                                      : "text-red-600"
+                                    v.stock > 0 ? 'text-green-800' : 'text-red-600'
                                   }`}
                                 >
                                   <span
                                     className={`w-1.5 h-1.5 rounded-full ${
-                                      v.stock > 0
-                                        ? "bg-green-700"
-                                        : "bg-red-500"
+                                      v.stock > 0 ? 'bg-green-700' : 'bg-red-500'
                                     }`}
                                   ></span>
-                                  {v.stock > 0 ? v.stock : "Out of Stock"}
+                                  {v.stock > 0 ? v.stock : 'Out of Stock'}
                                 </span>
                               </td>
                             </tr>
@@ -345,35 +337,28 @@ export const ViewProductModal = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <p className="text-xs text-gray-500">Shop Name</p>
-                      <p className="font-medium text-gray-800">
-                        {product.supplier.shopName}
-                      </p>
+                      <p className="font-medium text-gray-800">{product.supplier.shopName}</p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Brand</p>
-                      <p className="font-medium text-primary">
-                        {product.supplier.brandName}
-                      </p>
+                      <p className="font-medium text-primary">{product.supplier.brandName}</p>
                     </div>
                   </div>
                 </div>
               )}
 
               {/* Debug Info - Hidden by default, only shown if needed */}
-              {product.isVendorBrand &&
-                process.env.NODE_ENV === "development" && (
-                  <div className="mt-3 p-3 rounded-xl border border-dashed border-green-800 bg-amber-50 shadow-sm">
-                    <div className="flex items-start gap-2">
-                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-green-800 text-amber-700 text-xs font-bold"></div>
+              {product.isVendorBrand && process.env.NODE_ENV === 'development' && (
+                <div className="mt-3 p-3 rounded-xl border border-dashed border-green-800 bg-amber-50 shadow-sm">
+                  <div className="flex items-start gap-2">
+                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-green-800 text-amber-700 text-xs font-bold"></div>
 
-                      <div className="flex flex-col">
-                        <span className="text-sm font-bold text-green-700">
-                          Vendor Brand
-                        </span>
-                      </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-bold text-green-700">Vendor Brand</span>
                     </div>
                   </div>
-                )}
+                </div>
+              )}
             </div>
           </div>
         </DialogContent>
@@ -386,8 +371,7 @@ export const ViewProductModal = ({
             <DialogHeader>
               <DialogTitle className="text-red-600">Confirm Delete</DialogTitle>
               <DialogDescription>
-                Are you sure you want to delete this product? This action cannot
-                be undone.
+                Are you sure you want to delete this product? This action cannot be undone.
               </DialogDescription>
             </DialogHeader>
 
