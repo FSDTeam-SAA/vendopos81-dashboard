@@ -25,7 +25,6 @@ export default function Categories() {
   const categories = data?.data || [];
   const meta = data?.meta || { page: 1, limit: 10, total: 0, totalPage: 1 };
 
-  console.log("this is categories", categories);
 
   // Calculate stats
   const totalCategories = meta.total || categories.length;
