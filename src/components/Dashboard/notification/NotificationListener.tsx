@@ -1,15 +1,12 @@
-"use client";
+'use client';
 
-import { useWebSocket } from "@/lib/hooks/useWebSocket";
-import {
-  useAllNotifications,
-  useMarkNotificationAsViewed,
-} from "@/lib/hooks/useNotification";
-import { Notification } from "@/lib/types/notification";
-import { Bell, Package, Eye, CheckCircle, Clock } from "lucide-react";
-import { useState } from "react";
-import { useSession } from "next-auth/react";
-import { Button } from "@/components/ui/button";
+import { useWebSocket } from '@/lib/hooks/useWebSocket';
+import { useAllNotifications, useMarkNotificationAsViewed } from '@/lib/hooks/useNotification';
+import { Notification } from '@/lib/types/notification';
+import { Bell, Package, Eye, CheckCircle, Clock } from 'lucide-react';
+import { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { Button } from '@/components/ui/button';
 
 const NotificationListener = () => {
   const { message: wsMessage } = useWebSocket();
@@ -17,7 +14,7 @@ const NotificationListener = () => {
   const [page, setPage] = useState(1);
 
   // Get user ID from session or use fallback
-  const userId = session?.user?.id || "";
+  const userId = session?.user?.id || '';
 
   const { data, isLoading, isError, refetch } = useAllNotifications(userId);
   const { mutate: markAsViewed } = useMarkNotificationAsViewed();
@@ -29,7 +26,7 @@ const NotificationListener = () => {
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case "product":
+      case 'product':
         return <Package className="w-5 h-5 text-blue-500" />;
       default:
         return <Bell className="w-5 h-5 text-gray-500" />;
@@ -38,12 +35,12 @@ const NotificationListener = () => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
@@ -86,14 +83,17 @@ const NotificationListener = () => {
         </div>
         {meta && (
           <div className="text-sm flex gap-4 items-center text-gray-500">
-            {notifications.length > 0 &&  <Button onClick={()=>handleMarkAsViewed()} className="bg-[#086646] hover:bg-[#144836]">
-              Read to Mark
-            </Button>
+            {notifications.length > 0 && (
+              <Button
+                onClick={() => handleMarkAsViewed()}
+                className="bg-[#086646] hover:bg-[#144836]"
+              >
+                Read to Mark
+              </Button>
+            )}
 
-            }
-           
             <span>
-              Total: {meta.total} notification{meta.total !== 1 ? "s" : ""}
+              Total: {meta.total} notification{meta.total !== 1 ? 's' : ''}
             </span>
           </div>
         )}
@@ -110,9 +110,7 @@ const NotificationListener = () => {
             <div
               key={notification._id}
               className={`relative p-4 rounded-xl border transition-all duration-300 hover:shadow-md ${
-                notification.isViewed
-                  ? "bg-white border-gray-200"
-                  : "bg-lime-50 border-lime-200"
+                notification.isViewed ? 'bg-white border-gray-200' : 'bg-lime-50 border-lime-200'
               }`}
             >
               {!notification.isViewed && (
@@ -122,7 +120,7 @@ const NotificationListener = () => {
               <div className="flex items-start gap-4">
                 <div
                   className={`p-3 rounded-full ${
-                    notification.isViewed ? "bg-gray-100" : "bg-lime-100"
+                    notification.isViewed ? 'bg-gray-100' : 'bg-lime-100'
                   }`}
                 >
                   {getNotificationIcon(notification.type)}
@@ -131,9 +129,7 @@ const NotificationListener = () => {
                 <div className="flex-1">
                   <p
                     className={`text-sm ${
-                      notification.isViewed
-                        ? "text-gray-600"
-                        : "text-gray-800 font-medium"
+                      notification.isViewed ? 'text-gray-600' : 'text-gray-800 font-medium'
                     }`}
                   >
                     {notification.message}
@@ -148,7 +144,7 @@ const NotificationListener = () => {
                     <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full capitalize">
                       {notification.type}
                     </span>
-{/* 
+                    {/*
                     {notification.isViewed ? (
                       <span className="flex items-center gap-1 text-xs text-green-500">
                         <CheckCircle className="w-3 h-3" />
@@ -187,9 +183,7 @@ const NotificationListener = () => {
           </span>
 
           <button
-            onClick={() =>
-              setPage((prev) => Math.min(prev + 1, meta.totalPage))
-            }
+            onClick={() => setPage((prev) => Math.min(prev + 1, meta.totalPage))}
             disabled={page === meta.totalPage}
             className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors cursor-pointer"
           >

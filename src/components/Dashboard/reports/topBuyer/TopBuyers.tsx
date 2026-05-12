@@ -13,7 +13,8 @@ const TopBuyers = () => {
   const [selectedBuyer, setSelectedBuyer] = React.useState('');
   const [currentPage, setCurrentPage] = React.useState(1);
   const { data, isLoading, isError } = useReportTopBuyers();
-  const buyersData = data?.data || [];
+  // const buyersData = data?.data || [];
+  const buyersData = Array.isArray(data?.data) ? data.data : [];
 
   const totalPages = Math.ceil(buyersData.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -40,9 +41,9 @@ const TopBuyers = () => {
           </h3>
           <p className="text-sm text-gray-600">Customers with highest purchase value</p>
         </div>
-        <button className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900">
+        {/* <button className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900">
           📥 Export
-        </button>
+        </button> */}
       </div>
 
       <div className="overflow-x-auto">
