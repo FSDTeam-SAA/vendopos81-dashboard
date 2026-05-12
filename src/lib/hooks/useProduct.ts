@@ -13,7 +13,6 @@ import { ProductParams } from '../types/product';
 import { toast } from 'sonner';
 
 // Get All Products
-// Get All Products
 export const useAllProducts = (params?: ProductParams) => {
   return useQuery({
     queryKey: ['all-products', params],

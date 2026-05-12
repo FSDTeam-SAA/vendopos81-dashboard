@@ -1,15 +1,12 @@
-"use client";
+'use client';
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import {
-  useGetSingleCustomerData,
-  useSuspendCustomer,
-} from "@/lib/hooks/useUsers";
-import { User } from "@/lib/types/users";
-import { AlertTriangle, Calendar, Mail, MapPin, Phone } from "lucide-react";
-import Image from "next/image";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { useGetSingleCustomerData, useSuspendCustomer } from '@/lib/hooks/useUsers';
+import { User } from '@/lib/types/users';
+import { AlertTriangle, Calendar, Mail, MapPin, Phone } from 'lucide-react';
+import Image from 'next/image';
 
 interface CustomerModalProps {
   modalOpen: boolean;
@@ -17,11 +14,7 @@ interface CustomerModalProps {
   data: User | null;
 }
 
-const CustomerModal = ({
-  modalOpen,
-  onModalChange,
-  data,
-}: CustomerModalProps) => {
+const CustomerModal = ({ modalOpen, onModalChange, data }: CustomerModalProps) => {
   const { mutate: suspendCustomer, isPending: isSuspending } = useSuspendCustomer();
 
   const customerId = data?._id;
@@ -34,7 +27,7 @@ const CustomerModal = ({
 
   // suspend handler with console.log
   const handleSuspend = () => {
-    console.log("Suspending user ID:", customer._id);
+    console.log('Suspending user ID:', customer._id);
     suspendCustomer(customer._id);
   };
 
@@ -57,7 +50,9 @@ const CustomerModal = ({
                     <Image
                       src={customer.image.url}
                       alt="Customer"
-                      className="w-full h-full object-cover"
+                      width={48}
+                      height={48}
+                      className="object-cover rounded-full"
                     />
                   ) : (
                     initials
@@ -72,11 +67,11 @@ const CustomerModal = ({
                   <Badge
                     className={`mt-1 text-xs ${
                       customer.isSuspended
-                        ? "bg-red-100 text-red-600"
-                        : "bg-emerald-100 text-green-700"
+                        ? 'bg-red-100 text-red-600'
+                        : 'bg-emerald-100 text-green-700'
                     }`}
                   >
-                    {customer.isSuspended ? "Suspended" : "Active"}
+                    {customer.isSuspended ? 'Suspended' : 'Active'}
                   </Badge>
                 </div>
               </div>
@@ -94,9 +89,7 @@ const CustomerModal = ({
                 <Mail className="w-4 h-4 text-gray-400" />
                 <div>
                   <p className="text-sm text-gray-400">Email</p>
-                  <p className="text-sm text-gray-900">
-                    {customer.email || "N/A"}
-                  </p>
+                  <p className="text-sm text-gray-900">{customer.email || 'N/A'}</p>
                 </div>
               </div>
 
@@ -104,9 +97,7 @@ const CustomerModal = ({
                 <Phone className="w-4 h-4 text-gray-400 mt-1" />
                 <div>
                   <p className="text-sm text-gray-400">Phone</p>
-                  <p className="text-sm text-gray-900">
-                    {customer?.phone || "N/A"}
-                  </p>
+                  <p className="text-sm text-gray-900">{customer?.phone || 'N/A'}</p>
                 </div>
               </div>
 
@@ -117,7 +108,7 @@ const CustomerModal = ({
                   <p className="text-sm text-gray-900">
                     {customer?.createdAt
                       ? new Date(customer.createdAt).toLocaleDateString()
-                      : "N/A"}
+                      : 'N/A'}
                   </p>
                 </div>
               </div>
@@ -133,9 +124,9 @@ const CustomerModal = ({
               </div>
 
               <p className="text-sm text-gray-600 mt-3 leading-relaxed">
-                {customer.street || "Not provided"} <br />
-                {customer.location || "Not provided"} <br />
-                {customer.postalCode || "Not provided"}
+                {customer.street || 'Not provided'} <br />
+                {customer.location || 'Not provided'} <br />
+                {customer.postalCode || 'Not provided'}
               </p>
             </div>
 

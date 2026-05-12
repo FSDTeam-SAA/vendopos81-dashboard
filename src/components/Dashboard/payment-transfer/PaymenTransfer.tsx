@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -11,7 +11,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
   ChevronDown,
   Loader2,
@@ -22,7 +22,7 @@ import {
   Clock,
   XCircle,
   Send,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,14 +30,14 @@ import {
   DropdownMenuTrigger,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 
-import { useAllSettlements } from "@/lib/hooks/usePaymentsttatment";
-import { Settlement, Analytics } from "@/lib/types/paymentTransfer";
+import { useAllSettlements } from '@/lib/hooks/usePaymentsttatment';
+import { Settlement, Analytics } from '@/lib/types/paymentTransfer';
 
 const PaymenTransfer = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [status, setStatus] = useState<string>("");
+  const [status, setStatus] = useState<string>('');
 
   const { data: settlementResponse, isLoading, isError } = useAllSettlements();
 
@@ -66,7 +66,7 @@ const PaymenTransfer = () => {
   };
 
   const clearFilters = () => {
-    setStatus("");
+    setStatus('');
     setCurrentPage(1);
   };
 
@@ -88,14 +88,12 @@ const PaymenTransfer = () => {
 
   // Filter settlements on client side since the current hook doesn't support params
   const filteredSettlements = status
-    ? settlements.filter(
-        (s: Settlement) => s.status.toLowerCase() === status.toLowerCase(),
-      )
+    ? settlements.filter((s: Settlement) => s.status.toLowerCase() === status.toLowerCase())
     : settlements;
 
   const handleTransaction = (settlement: Settlement) => {
     // Implement the logic to handle transaction details view
-    console.log("Transaction details for settlement:", settlement);
+    console.log('Transaction details for settlement:', settlement);
   };
 
   return (
@@ -155,9 +153,7 @@ const PaymenTransfer = () => {
         {/* Table Section */}
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Transfer History
-            </h2>
+            <h2 className="text-lg font-semibold text-gray-900">Transfer History</h2>
             <div className="flex items-center gap-3">
               {status && (
                 <Button
@@ -172,35 +168,25 @@ const PaymenTransfer = () => {
               )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="bg-white text-gray-700"
-                  >
+                  <Button variant="outline" size="sm" className="bg-white text-gray-700">
                     <Filter className="w-4 h-4 mr-2" />
-                    Status: {status || "All"}
+                    Status: {status || 'All'}
                     <ChevronDown className="ml-2 w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => handleStatusChange("")}>
+                  <DropdownMenuItem onClick={() => handleStatusChange('')}>
                     All Transfers
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleStatusChange("transferred")}
-                  >
+                  <DropdownMenuItem onClick={() => handleStatusChange('transferred')}>
                     Transferred
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleStatusChange("pending")}
-                  >
+                  <DropdownMenuItem onClick={() => handleStatusChange('pending')}>
                     Pending
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleStatusChange("requested")}
-                  >
+                  <DropdownMenuItem onClick={() => handleStatusChange('requested')}>
                     Requested
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -240,16 +226,12 @@ const PaymenTransfer = () => {
 
                 <TableBody>
                   {filteredSettlements?.map((settlement: Settlement) => (
-                    <TableRow
-                      key={settlement._id}
-                      className="bg-white hover:bg-gray-50 transition"
-                    >
+                    <TableRow key={settlement._id} className="bg-white hover:bg-gray-50 transition">
                       {/* 1. Supplier */}
                       <TableCell className="whitespace-nowrap">
                         <div className="flex flex-col">
                           <span className="font-medium text-gray-900">
-                            {settlement.supplierId?.shopName ||
-                              settlement.supplierId?.brandName}
+                            {settlement.supplierId?.shopName || settlement.supplierId?.brandName}
                           </span>
                           <span className="text-xs text-gray-500">
                             {settlement.supplierId?.email}
@@ -289,11 +271,11 @@ const PaymenTransfer = () => {
                       <TableCell className="text-center">
                         <Badge
                           className={`capitalize pointer-events-none whitespace-nowrap ${
-                            settlement.status === "transferred"
-                              ? "bg-green-100 text-green-700 border-green-200"
-                              : settlement.status === "pending"
-                                ? "bg-yellow-100 text-yellow-700 border-yellow-200"
-                                : "bg-blue-100 text-blue-700 border-blue-200"
+                            settlement.status === 'transferred'
+                              ? 'bg-green-100 text-green-700 border-green-200'
+                              : settlement.status === 'pending'
+                                ? 'bg-yellow-100 text-yellow-700 border-yellow-200'
+                                : 'bg-blue-100 text-blue-700 border-blue-200'
                           }`}
                         >
                           {settlement.status}
@@ -311,7 +293,7 @@ const PaymenTransfer = () => {
                       </TableCell>
 
                       {/* 7. Action */}
-                      {settlement.orderId.paymentStatus === "paid" ? (
+                      {settlement.orderId?.paymentStatus === 'paid' ? (
                         <TableCell className="text-center whitespace-nowrap">
                           <span className="text-gray-500">N/A</span>
                         </TableCell>
@@ -332,10 +314,7 @@ const PaymenTransfer = () => {
                   ))}
                   {filteredSettlements.length === 0 && (
                     <TableRow>
-                      <td
-                        colSpan={7}
-                        className="py-12 text-center text-gray-500 font-medium"
-                      >
+                      <td colSpan={7} className="py-12 text-center text-gray-500 font-medium">
                         No transfers found.
                       </td>
                     </TableRow>
@@ -357,30 +336,26 @@ const PaymenTransfer = () => {
               >
                 ←
               </Button>
-              {Array.from({ length: totalPage }, (_, i) => i + 1).map(
-                (page) => (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "default" : "outline"}
-                    size="sm"
-                    className={
-                      currentPage === page
-                        ? "bg-teal-600 text-white hover:bg-teal-700"
-                        : "text-gray-600 bg-transparent"
-                    }
-                    onClick={() => handlePageChange(page)}
-                  >
-                    {page}
-                  </Button>
-                ),
-              )}
+              {Array.from({ length: totalPage }, (_, i) => i + 1).map((page) => (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? 'default' : 'outline'}
+                  size="sm"
+                  className={
+                    currentPage === page
+                      ? 'bg-teal-600 text-white hover:bg-teal-700'
+                      : 'text-gray-600 bg-transparent'
+                  }
+                  onClick={() => handlePageChange(page)}
+                >
+                  {page}
+                </Button>
+              ))}
               <Button
                 variant="outline"
                 size="sm"
                 className="text-gray-600 hover:text-gray-900 bg-transparent"
-                onClick={() =>
-                  handlePageChange(Math.min(totalPage, currentPage + 1))
-                }
+                onClick={() => handlePageChange(Math.min(totalPage, currentPage + 1))}
                 disabled={currentPage === totalPage}
               >
                 →

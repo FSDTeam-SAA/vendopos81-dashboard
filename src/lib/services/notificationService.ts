@@ -1,6 +1,5 @@
-
-import axiosInstance from "../instance/axios-instance";
-import { NotificationsParams } from "../types/notification";
+import axiosInstance from '../instance/axios-instance';
+import { NotificationsParams } from '../types/notification';
 
 // Get All Notifications
 export const getAllNotifications = async (id: string, params?: NotificationsParams) => {
@@ -8,7 +7,7 @@ export const getAllNotifications = async (id: string, params?: NotificationsPara
     const response = await axiosInstance.get(`/notification/admin/${id}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching notifications:", error);
+    console.error('Error fetching notifications:', error);
     throw error;
   }
 };
@@ -19,7 +18,7 @@ export const markNotificationAsViewed = async () => {
     const response = await axiosInstance.patch(`/notification/read/all`);
     return response.data;
   } catch (error) {
-    console.error("Error marking notification as viewed:", error);
+    console.error('Error marking notification as viewed:', error);
     throw error;
   }
 };
