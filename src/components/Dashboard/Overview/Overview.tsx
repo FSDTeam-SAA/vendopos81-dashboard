@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -8,24 +8,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useAllOrders } from "@/lib/hooks/useOrder";
-import { useAnalytics } from "@/lib/hooks/useOverView";
-import { Order } from "@/lib/types/order";
-import { DashboardAnalyticsApiResponse } from "@/lib/types/overall";
-import {
-  DollarSign,
-  Loader2,
-  ShoppingCart,
-  Truck,
-  UserRoundCheck,
-  Users,
-} from "lucide-react";
-import Renvenue from "./Renvenue";
-import SalesByRegion from "./SalesByRegion";
+} from '@/components/ui/table';
+import { useAllOrders } from '@/lib/hooks/useOrder';
+import { useAnalytics } from '@/lib/hooks/useOverView';
+import { Order } from '@/lib/types/order';
+import { DashboardAnalyticsApiResponse } from '@/lib/types/overall';
+import { DollarSign, Loader2, ShoppingCart, Truck, UserRoundCheck, Users } from 'lucide-react';
+import Renvenue from './Renvenue';
+import SalesByRegion from './SalesByRegion';
 
-import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
+import { Badge } from '@/components/ui/badge';
+import Link from 'next/link';
 
 export default function Overview() {
   const { data, isLoading, isError } = useAnalytics();
@@ -71,29 +64,23 @@ export default function Overview() {
         {/* Total Over view */}
         <Card className="bg-white border-0 gap-3 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between ">
-            <CardTitle className="text-lg font-medium text-gray-600">
-              Total Orders
-            </CardTitle>
+            <CardTitle className="text-lg font-medium text-gray-600">Total Orders</CardTitle>
             <ShoppingCart className="w-16 h-16 bg-[#ebf7f4] text-2xl! rounded-xl p-2 text-[#10a37f]" />
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-gray-900">
-              {analyticsData?.totalOrder || 0}
-            </p>
+            <p className="text-2xl font-bold text-gray-900">{analyticsData?.totalOrder || 0}</p>
           </CardContent>
         </Card>
 
         {/* Total Revenue */}
         <Card className="bg-white border-0 gap-3 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between ">
-            <CardTitle className="text-lg font-medium text-gray-600">
-              Total Revenue
-            </CardTitle>
+            <CardTitle className="text-lg font-medium text-gray-600">Total Revenue</CardTitle>
             <DollarSign className="w-16 h-16 bg-[#ebf7f4] text-2xl! rounded-xl p-2 text-[#10a37f]" />
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-gray-900">
-              ${analyticsData?.totalRevenue?.toLocaleString() || "0.00"}
+              ${analyticsData?.totalRevenue?.toLocaleString() || '0.00'}
             </p>
           </CardContent>
         </Card>
@@ -101,30 +88,22 @@ export default function Overview() {
         {/* Total Customers */}
         <Card className="bg-white border-0 gap-3 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between ">
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Total Customers
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-600">Total Customers</CardTitle>
             <Users className="w-16 h-16 bg-[#ebf7f4] text-2xl! p-2 rounded-xl text-[#10a37f]" />
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-gray-900">
-              {analyticsData?.totalCustomer || 0}
-            </p>
+            <p className="text-2xl font-bold text-gray-900">{analyticsData?.totalCustomer || 0}</p>
           </CardContent>
         </Card>
 
         {/* Total Supplier */}
         <Card className="bg-white border-0 gap-3 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between ">
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Total Suppliers
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-600">Total Suppliers</CardTitle>
             <UserRoundCheck className="w-16 h-16 bg-[#ebf7f4] rounded-xl text-2xl! p-2 text-[#10a37f]" />
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-gray-900">
-              {analyticsData?.totalSupplier || 0}
-            </p>
+            <p className="text-2xl font-bold text-gray-900">{analyticsData?.totalSupplier || 0}</p>
           </CardContent>
         </Card>
       </div>
@@ -140,13 +119,8 @@ export default function Overview() {
       <div>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Recent Orders
-            </h2>
-            <Link
-              href="/orders"
-              className="text-sm text-teal-600 hover:text-teal-700"
-            >
+            <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
+            <Link href="/orders" className="text-sm text-teal-600 hover:text-teal-700">
               View All
             </Link>
           </div>
@@ -155,21 +129,11 @@ export default function Overview() {
             <Table>
               <TableHeader className="bg-gray-50/50">
                 <TableRow>
-                  <TableHead className="font-semibold text-gray-700">
-                    Order ID
-                  </TableHead>
-                  <TableHead className="font-semibold text-gray-700">
-                    Customer
-                  </TableHead>
-                  <TableHead className="font-semibold text-gray-700">
-                    Amount
-                  </TableHead>
-                  <TableHead className="font-semibold text-gray-700">
-                    Status
-                  </TableHead>
-                  <TableHead className="font-semibold text-gray-700">
-                    Date
-                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700">Order ID</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Customer</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Amount</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Status</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Date</TableHead>
                   {/* <TableHead className="font-semibold text-gray-700">
                     Actions
                   </TableHead> */}
@@ -201,15 +165,13 @@ export default function Overview() {
                         <div className="font-medium text-gray-900">
                           {order.userId.firstName} {order.userId.lastName}
                         </div>
-                        <div className="text-sm text-gray-500">
-                          {order.userId.email}
-                        </div>
+                        <div className="text-sm text-gray-500">{order.userId.email}</div>
                       </TableCell>
 
                       {/* Amount */}
                       <TableCell>
                         <span className="font-semibold text-gray-900">
-                          ${order.totalPrice?.toFixed(2) || "0.00"}
+                          ${order.totalPrice?.toFixed(2) || '0.00'}
                         </span>
                       </TableCell>
 
@@ -217,11 +179,11 @@ export default function Overview() {
                       <TableCell>
                         <Badge
                           className={`capitalize ${
-                            order.orderStatus === "delivered"
-                              ? "bg-green-100 text-green-700 hover:bg-green-100"
-                              : order.orderStatus === "pending"
-                                ? "bg-amber-100 text-amber-700 hover:bg-amber-100"
-                                : "bg-red-100 text-red-700 hover:bg-red-100"
+                            order.orderStatus === 'delivered'
+                              ? 'bg-green-100 text-green-700 hover:bg-green-100'
+                              : order.orderStatus === 'pending'
+                                ? 'bg-amber-100 text-amber-700 hover:bg-amber-100'
+                                : 'bg-red-100 text-red-700 hover:bg-red-100'
                           }`}
                         >
                           {order.orderStatus}
@@ -249,10 +211,7 @@ export default function Overview() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell
-                      colSpan={5}
-                      className="text-center py-10 text-gray-500"
-                    >
+                    <TableCell colSpan={5} className="text-center py-10 text-gray-500">
                       No orders found
                     </TableCell>
                   </TableRow>
@@ -288,7 +247,7 @@ export default function Overview() {
               <CardTitle className="text-base font-medium text-gray-600">
                 <span>Total Revenue</span>
                 <p className="text-xl font-bold text-gray-900 ml-1">
-                  ${analyticsData?.totalRevenue?.toLocaleString() || "0.00"}
+                  ${analyticsData?.totalRevenue?.toLocaleString() || '0.00'}
                 </p>
               </CardTitle>
             </CardHeader>
