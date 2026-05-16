@@ -294,7 +294,7 @@ export default function Payments() {
                   {paymentData.length === 0 && (
                     <TableRow>
                       <td colSpan={7} className="py-12 text-center text-gray-500 font-medium">
-                        No payments found matching your criteria.
+                        No payment records found.
                       </td>
                     </TableRow>
                   )}
