@@ -34,6 +34,7 @@ export default function Overview() {
 
   const ordersData = ordersResponse?.data || [];
   const ordersAnalytics = ordersResponse?.analytics;
+  console.log(ordersAnalytics);
 
   if (isLoading) {
     return (
@@ -220,24 +221,7 @@ export default function Overview() {
             </Table>
           </Card>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 mt-10 lg:grid-cols-4 gap-4">
-          {/* Total Orders */}
-          <Card className="py-2 rounded-[13.734px] border border-[rgba(233,236,239,0.5)] bg-[#F7F9F9] bg-[linear-gradient(135deg,rgba(8,102,70,0.05)_0%,rgba(0,0,0,0)_100%)] shadow-sm">
-            <CardHeader className="flex flex-row items-center gap-2 pb-1">
-              <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-[#086646] text-white p-2">
-                <ShoppingCart className="w-5 h-5" />
-              </div>
-              <CardTitle className="text-base font-medium text-gray-600">
-                <span>Total Orders</span>
-                <p className="text-xl font-bold text-gray-900 ml-1">
-                  {analyticsData?.totalOrder || 0}
-                </p>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pb-2"></CardContent>
-          </Card>
-
           {/* Total Revenue */}
           <Card className="py-2 rounded-[13.734px] border border-[rgba(233,236,239,0.5)] bg-[#F7F9F9] bg-[linear-gradient(135deg,rgba(8,102,70,0.05)_0%,rgba(0,0,0,0)_100%)] shadow-sm">
             <CardHeader className="flex flex-row items-center gap-2 pb-1">
@@ -245,9 +229,9 @@ export default function Overview() {
                 <DollarSign className="w-5 h-5" />
               </div>
               <CardTitle className="text-base font-medium text-gray-600">
-                <span>Total Revenue</span>
+                <span>Total Cancelled Orders</span>
                 <p className="text-xl font-bold text-gray-900 ml-1">
-                  ${analyticsData?.totalRevenue?.toLocaleString() || '0.00'}
+                  {ordersAnalytics?.totalCancelledOrder || 0}
                 </p>
               </CardTitle>
             </CardHeader>
@@ -261,9 +245,9 @@ export default function Overview() {
                 <Users className="w-5 h-5" />
               </div>
               <CardTitle className="text-base font-medium text-gray-600">
-                <span>Total Customers</span>
+                <span>Total Delivered Orders</span>
                 <p className="text-xl font-bold text-gray-900 ml-1">
-                  {analyticsData?.totalCustomer || 0}
+                  {ordersAnalytics?.totalDeliveredOrder || 0}
                 </p>
               </CardTitle>
             </CardHeader>
@@ -277,9 +261,23 @@ export default function Overview() {
                 <Truck className="w-5 h-5" />
               </div>
               <CardTitle className="text-base font-medium text-gray-600">
-                <span>Total Suppliers</span>
+                <span>Total Pending Orders</span>
                 <p className="text-xl font-bold text-gray-900 ml-1">
-                  {analyticsData?.totalSupplier || 0}
+                  {ordersAnalytics?.totalPendingOrder || 0}
+                </p>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pb-2"></CardContent>
+          </Card>
+          <Card className="py-2 rounded-[13.734px] border border-[rgba(233,236,239,0.5)] bg-[#F7F9F9] bg-[linear-gradient(135deg,rgba(8,102,70,0.05)_0%,rgba(0,0,0,0)_100%)] shadow-sm">
+            <CardHeader className="flex flex-row items-center gap-2 pb-1">
+              <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-[#f97316] text-white p-2">
+                <Truck className="w-5 h-5" />
+              </div>
+              <CardTitle className="text-base font-medium text-gray-600">
+                <span>Total Paid Orders</span>
+                <p className="text-xl font-bold text-gray-900 ml-1">
+                  {ordersAnalytics?.totalPaidOrder || 0}
                 </p>
               </CardTitle>
             </CardHeader>
