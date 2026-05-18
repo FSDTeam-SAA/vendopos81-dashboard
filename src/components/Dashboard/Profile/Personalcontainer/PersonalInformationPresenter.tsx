@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import type { UseFormReturn, ControllerRenderProps } from "react-hook-form";
-import { Button } from "@/components/ui/button";
+import type { UseFormReturn, ControllerRenderProps } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -9,11 +9,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { PersonalInformationFormData } from "../securitycontainer/schema";
-import { ProfileResponse } from "@/lib/types/profile";
-import Image from "next/image";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { PersonalInformationFormData } from '../securitycontainer/schema';
+import { ProfileResponse } from '@/lib/types/profile';
+import Image from 'next/image';
 
 interface PersonalInformationPresenterProps {
   form: UseFormReturn<PersonalInformationFormData>;
@@ -26,17 +26,16 @@ const PersonalInformationPresenter = ({
   form,
   onSubmit,
   isLoading = false,
-  profile
+  profile,
 }: PersonalInformationPresenterProps) => {
-      const profileData=profile?.data;
+  const profileData = profile?.data;
+
   return (
     <div className="flex-1 bg-white rounded-lg border border-gray-200 p-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Personal Information
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-900">Personal Information</h1>
           <p className="text-gray-600 text-sm mt-1">
             Manage your personal information and profile details.
           </p>
@@ -50,11 +49,13 @@ const PersonalInformationPresenter = ({
             <FormField
               control={form.control}
               name="firstName"
-              render={({ field }: { field: ControllerRenderProps<PersonalInformationFormData, "firstName"> }) => (
+              render={({
+                field,
+              }: {
+                field: ControllerRenderProps<PersonalInformationFormData, 'firstName'>;
+              }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 font-medium">
-                    First Name
-                  </FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">First Name</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Olivia"
@@ -66,14 +67,17 @@ const PersonalInformationPresenter = ({
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="lastName"
-              render={({ field }: { field: ControllerRenderProps<PersonalInformationFormData, "lastName"> }) => (
+              render={({
+                field,
+              }: {
+                field: ControllerRenderProps<PersonalInformationFormData, 'lastName'>;
+              }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 font-medium">
-                    Last Name
-                  </FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">Last Name</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Rhye"
@@ -91,23 +95,27 @@ const PersonalInformationPresenter = ({
           <FormField
             control={form.control}
             name="image"
-            render={({ field }: { field: ControllerRenderProps<PersonalInformationFormData, "image"> }) => (
+            render={({
+              field,
+            }: {
+              field: ControllerRenderProps<PersonalInformationFormData, 'image'>;
+            }) => (
               <FormItem>
-                <FormLabel className="text-gray-700 font-medium">
-                  Profile Image
-                </FormLabel>
+                <FormLabel className="text-gray-700 font-medium">Profile Image</FormLabel>
+
                 {profileData?.image?.url && (
                   <div className="mb-2">
                     <p className="text-sm text-gray-500 mb-1">Current Image:</p>
-                    <Image 
-                    width={40}
-                    height={40} 
-                      src={profileData.image.url} 
-                      alt="Profile" 
+                    <Image
+                      width={40}
+                      height={40}
+                      src={profileData.image.url}
+                      alt="Profile"
                       className="w-20 h-20 rounded-full object-cover border border-gray-300"
                     />
                   </div>
                 )}
+
                 <FormControl>
                   <Input
                     type="file"
@@ -121,6 +129,7 @@ const PersonalInformationPresenter = ({
                     className="border-gray-300 focus:border-primary focus:ring-primary"
                   />
                 </FormControl>
+
                 <FormMessage />
               </FormItem>
             )}
@@ -131,11 +140,13 @@ const PersonalInformationPresenter = ({
             <FormField
               control={form.control}
               name="location"
-              render={({ field }: { field: ControllerRenderProps<PersonalInformationFormData, "location"> }) => (
+              render={({
+                field,
+              }: {
+                field: ControllerRenderProps<PersonalInformationFormData, 'location'>;
+              }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 font-medium">
-                    Location
-                  </FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">Location</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Florida, USA"
@@ -147,14 +158,17 @@ const PersonalInformationPresenter = ({
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="postalCode"
-              render={({ field }: { field: ControllerRenderProps<PersonalInformationFormData, "postalCode"> }) => (
+              render={({
+                field,
+              }: {
+                field: ControllerRenderProps<PersonalInformationFormData, 'postalCode'>;
+              }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 font-medium">
-                    Postal Code
-                  </FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">Postal Code</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="30301"
@@ -173,11 +187,13 @@ const PersonalInformationPresenter = ({
             <FormField
               control={form.control}
               name="street"
-              render={({ field }: { field: ControllerRenderProps<PersonalInformationFormData, "street"> }) => (
+              render={({
+                field,
+              }: {
+                field: ControllerRenderProps<PersonalInformationFormData, 'street'>;
+              }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 font-medium">
-                    Street
-                  </FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">Street</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Enter Your Street"
@@ -189,14 +205,17 @@ const PersonalInformationPresenter = ({
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="phone"
-              render={({ field }: { field: ControllerRenderProps<PersonalInformationFormData, "phone"> }) => (
+              render={({
+                field,
+              }: {
+                field: ControllerRenderProps<PersonalInformationFormData, 'phone'>;
+              }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 font-medium">
-                    Phone Number
-                  </FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">Phone Number</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Enter Your Phone Number"
@@ -210,7 +229,6 @@ const PersonalInformationPresenter = ({
             />
           </div>
 
-
           {/* Action Buttons */}
           <div className="flex gap-4 pt-6">
             <Button
@@ -218,29 +236,22 @@ const PersonalInformationPresenter = ({
               variant="outline"
               className="border-gray-300 text-gray-700 hover:bg-gray-50 bg-transparent"
               onClick={() => {
-                // Reset form to original profile values
-                if (profileData) {
-                  form.reset({
-                    firstName: profileData.firstName || "",
-                    lastName: profileData.lastName || "",
-                  
-                    location: profileData.location || "",
-                    postalCode: profileData.postalCode || "",
-                    street: profileData.street || "",
-                    phone: profileData.phone || "",
-                    image: null, 
-                  });
-                }
+                form.reset({
+                  firstName: profileData?.firstName || '',
+                  lastName: profileData?.lastName || '',
+                  location: profileData?.location || '',
+                  postalCode: profileData?.postalCode || '',
+                  street: profileData?.street || '',
+                  phone: profileData?.phone || '',
+                  image: null,
+                });
               }}
             >
               Discard Changes
             </Button>
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="bg-primary hover:bg-primary/90 text-white"
-            >
-              {isLoading ? "Saving..." : "Save Changes"}
+
+            <Button type="submit" disabled={isLoading} className="bg-[#086646] text-white">
+              {isLoading ? 'Saving...' : 'Save Changes'}
             </Button>
           </div>
         </form>
