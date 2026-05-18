@@ -1,42 +1,55 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import type { UseFormReturn, ControllerRenderProps } from "react-hook-form"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { ChangePasswordFormData } from "../securitycontainer/schema"
+import { useState } from 'react';
+import type { UseFormReturn, ControllerRenderProps } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { ChangePasswordFormData } from '../securitycontainer/schema';
 
 interface ChangePasswordPresenterProps {
-  form: UseFormReturn<ChangePasswordFormData>
-  onSubmit: (data: ChangePasswordFormData) => void
-  isLoading?: boolean
+  form: UseFormReturn<ChangePasswordFormData>;
+  onSubmit: (data: ChangePasswordFormData) => void;
+  isLoading?: boolean;
 }
 
-const ChangePasswordPresenter = ({ form, onSubmit, isLoading = false }: ChangePasswordPresenterProps) => {
+const ChangePasswordPresenter = ({
+  form,
+  onSubmit,
+  isLoading = false,
+}: ChangePasswordPresenterProps) => {
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
     confirm: false,
-  })
+  });
 
   const passwordRequirements = [
-    { label: "Minimum 8 characters", met: form.watch("newPassword")?.length >= 8 },
-    { label: "At least 1 uppercase letter", met: /[A-Z]/.test(form.watch("newPassword") || "") },
-    { label: "At least 1 lowercase letter", met: /[a-z]/.test(form.watch("newPassword") || "") },
-    { label: "At least 1 number", met: /[0-9]/.test(form.watch("newPassword") || "") },
+    { label: 'Minimum 8 characters', met: form.watch('newPassword')?.length >= 8 },
+    { label: 'At least 1 uppercase letter', met: /[A-Z]/.test(form.watch('newPassword') || '') },
+    { label: 'At least 1 lowercase letter', met: /[a-z]/.test(form.watch('newPassword') || '') },
+    { label: 'At least 1 number', met: /[0-9]/.test(form.watch('newPassword') || '') },
     {
-      label: "At least 1 special character (e.g. !@#$%^&*)",
-      met: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(form.watch("newPassword") || ""),
+      label: 'At least 1 special character (e.g. !@#$%^&*)',
+      met: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(form.watch('newPassword') || ''),
     },
-  ]
+  ];
 
   return (
     <div className="flex-1 bg-white rounded-lg border border-gray-200 p-8">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Change Password</h1>
-        <p className="text-gray-600 text-sm mt-1">Manage your personal information and profile details.</p>
+        <p className="text-gray-600 text-sm mt-1">
+          Manage your personal information and profile details.
+        </p>
       </div>
 
       <Form {...form}>
@@ -45,23 +58,34 @@ const ChangePasswordPresenter = ({ form, onSubmit, isLoading = false }: ChangePa
           <FormField
             control={form.control}
             name="currentPassword"
-            render={({ field }: { field: ControllerRenderProps<ChangePasswordFormData, "currentPassword"> }) => (
+            render={({
+              field,
+            }: {
+              field: ControllerRenderProps<ChangePasswordFormData, 'currentPassword'>;
+            }) => (
               <FormItem>
                 <FormLabel className="text-gray-700 font-medium">Current Password</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
-                      type={showPasswords.current ? "text" : "password"}
+                      type={showPasswords.current ? 'text' : 'password'}
                       placeholder="••••••••"
                       {...field}
                       className="border-gray-300 focus:border-teal-600 focus:ring-teal-600 pr-10"
                     />
                     <button
                       type="button"
-                      onClick={() => setShowPasswords((prev) => ({ ...prev, current: !prev.current }))}
+                      onClick={() =>
+                        setShowPasswords((prev) => ({ ...prev, current: !prev.current }))
+                      }
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -88,13 +112,17 @@ const ChangePasswordPresenter = ({ form, onSubmit, isLoading = false }: ChangePa
             <FormField
               control={form.control}
               name="newPassword"
-              render={({ field }: { field: ControllerRenderProps<ChangePasswordFormData, "newPassword"> }) => (
+              render={({
+                field,
+              }: {
+                field: ControllerRenderProps<ChangePasswordFormData, 'newPassword'>;
+              }) => (
                 <FormItem>
                   <FormLabel className="text-gray-700 font-medium">Create New Password</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
-                        type={showPasswords.new ? "text" : "password"}
+                        type={showPasswords.new ? 'text' : 'password'}
                         placeholder="••••••••"
                         {...field}
                         className="border-gray-300 focus:border-primary focus:ring-primary pr-10"
@@ -104,7 +132,12 @@ const ChangePasswordPresenter = ({ form, onSubmit, isLoading = false }: ChangePa
                         onClick={() => setShowPasswords((prev) => ({ ...prev, new: !prev.new }))}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                       >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -129,23 +162,34 @@ const ChangePasswordPresenter = ({ form, onSubmit, isLoading = false }: ChangePa
             <FormField
               control={form.control}
               name="confirmPassword"
-              render={({ field }: { field: ControllerRenderProps<ChangePasswordFormData, "confirmPassword"> }) => (
+              render={({
+                field,
+              }: {
+                field: ControllerRenderProps<ChangePasswordFormData, 'confirmPassword'>;
+              }) => (
                 <FormItem>
                   <FormLabel className="text-gray-700 font-medium">Confirm New Password</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
-                        type={showPasswords.confirm ? "text" : "password"}
+                        type={showPasswords.confirm ? 'text' : 'password'}
                         placeholder="••••••••"
                         {...field}
                         className="border-gray-300 focus:border-primary focus:ring-primary pr-10"
                       />
                       <button
                         type="button"
-                        onClick={() => setShowPasswords((prev) => ({ ...prev, confirm: !prev.confirm }))}
+                        onClick={() =>
+                          setShowPasswords((prev) => ({ ...prev, confirm: !prev.confirm }))
+                        }
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                       >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -175,10 +219,10 @@ const ChangePasswordPresenter = ({ form, onSubmit, isLoading = false }: ChangePa
               {passwordRequirements.map((req, idx) => (
                 <li
                   key={idx}
-                  className={`text-sm flex items-center gap-2 ${req.met ? "text-gray-600" : "text-gray-400"}`}
+                  className={`text-sm flex items-center gap-2 ${req.met ? 'text-gray-600' : 'text-gray-400'}`}
                 >
                   <svg
-                    className={`w-4 h-4 ${req.met ? "text-primary" : "text-gray-300"}`}
+                    className={`w-4 h-4 ${req.met ? 'text-primary' : 'text-gray-300'}`}
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -199,19 +243,19 @@ const ChangePasswordPresenter = ({ form, onSubmit, isLoading = false }: ChangePa
             <Button
               type="button"
               variant="outline"
+              onClick={() => form.reset()}
               className="border-gray-300 text-gray-700 hover:bg-gray-50 bg-transparent"
             >
               Discard Changes
             </Button>
-            <Button type="submit" disabled={isLoading} className="bg-primary hover:bg-primary/90 text-white">
-              {isLoading ? "Saving..." : "Save Changes"}
+            <Button type="submit" disabled={isLoading} className="bg-[#086646] text-white">
+              {isLoading ? 'Saving...' : 'Save Changes'}
             </Button>
           </div>
         </form>
       </Form>
     </div>
-  )
-}
+  );
+};
 
-export default ChangePasswordPresenter
-
+export default ChangePasswordPresenter;
