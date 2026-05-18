@@ -4,27 +4,8 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  Eye,
-  Trash2,
-  MoreVertical,
-  Star,
-  Mail,
-  Phone,
-  MapPin,
-  ChevronDown,
-  Loader2,
-  XCircle,
-  CheckCircle,
-} from 'lucide-react';
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
+import { Eye, Star, Loader2, XCircle, CheckCircle } from 'lucide-react';
 import { useAllReviews, useUpdateReviewStatus } from '@/lib/hooks/useReview';
 import { Review, ReviewAnalytics } from '@/lib/types/review';
 import ReviewsModal from './ReviewModal';
