@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -12,17 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  ChevronDown,
-  Loader2,
-  Filter,
-  RotateCcw,
-  DollarSign,
-  CheckCircle,
-  Clock,
-  XCircle,
-  Send,
-} from 'lucide-react';
+import { ChevronDown, Loader2, Filter, RotateCcw, CheckCircle, Clock, Send } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,

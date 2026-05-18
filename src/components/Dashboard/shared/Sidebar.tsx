@@ -1,7 +1,7 @@
-"use client";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+'use client';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
 import {
   LayoutDashboard,
   LogOut,
@@ -16,10 +16,10 @@ import {
   Ambulance,
   UserCog,
   NotebookText,
-} from "lucide-react";
-import { useState } from "react";
+} from 'lucide-react';
+import { useState } from 'react';
 
-import { signOut } from "next-auth/react";
+import { signOut } from 'next-auth/react';
 import {
   Dialog,
   DialogContent,
@@ -28,26 +28,25 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
 
 const navigation = [
-  { name: "Overview", href: "/", icon: LayoutDashboard },
-  { name: "Products", href: "/products", icon: Package },
-  { name: "Suppliers", href: "/suppliers", icon: Users },
-  { name: "Customers", href: "/customers", icon: UserCheck },
-  { name: "Categories", href: "/categories", icon: FolderTree },
-  { name: "Orders", href: "/orders", icon: ShoppingCart },
-  { name: "Payments", href: "/payments", icon: NotebookText },
-  { name: "Payments Transfer", href: "/payment-transfer", icon: NotebookText },
-
-  { name: "Reviews", href: "/review", icon: Star },
-  { name: "Reports", href: "/reports", icon: FileText },
-  { name: "Subscription", href: "/subscription", icon: MailCheck },
-  // { name: "Deliveries", href: "/deliveries", icon: Ambulance },
-  { name: "Profile", href: "/profile", icon: UserCog },
-  { name: "Notifications", href: "/notifications", icon: MailCheck },
+  { name: 'Overview', href: '/', icon: LayoutDashboard },
+  { name: 'Products', href: '/products', icon: Package },
+  { name: 'Suppliers', href: '/suppliers', icon: Users },
+  { name: 'Customers', href: '/customers', icon: UserCheck },
+  { name: 'Categories', href: '/categories', icon: FolderTree },
+  { name: 'Orders', href: '/orders', icon: ShoppingCart },
+  { name: 'Payments', href: '/payments', icon: NotebookText },
+  { name: 'Payments Transfer', href: '/payment-transfer', icon: NotebookText },
+  { name: 'Reviews', href: '/review', icon: Star },
+  { name: 'Reports', href: '/reports', icon: FileText },
+  { name: 'Subscription', href: '/subscription', icon: MailCheck },
+  { name: 'Drivers', href: '/drivers', icon: Ambulance },
+  { name: 'Profile', href: '/profile', icon: UserCog },
+  { name: 'Notifications', href: '/notifications', icon: MailCheck },
 ];
 
 export default function Sidebar({
@@ -62,7 +61,7 @@ export default function Sidebar({
 
   const handleLogout = () => {
     // NextAuth signOut with redirect to login page
-    signOut({ callbackUrl: "/login" });
+    signOut({ callbackUrl: '/login' });
     setOpen(false);
   };
 
@@ -78,8 +77,8 @@ export default function Sidebar({
 
       <div
         className={cn(
-          "flex h-screen w-64 flex-col bg-white border-r border-gray-200 fixed z-40 transition-transform duration-300 transform lg:translate-x-0",
-          isOpen ? "translate-x-0" : "-translate-x-full",
+          'flex h-screen w-64 flex-col bg-white border-r border-gray-200 fixed z-40 transition-transform duration-300 transform lg:translate-x-0',
+          isOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
         {/* Logo */}
@@ -99,10 +98,7 @@ export default function Sidebar({
         <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
           {navigation.map((item) => {
             // Active logic
-            const isActive =
-              item.href === "/"
-                ? pathname === "/"
-                : pathname?.startsWith(item.href);
+            const isActive = item.href === '/' ? pathname === '/' : pathname?.startsWith(item.href);
 
             return (
               <motion.div
@@ -117,10 +113,10 @@ export default function Sidebar({
                 <Link
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg p-3 text-base font-semibold transition-colors",
+                    'flex items-center gap-3 rounded-lg p-3 text-base font-semibold transition-colors',
                     isActive
-                      ? "bg-[#086646] text-white"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-[#086646]",
+                      ? 'bg-[#086646] text-white'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-[#086646]',
                   )}
                 >
                   <item.icon className="h-5 w-5" />
@@ -146,23 +142,13 @@ export default function Sidebar({
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Confirm Logout</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to log out?
-                </DialogDescription>
+                <DialogDescription>Are you sure you want to log out?</DialogDescription>
               </DialogHeader>
               <DialogFooter className="flex justify-end gap-2">
-                <Button
-                  className="cursor-pointer"
-                  variant="outline"
-                  onClick={() => setOpen(false)}
-                >
+                <Button className="cursor-pointer" variant="outline" onClick={() => setOpen(false)}>
                   Cancel
                 </Button>
-                <Button
-                  className="cursor-pointer"
-                  variant="destructive"
-                  onClick={handleLogout}
-                >
+                <Button className="cursor-pointer" variant="destructive" onClick={handleLogout}>
                   Log Out
                 </Button>
               </DialogFooter>
