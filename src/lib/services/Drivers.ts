@@ -9,3 +9,15 @@ export const getAllDrivers = async () => {
     throw error;
   }
 };
+
+export const updateDriverStatus = async (id: string, status: string) => {
+  try {
+    const response = await axiosInstance.put(`/driver/update-status/${id}`, {
+      status,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating driver status:', error);
+    throw error;
+  }
+};

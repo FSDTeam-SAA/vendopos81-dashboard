@@ -21,17 +21,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
 import { Button } from '@/components/ui/button';
-
-import { useAllDrivers } from '../../../lib/hooks/useDrivers';
-
+import { useAllDrivers, useUpdateDriverStatus } from '../../../lib/hooks/useDrivers';
 import Loading from '../../shared/Loading';
-
 import DriverDetailsModal from './DriverDetailsModal';
 
 const Drivers = () => {
   const { data, isLoading, isError } = useAllDrivers();
+
+  // ✅ Status Update Mutation
+  const { mutate: updateStatus, isPending: statusUpdating } = useUpdateDriverStatus();
 
   const drivers = data?.data || [];
 
@@ -42,6 +41,14 @@ const Drivers = () => {
   const handleViewDetails = (driver: any) => {
     setSelectedDriver(driver);
     setOpen(true);
+  };
+
+  // ✅ Handle Status Update
+  const handleStatusUpdate = (id: string, status: string) => {
+    updateStatus({
+      id,
+      status,
+    });
   };
 
   if (isLoading) {
@@ -79,6 +86,7 @@ const Drivers = () => {
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
+
               <TableBody>
                 {drivers.map((driver: any) => (
                   <TableRow key={driver._id}>
@@ -87,11 +95,15 @@ const Drivers = () => {
                         <span className="font-medium">
                           {driver.firstName} {driver.lastName}
                         </span>
+
                         <span className="text-sm text-muted-foreground">{driver.email}</span>
                       </div>
                     </TableCell>
+
                     <TableCell>{driver.yearsOfExperience} Years</TableCell>
+
                     <TableCell>{driver.city}</TableCell>
+
                     <TableCell>
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
@@ -115,16 +127,36 @@ const Drivers = () => {
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
+
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon">
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
+
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem>Approve</DropdownMenuItem>
-                            <DropdownMenuItem>Pending</DropdownMenuItem>
-                            <DropdownMenuItem className="text-red-500">Reject</DropdownMenuItem>
+                            <DropdownMenuItem
+                              disabled={statusUpdating}
+                              onClick={() => handleStatusUpdate(driver._id, 'approved')}
+                            >
+                              Approve
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem
+                              disabled={statusUpdating}
+                              onClick={() => handleStatusUpdate(driver._id, 'pending')}
+                            >
+                              Pending
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem
+                              disabled={statusUpdating}
+                              className="text-red-500"
+                              onClick={() => handleStatusUpdate(driver._id, 'rejected')}
+                            >
+                              Reject
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
