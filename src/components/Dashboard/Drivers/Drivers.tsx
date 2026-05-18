@@ -28,14 +28,9 @@ import DriverDetailsModal from './DriverDetailsModal';
 
 const Drivers = () => {
   const { data, isLoading, isError } = useAllDrivers();
-
-  // ✅ Status Update Mutation
   const { mutate: updateStatus, isPending: statusUpdating } = useUpdateDriverStatus();
-
   const drivers = data?.data || [];
-
   const [open, setOpen] = useState(false);
-
   const [selectedDriver, setSelectedDriver] = useState<any>(null);
 
   const handleViewDetails = (driver: any) => {
@@ -43,7 +38,6 @@ const Drivers = () => {
     setOpen(true);
   };
 
-  // ✅ Handle Status Update
   const handleStatusUpdate = (id: string, status: string) => {
     updateStatus({
       id,
@@ -88,81 +82,95 @@ const Drivers = () => {
               </TableHeader>
 
               <TableBody>
-                {drivers.map((driver: any) => (
-                  <TableRow key={driver._id}>
-                    <TableCell>
-                      <div className="flex flex-col">
-                        <span className="font-medium">
-                          {driver.firstName} {driver.lastName}
-                        </span>
+                {drivers.length > 0 ? (
+                  drivers.map((driver: any) => (
+                    <TableRow key={driver._id}>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span className="font-medium">
+                            {driver.firstName} {driver.lastName}
+                          </span>
 
-                        <span className="text-sm text-muted-foreground">{driver.email}</span>
-                      </div>
-                    </TableCell>
+                          <span className="text-sm text-muted-foreground">{driver.email}</span>
+                        </div>
+                      </TableCell>
 
-                    <TableCell>{driver.yearsOfExperience} Years</TableCell>
+                      <TableCell>{driver.yearsOfExperience} Years</TableCell>
 
-                    <TableCell>{driver.city}</TableCell>
+                      <TableCell>{driver.city}</TableCell>
 
-                    <TableCell>
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
-                          driver.status === 'approved'
-                            ? 'bg-green-100 text-green-700'
-                            : driver.status === 'pending'
-                              ? 'bg-yellow-100 text-yellow-700'
-                              : 'bg-red-100 text-red-700'
-                        }`}
-                      >
-                        {driver.status}
-                      </span>
-                    </TableCell>
-
-                    <TableCell>
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => handleViewDetails(driver)}
+                      <TableCell>
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
+                            driver.status === 'approved'
+                              ? 'bg-green-100 text-green-700'
+                              : driver.status === 'pending'
+                                ? 'bg-yellow-100 text-yellow-700'
+                                : 'bg-red-100 text-red-700'
+                          }`}
                         >
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                          {driver.status}
+                        </span>
+                      </TableCell>
 
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
+                      <TableCell>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleViewDetails(driver)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
 
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              disabled={statusUpdating}
-                              onClick={() => handleStatusUpdate(driver._id, 'approved')}
-                            >
-                              Approve
-                            </DropdownMenuItem>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
 
-                            <DropdownMenuItem
-                              disabled={statusUpdating}
-                              onClick={() => handleStatusUpdate(driver._id, 'pending')}
-                            >
-                              Pending
-                            </DropdownMenuItem>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem
+                                disabled={statusUpdating}
+                                onClick={() => handleStatusUpdate(driver._id, 'approved')}
+                              >
+                                Approve
+                              </DropdownMenuItem>
 
-                            <DropdownMenuItem
-                              disabled={statusUpdating}
-                              className="text-red-500"
-                              onClick={() => handleStatusUpdate(driver._id, 'rejected')}
-                            >
-                              Reject
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                              <DropdownMenuItem
+                                disabled={statusUpdating}
+                                onClick={() => handleStatusUpdate(driver._id, 'pending')}
+                              >
+                                Pending
+                              </DropdownMenuItem>
+
+                              <DropdownMenuItem
+                                disabled={statusUpdating}
+                                className="text-red-500"
+                                onClick={() => handleStatusUpdate(driver._id, 'rejected')}
+                              >
+                                Reject
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-[300px] text-center">
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <h3 className="text-lg font-semibold">No drivers available now</h3>
+
+                        <p className="text-sm text-muted-foreground">
+                          Wait for driver applications.
+                        </p>
                       </div>
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </div>
