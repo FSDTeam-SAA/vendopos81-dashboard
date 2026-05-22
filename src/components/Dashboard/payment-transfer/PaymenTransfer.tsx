@@ -310,7 +310,7 @@ const PaymenTransfer = () => {
                           className={cn(
                             'rounded-full px-3 py-1 text-xs font-medium capitalize border',
 
-                            settlement.status === 'transferred' &&
+                            settlement.status === 'completed' &&
                               'border-green-200 bg-green-50 text-green-700',
 
                             settlement.status === 'pending' &&
@@ -403,13 +403,13 @@ const PaymenTransfer = () => {
                             Not Requested
                           </span>
                         </TableCell>
-                      ) : (
+                      ) : settlement.status === 'completed' ? (
                         <TableCell className="px-6 py-5 text-center whitespace-nowrap">
                           <span className="inline-flex items-center rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-medium text-green-700">
-                            Already Transferred
+                            Transferred Completed
                           </span>
                         </TableCell>
-                      )}
+                      ) : null}
                     </TableRow>
                   ))}
 
