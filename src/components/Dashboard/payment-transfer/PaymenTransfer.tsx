@@ -32,9 +32,11 @@ import { toast } from 'sonner';
 const PaymenTransfer = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [status, setStatus] = useState<string>('');
+  const [processingId, setProcessingId] = useState<string | null>(null);
+
   const { data: settlementResponse, isLoading, isError, refetch } = useAllSettlements();
 
-  const { mutate: transferPayment, isPending: isTransferLoading } = useTransferPaymentToSupplier();
+  const { mutate: transferPayment } = useTransferPaymentToSupplier();
 
   const settlementsRaw = settlementResponse?.data ?? settlementResponse;
   console.log('this is response', settlementsRaw);
@@ -86,15 +88,21 @@ const PaymenTransfer = () => {
     : settlements;
 
   const handleTransaction = (settlement: Settlement) => {
+    setProcessingId(settlement._id);
+
     transferPayment(settlement._id, {
       onSuccess: (response) => {
         toast.success(response?.message || 'Payment transferred successfully');
+
+        setProcessingId(null);
 
         refetch();
       },
 
       onError: (error: any) => {
         toast.error(error?.response?.data?.message || 'Failed to transfer payment');
+
+        setProcessingId(null);
       },
     });
   };
@@ -375,11 +383,11 @@ const PaymenTransfer = () => {
                         <TableCell className="px-6 py-5 text-center whitespace-nowrap">
                           <Button
                             onClick={() => handleTransaction(settlement)}
-                            disabled={isTransferLoading}
+                            disabled={processingId === settlement._id}
                             size="sm"
                             className="h-9 rounded-lg bg-[#086646] px-4 text-white hover:bg-[#06543f] shadow-none"
                           >
-                            {isTransferLoading ? (
+                            {processingId === settlement._id ? (
                               <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 Processing...
@@ -388,6 +396,12 @@ const PaymenTransfer = () => {
                               'Transfer Now'
                             )}
                           </Button>
+                        </TableCell>
+                      ) : settlement.status === 'pending' ? (
+                        <TableCell className="px-6 py-5 text-center whitespace-nowrap">
+                          <span className="inline-flex items-center rounded-full border border-yellow-200 bg-yellow-50 px-3 py-1 text-xs font-medium text-yellow-700">
+                            Not Requested
+                          </span>
                         </TableCell>
                       ) : (
                         <TableCell className="px-6 py-5 text-center whitespace-nowrap">
