@@ -12,16 +12,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+
 import {
   ChevronDown,
   Loader2,
   Filter,
   RotateCcw,
   DollarSign,
-  CheckCircle,
-  Clock,
+  CheckCircle2,
+  Clock3,
   XCircle,
 } from 'lucide-react';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,6 +35,8 @@ import {
 
 import { useAllPayments } from '@/lib/hooks/usePayment';
 import { Payment, PaymentAnalytics } from '@/lib/types/payment';
+import { cn } from '@/lib/utils';
+import Pagination from '../../shared/Pagination';
 
 export default function Payments() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,7 +60,7 @@ export default function Payments() {
 
   const handleStatusChange = (newStatus: string) => {
     setStatus(newStatus);
-    setCurrentPage(1); // Reset to first page on filter change
+    setCurrentPage(1);
   };
 
   const clearFilters = () => {
@@ -64,10 +68,73 @@ export default function Payments() {
     setCurrentPage(1);
   };
 
+  const stats = [
+    {
+      title: 'Total Revenue',
+      value: `$${paymentAnalytics?.totalRevenue?.toLocaleString() || 0}`,
+      icon: DollarSign,
+      iconBg: 'bg-blue-50',
+      iconColor: 'text-blue-700',
+    },
+    {
+      title: 'Completed Payments',
+      value: paymentAnalytics?.completedPayment || 0,
+      icon: CheckCircle2,
+      iconBg: 'bg-emerald-50',
+      iconColor: 'text-emerald-700',
+    },
+    {
+      title: 'Pending Payments',
+      value: paymentAnalytics?.pendingPayment || 0,
+      icon: Clock3,
+      iconBg: 'bg-amber-50',
+      iconColor: 'text-amber-700',
+    },
+    {
+      title: 'Failed Payments',
+      value: paymentAnalytics?.failedPayment || 0,
+      icon: XCircle,
+      iconBg: 'bg-red-50',
+      iconColor: 'text-red-700',
+    },
+  ];
+
+  const getPaymentStatusClass = (status: string) => {
+    switch (status) {
+      case 'success':
+        return 'border-green-200 bg-green-50 text-green-700';
+
+      case 'pending':
+        return 'border-yellow-200 bg-yellow-50 text-yellow-700';
+
+      case 'failed':
+        return 'border-red-200 bg-red-50 text-red-700';
+
+      default:
+        return 'border-gray-200 bg-gray-50 text-gray-700';
+    }
+  };
+
+  const getOrderStatusClass = (status: string) => {
+    switch (status) {
+      case 'delivered':
+        return 'border-green-200 bg-green-50 text-green-700';
+
+      case 'pending':
+        return 'border-yellow-200 bg-yellow-50 text-yellow-700';
+
+      case 'cancelled':
+        return 'border-red-200 bg-red-50 text-red-700';
+
+      default:
+        return 'border-gray-200 bg-gray-50 text-gray-700';
+    }
+  };
+
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-black">
-        <Loader2 className="w-10 h-10 animate-spin text-teal-600" />
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-[#086646]" />
       </div>
     );
   }
@@ -81,111 +148,96 @@ export default function Payments() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="p-6 mx-auto container space-y-6">
-        {/* Stat Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-black">
-          <Card className="bg-white border-0 shadow-sm">
-            <CardContent className="flex items-center justify-between p-6">
-              <div>
-                <CardTitle className="text-sm font-medium mb-3 text-gray-600">
-                  Total Revenue
-                </CardTitle>
-                <p className="text-3xl font-bold text-gray-900">
-                  ${paymentAnalytics?.totalRevenue?.toLocaleString() || 0}
-                </p>
-              </div>
-              <div>
-                <DollarSign className="w-14 h-14 bg-[#086646] text-white rounded-md p-3" />
-              </div>
-            </CardContent>
-          </Card>
+    <main className="min-h-screen bg-[#f8fafc]">
+      <div className="container mx-auto p-6 space-y-6">
+        {/* STATS */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+          {stats.map((item) => {
+            const Icon = item.icon;
 
-          <Card className="bg-white border-0 shadow-sm">
-            <CardContent className="flex items-center justify-between p-6">
-              <div>
-                <CardTitle className="text-sm font-medium mb-3 text-teal-600">
-                  Completed Payments
-                </CardTitle>
-                <p className="text-3xl font-bold text-teal-600">
-                  {paymentAnalytics?.completedPayment || 0}
-                </p>
-              </div>
-              <div>
-                <CheckCircle className="w-14 h-14 bg-[#DCFCE7] text-[#00A63E] rounded-md p-3" />
-              </div>
-            </CardContent>
-          </Card>
+            return (
+              <Card
+                key={item.title}
+                className="border border-gray-200 bg-white rounded-2xl shadow-none"
+              >
+                <CardContent className="p-6 flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-sm font-medium text-gray-500 mb-3">
+                      {item.title}
+                    </CardTitle>
 
-          <Card className="bg-white border-0 shadow-sm">
-            <CardContent className="flex items-center justify-between p-6">
-              <div>
-                <CardTitle className="text-sm font-medium mb-3 text-amber-600">
-                  Pending Payments
-                </CardTitle>
-                <p className="text-3xl font-bold text-amber-600">
-                  {paymentAnalytics?.pendingPayment || 0}
-                </p>
-              </div>
-              <div>
-                <Clock className="w-14 h-14 bg-[#f59e0b] text-white rounded-md p-3" />
-              </div>
-            </CardContent>
-          </Card>
+                    <p className="text-3xl font-bold text-gray-900">{item.value}</p>
+                  </div>
 
-          <Card className="bg-white border-0 shadow-sm">
-            <CardContent className="flex items-center justify-between p-6">
-              <div>
-                <CardTitle className="text-sm font-medium mb-3 text-red-600">
-                  Failed Payments
-                </CardTitle>
-                <p className="text-3xl font-bold text-red-600">
-                  {paymentAnalytics?.failedPayment || 0}
-                </p>
-              </div>
-              <div>
-                <XCircle className="w-14 h-14 bg-[#ef4444] text-white rounded-md p-3" />
-              </div>
-            </CardContent>
-          </Card>
+                  <div
+                    className={cn(
+                      'w-14 h-14 rounded-2xl flex items-center justify-center',
+                      item.iconBg,
+                    )}
+                  >
+                    <Icon className={cn('w-7 h-7', item.iconColor)} />
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
-        {/* Table Section */}
-        <div className="space-y-4">
+        {/* TABLE SECTION */}
+        <div className="space-y-5">
+          {/* TOPBAR */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h2 className="text-lg font-semibold text-gray-900">Transaction History</h2>
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Transaction History</h2>
+
+              <p className="text-sm text-gray-500 mt-1">
+                View and track all payment records and statuses.
+              </p>
+            </div>
+
             <div className="flex items-center gap-3">
               {status && (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={clearFilters}
-                  className="text-gray-500 hover:text-red-500"
+                  className="text-gray-500 hover:text-red-500 hover:bg-red-50"
                 >
-                  <RotateCcw className="w-4 h-4 mr-1" />
+                  <RotateCcw className="w-4 h-4 mr-2" />
                   Clear
                 </Button>
               )}
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="bg-white text-gray-700">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50 shadow-none"
+                  >
                     <Filter className="w-4 h-4 mr-2" />
                     Status: {status || 'All'}
                     <ChevronDown className="ml-2 w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
+
+                <DropdownMenuContent align="end" className="w-52">
+                  <DropdownMenuLabel>Filter by Payment Status</DropdownMenuLabel>
+
                   <DropdownMenuSeparator />
+
                   <DropdownMenuItem onClick={() => handleStatusChange('')}>
                     All Payments
                   </DropdownMenuItem>
+
                   <DropdownMenuItem onClick={() => handleStatusChange('success')}>
                     Success
                   </DropdownMenuItem>
+
                   <DropdownMenuItem onClick={() => handleStatusChange('pending')}>
                     Pending
                   </DropdownMenuItem>
+
                   <DropdownMenuItem onClick={() => handleStatusChange('failed')}>
                     Failed
                   </DropdownMenuItem>
@@ -194,30 +246,37 @@ export default function Payments() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          {/* TABLE */}
+          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
             <div className="overflow-x-auto">
               <Table>
-                <TableHeader className="bg-gray-50/50">
-                  <TableRow>
-                    <TableHead className="font-semibold text-gray-700 whitespace-nowrap">
+                <TableHeader className="bg-gray-50">
+                  <TableRow className="border-b border-gray-200 hover:bg-gray-50">
+                    <TableHead className="h-14 px-6 text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap">
                       Transaction ID
                     </TableHead>
-                    <TableHead className="font-semibold text-gray-700 whitespace-nowrap">
+
+                    <TableHead className="h-14 px-6 text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap">
                       Order ID
                     </TableHead>
-                    <TableHead className="font-semibold text-gray-700 whitespace-nowrap">
+
+                    <TableHead className="h-14 px-6 text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap">
                       Customer
                     </TableHead>
-                    <TableHead className="font-semibold text-gray-700 whitespace-nowrap">
+
+                    <TableHead className="h-14 px-6 text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap">
                       Amount
                     </TableHead>
-                    <TableHead className="font-semibold text-gray-700 whitespace-nowrap text-center">
+
+                    <TableHead className="h-14 px-6 text-center text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap">
                       Payment Status
                     </TableHead>
-                    <TableHead className="font-semibold text-gray-700 whitespace-nowrap text-center">
+
+                    <TableHead className="h-14 px-6 text-center text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap">
                       Order Status
                     </TableHead>
-                    <TableHead className="font-semibold text-gray-700 text-center whitespace-nowrap">
+
+                    <TableHead className="h-14 px-6 text-center text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap">
                       Date
                     </TableHead>
                   </TableRow>
@@ -225,77 +284,92 @@ export default function Payments() {
 
                 <TableBody>
                   {paymentData.map((payment: Payment) => (
-                    <TableRow key={payment._id} className="bg-white hover:bg-gray-50 transition">
-                      {/* 1. Transaction ID */}
-                      <TableCell className="whitespace-nowrap">
-                        {payment.customTransactionId}
+                    <TableRow
+                      key={payment._id}
+                      className="border-b border-gray-100 hover:bg-gray-50/60 transition-colors"
+                    >
+                      {/* TRANSACTION ID */}
+                      <TableCell className="px-6 py-5 whitespace-nowrap">
+                        <span className="text-sm font-semibold text-gray-900">
+                          {payment.customTransactionId}
+                        </span>
                       </TableCell>
 
-                      {/* 2. Order ID */}
-                      <TableCell className="whitespace-nowrap font-medium">
-                        #{payment.orderId?.orderUniqueId}
+                      {/* ORDER ID */}
+                      <TableCell className="px-6 py-5 whitespace-nowrap">
+                        <span className="text-sm font-medium text-gray-800">
+                          #{payment.orderId?.orderUniqueId}
+                        </span>
                       </TableCell>
 
-                      {/* 3. Customer */}
-                      <TableCell className="whitespace-nowrap">
+                      {/* CUSTOMER */}
+                      <TableCell className="px-6 py-5 whitespace-nowrap">
                         <div className="flex flex-col">
-                          <span className="font-medium text-gray-900">
+                          <span className="text-sm font-semibold text-gray-900">
                             {payment.userId.firstName} {payment.userId.lastName}
                           </span>
-                          <span className="text-xs text-gray-500">{payment.userId.email}</span>
+
+                          <span className="text-xs text-gray-500 mt-1">{payment.userId.email}</span>
                         </div>
                       </TableCell>
 
-                      {/* 4. Amount */}
-                      <TableCell className="font-semibold text-gray-900 whitespace-nowrap">
-                        ${payment.amount}{' '}
-                        <span className="text-[10px] uppercase text-gray-400">
+                      {/* AMOUNT */}
+                      <TableCell className="px-6 py-5 whitespace-nowrap">
+                        <span className="text-sm font-semibold text-gray-900">
+                          ${payment.amount}
+                        </span>
+
+                        <span className="ml-2 text-[10px] uppercase text-gray-400">
                           {payment.currency}
                         </span>
                       </TableCell>
 
-                      {/* 5. Payment Status */}
-                      <TableCell className="text-center">
+                      {/* PAYMENT STATUS */}
+                      <TableCell className="px-6 py-5 text-center whitespace-nowrap">
                         <Badge
-                          className={`capitalize pointer-events-none whitespace-nowrap ${
-                            payment.status === 'success'
-                              ? 'bg-green-100 text-green-700 border-green-200'
-                              : payment.status === 'pending'
-                                ? 'bg-yellow-100 text-yellow-700 border-yellow-200'
-                                : 'bg-red-100 text-red-700 border-red-200'
-                          }`}
+                          variant="outline"
+                          className={cn(
+                            'rounded-full px-3 py-1 text-xs font-medium capitalize border',
+                            getPaymentStatusClass(payment.status),
+                          )}
                         >
                           {payment.status}
                         </Badge>
                       </TableCell>
 
-                      {/* 6. Order Status */}
-                      <TableCell className="text-center">
+                      {/* ORDER STATUS */}
+                      <TableCell className="px-6 py-5 text-center whitespace-nowrap">
                         <Badge
                           variant="outline"
-                          className="capitalize pointer-events-none font-normal whitespace-nowrap"
+                          className={cn(
+                            'rounded-full px-3 py-1 text-xs font-medium capitalize border',
+                            getOrderStatusClass(payment.orderId?.orderStatus),
+                          )}
                         >
                           {payment.orderId?.orderStatus}
                         </Badge>
                       </TableCell>
 
-                      {/* 7. Date */}
-                      <TableCell className="text-gray-500 text-center text-sm whitespace-nowrap">
-                        {new Date(payment.paymentDate).toLocaleString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
+                      {/* DATE */}
+                      <TableCell className="px-6 py-5 text-center whitespace-nowrap">
+                        <span className="text-sm text-gray-600">
+                          {new Date(payment.paymentDate).toLocaleString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </span>
                       </TableCell>
                     </TableRow>
                   ))}
+
                   {paymentData.length === 0 && (
                     <TableRow>
-                      <td colSpan={7} className="py-12 text-center text-gray-500 font-medium">
+                      <TableCell colSpan={7} className="h-32 text-center text-sm text-gray-500">
                         No payment records found.
-                      </td>
+                      </TableCell>
                     </TableRow>
                   )}
                 </TableBody>
@@ -303,44 +377,12 @@ export default function Payments() {
             </div>
           </div>
 
-          {/* Pagination */}
-          {totalPage > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-6">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-gray-600 hover:text-gray-900 bg-transparent"
-                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-              >
-                ←
-              </Button>
-              {Array.from({ length: totalPage }, (_, i) => i + 1).map((page) => (
-                <Button
-                  key={page}
-                  variant={currentPage === page ? 'default' : 'outline'}
-                  size="sm"
-                  className={
-                    currentPage === page
-                      ? 'bg-teal-600 text-white hover:bg-teal-700'
-                      : 'text-gray-600 bg-transparent'
-                  }
-                  onClick={() => handlePageChange(page)}
-                >
-                  {page}
-                </Button>
-              ))}
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-gray-600 hover:text-gray-900 bg-transparent"
-                onClick={() => handlePageChange(Math.min(totalPage, currentPage + 1))}
-                disabled={currentPage === totalPage}
-              >
-                →
-              </Button>
-            </div>
-          )}
+          {/* PAGINATION */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPage}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
     </main>

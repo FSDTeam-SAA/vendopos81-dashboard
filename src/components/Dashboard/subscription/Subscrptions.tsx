@@ -1,7 +1,5 @@
 'use client';
 
-'use client';
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -9,17 +7,19 @@ import SubscriptionsModal from './SubscriptionsModal';
 import { useQuery } from '@tanstack/react-query';
 import { subscriptionService } from '@/lib/services/subscriptionService';
 import { format } from 'date-fns';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Mail, CalendarDays, SendHorizonal } from 'lucide-react';
+import Pagination from '../../shared/Pagination';
 
 const Subscriptions = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSubscriberId, setSelectedSubscriberId] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+
   const limit = 10;
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['subscriptions', page, limit],
-    queryFn: () => subscriptionService.getAll(page, limit),
+    queryKey: ['subscriptions', currentPage, limit],
+    queryFn: () => subscriptionService.getAll(currentPage, limit),
   });
 
   const handleOpenModal = (id: string | null = null) => {
@@ -30,117 +30,164 @@ const Subscriptions = () => {
   const subscribers = data?.data || [];
   const meta = data?.meta;
 
+  // Pagination
+  const totalPage = meta?.totalPage || 1;
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return (
-    <div className="w-full bg-white rounded-lg p-6">
-      <div className="flex justify-between items-center mb-6">
-        {/* <div>
-          <h2 className="text-2xl font-semibold text-gray-900">Subscription</h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Manage your newsletter subscribers
-          </p>
-        </div> */}
-        <Button
-          onClick={() => handleOpenModal(null)}
-          className="bg-[#086646] hover:bg-green-800 text-white"
-        >
-          Send Bulk Email
-        </Button>
-      </div>
+    <main className="min-h-screen bg-gray-50">
+      <div className="container mx-auto p-6 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900">Subscribers</h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Manage newsletter subscribers and send email campaigns.
+            </p>
+          </div>
 
-      <div className="overflow-x-auto border rounded-lg">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">
-                Email Address
-              </th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">
-                Subscribed Date
-              </th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr>
-                <td colSpan={3} className="px-6 py-8 text-center">
-                  <div className="flex justify-center items-center gap-2 text-gray-500">
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                    <span>Loading subscribers...</span>
-                  </div>
-                </td>
-              </tr>
-            ) : isError ? (
-              <tr>
-                <td colSpan={3} className="px-6 py-8 text-center text-red-500">
-                  Failed to load subscribers. Please try again.
-                </td>
-              </tr>
-            ) : subscribers.length === 0 ? (
-              <tr>
-                <td colSpan={3} className="px-6 py-8 text-center text-gray-500">
-                  No subscribers found.
-                </td>
-              </tr>
-            ) : (
-              subscribers.map((subscriber) => (
-                <tr
-                  key={subscriber._id}
-                  className="border-b border-gray-200   hover:bg-gray-50 transition"
-                >
-                  <td className="px-6 py-4 text-sm text-gray-600">{subscriber.email}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {format(new Date(subscriber.createdAt), 'PPP')}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    <Button
-                      onClick={() => handleOpenModal(subscriber._id)}
-                      className="bg-[#086646] hover:bg-green-800 text-white"
-                      size="sm"
-                    >
-                      Send Email
-                    </Button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {!isLoading && !isError && meta && meta.totalPage > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-8">
           <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
+            onClick={() => handleOpenModal(null)}
+            className="h-10 px-5 bg-[#086646] hover:bg-[#06543a] text-white rounded-lg"
           >
-            Previous
-          </Button>
-          <span className="text-sm text-gray-600">
-            Page {page} of {meta.totalPage}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setPage((p) => Math.min(meta.totalPage, p + 1))}
-            disabled={page === meta.totalPage}
-          >
-            Next
+            <SendHorizonal className="w-4 h-4 mr-2" />
+            Send Bulk Email
           </Button>
         </div>
-      )}
 
+        {/* Summary Card */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="bg-white border border-gray-200 rounded-2xl p-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500 font-medium">Total Subscribers</p>
+
+                <h2 className="text-3xl font-semibold text-gray-900 mt-2">
+                  {meta?.total || subscribers.length || 0}
+                </h2>
+              </div>
+
+              <div className="w-11 h-11 rounded-xl bg-gray-100 flex items-center justify-center">
+                <Mail className="w-5 h-5 text-gray-700" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Table Section */}
+        <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[700px]">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Email Address
+                  </th>
+
+                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Subscribed Date
+                  </th>
+
+                  <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody className="divide-y divide-gray-100">
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={3} className="py-16">
+                      <div className="flex items-center justify-center gap-3 text-gray-500">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span className="text-sm">Loading subscribers...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : isError ? (
+                  <tr>
+                    <td colSpan={3} className="py-16 text-center">
+                      <p className="text-sm font-medium text-red-500">
+                        Failed to load subscribers. Please try again.
+                      </p>
+                    </td>
+                  </tr>
+                ) : subscribers.length === 0 ? (
+                  <tr>
+                    <td colSpan={3} className="py-16 text-center">
+                      <p className="text-sm text-gray-500">No subscribers found.</p>
+                    </td>
+                  </tr>
+                ) : (
+                  subscribers.map((subscriber) => (
+                    <tr key={subscriber._id} className="hover:bg-gray-50/70 transition-colors">
+                      {/* Email */}
+                      <td className="px-6 py-5">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
+                            <Mail className="w-4 h-4 text-gray-600" />
+                          </div>
+
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">{subscriber.email}</p>
+
+                            <p className="text-xs text-gray-500 mt-1">Newsletter Subscriber</p>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Date */}
+                      <td className="px-6 py-5">
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <CalendarDays className="w-4 h-4 text-gray-400" />
+
+                          {format(new Date(subscriber.createdAt), 'PPP')}
+                        </div>
+                      </td>
+
+                      {/* Action */}
+                      <td className="px-6 py-5 text-right">
+                        <Button
+                          onClick={() => handleOpenModal(subscriber._id)}
+                          size="sm"
+                          className="h-9 px-4 rounded-lg bg-[#086646] hover:bg-[#06543a] text-white"
+                        >
+                          Send Email
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          {!isLoading && !isError && totalPage > 1 && (
+            <div className="border-t border-gray-200 px-6 py-4">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPage}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto w-full">
+        <DialogContent className="max-w-4xl w-full max-h-[90vh] overflow-y-auto rounded-2xl border border-gray-200">
           <SubscriptionsModal
             onClose={() => setIsModalOpen(false)}
             subscriberId={selectedSubscriberId}
           />
         </DialogContent>
       </Dialog>
-    </div>
+    </main>
   );
 };
 
