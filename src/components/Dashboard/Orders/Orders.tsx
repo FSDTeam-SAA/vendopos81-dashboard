@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -13,20 +13,16 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
-  Eye,
-  Trash2,
-  MoreVertical,
-  Star,
-  Mail,
-  Phone,
-  MapPin,
   ChevronDown,
   Loader2,
-  XCircle,
-  CheckCircle,
   Filter,
   RotateCcw,
+  ShoppingBag,
+  CheckCircle2,
+  Clock3,
+  DollarSign,
 } from 'lucide-react';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,9 +31,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+
 import OrdersModal from './OrdersModal';
 import { useAllOrders } from '@/lib/hooks/useOrder';
 import { Order, OrderAnalytics } from '@/lib/types/order';
+import Pagination from '../../shared/Pagination';
+import { cn } from '@/lib/utils';
 
 export default function Orders() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,12 +55,12 @@ export default function Orders() {
 
   const orderAnalytics: OrderAnalytics | undefined = data?.analytics;
   const orderData = data?.data || [];
-  console.log(orderData);
 
   // Reset pagination when filters change
   const handleFilterChange = (type: 'orderStatus' | 'paymentType', value: string) => {
     if (type === 'orderStatus') setOrderStatus(value);
     if (type === 'paymentType') setPaymentType(value);
+
     setCurrentPage(1);
   };
 
@@ -74,6 +73,7 @@ export default function Orders() {
   // Manual Pagination Logic
   const totalItems = orderData.length;
   const totalPage = Math.ceil(totalItems / limit);
+
   const paginatedData = orderData.slice((currentPage - 1) * limit, currentPage * limit);
 
   const handlePageChange = (page: number) => {
@@ -85,10 +85,70 @@ export default function Orders() {
     setModalOpen(true);
   };
 
+  const getOrderStatusClass = (status: string) => {
+    switch (status) {
+      case 'delivered':
+        return 'bg-emerald-50 text-emerald-700 border border-emerald-100';
+
+      case 'pending':
+        return 'bg-amber-50 text-amber-700 border border-amber-100';
+
+      case 'cancelled':
+        return 'bg-red-50 text-red-700 border border-red-100';
+
+      default:
+        return 'bg-gray-50 text-gray-700 border border-gray-100';
+    }
+  };
+
+  const getPaymentStatusClass = (status: string) => {
+    switch (status) {
+      case 'paid':
+        return 'bg-emerald-50 text-emerald-700 border border-emerald-100';
+
+      case 'pending':
+        return 'bg-amber-50 text-amber-700 border border-amber-100';
+
+      default:
+        return 'bg-red-50 text-red-700 border border-red-100';
+    }
+  };
+
+  const stats = [
+    {
+      title: 'Total Orders',
+      value: orderAnalytics?.totalOrder || 0,
+      icon: ShoppingBag,
+      iconBg: 'bg-slate-100',
+      iconColor: 'text-slate-700',
+    },
+    {
+      title: 'Delivered Orders',
+      value: orderAnalytics?.totalDeliveredOrder || 0,
+      icon: CheckCircle2,
+      iconBg: 'bg-emerald-50',
+      iconColor: 'text-emerald-700',
+    },
+    {
+      title: 'Pending Orders',
+      value: orderAnalytics?.totalPendingOrder || 0,
+      icon: Clock3,
+      iconBg: 'bg-amber-50',
+      iconColor: 'text-amber-700',
+    },
+    {
+      title: 'Total Sales',
+      value: `$${orderAnalytics?.totalSalesAmount?.toFixed(2) || '0.00'}`,
+      icon: DollarSign,
+      iconBg: 'bg-blue-50',
+      iconColor: 'text-blue-700',
+    },
+  ];
+
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-black">
-        <Loader2 className="w-10 h-10 animate-spin text-teal-600" />
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-[#086646]" />
       </div>
     );
   }
@@ -102,124 +162,128 @@ export default function Orders() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="p-6 mx-auto container space-y-6">
-        {/* Stat Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-black">
-          <Card className="bg-white border-0 shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">Total Orders</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-gray-900">{orderAnalytics?.totalOrder || 0}</p>
-            </CardContent>
-          </Card>
+    <main className="min-h-screen bg-[#f8fafc]">
+      <div className="container mx-auto p-6 space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+          {stats.map((item) => {
+            const Icon = item.icon;
 
-          <Card className="bg-white border-0 shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-teal-600">Total Delivered</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-teal-600">
-                {orderAnalytics?.totalDeliveredOrder || 0}
-              </p>
-            </CardContent>
-          </Card>
+            return (
+              <Card
+                key={item.title}
+                className="border border-gray-200 bg-white rounded-2xl shadow-none"
+              >
+                <CardContent className="p-5 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">{item.title}</p>
 
-          <Card className="bg-white border-0 shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-amber-600">Pending Orders</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-amber-600">
-                {orderAnalytics?.totalPendingOrder || 0}
-              </p>
-            </CardContent>
-          </Card>
+                    <h3 className="mt-3 text-3xl font-bold text-gray-900">{item.value}</h3>
+                  </div>
 
-          <Card className="bg-white border-0 shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">Total Sales</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-gray-900">
-                ${orderAnalytics?.totalSalesAmount?.toFixed(2) || '0.00'}
-              </p>
-            </CardContent>
-          </Card>
+                  <div
+                    className={cn(
+                      'w-12 h-12 rounded-2xl flex items-center justify-center',
+                      item.iconBg,
+                    )}
+                  >
+                    <Icon className={cn('w-6 h-6', item.iconColor)} />
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
-        {/* Table Section */}
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
-            <div className="flex items-center gap-2 flex-wrap">
-              {/* Order Status Filter */}
+        {/* TABLE SECTION */}
+        <div className="space-y-5">
+          {/* TOPBAR */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
+
+              <p className="text-sm text-gray-500 mt-1">
+                Manage and monitor all incoming customer orders.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 flex-wrap">
+              {/* ORDER STATUS FILTER */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
                     size="sm"
-                    className="bg-white text-gray-700 border-gray-200"
+                    className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50 shadow-none"
                   >
                     <Filter className="w-4 h-4 mr-2" />
                     Status: {orderStatus || 'All'}
-                    <ChevronDown className="ml-2 w-4 h-4" />
+                    <ChevronDown className="w-4 h-4 ml-2" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
+
+                <DropdownMenuContent align="end" className="w-52">
+                  <DropdownMenuLabel>Filter by Order Status</DropdownMenuLabel>
+
                   <DropdownMenuSeparator />
+
                   <DropdownMenuItem onClick={() => handleFilterChange('orderStatus', '')}>
                     All Statuses
                   </DropdownMenuItem>
+
                   <DropdownMenuItem onClick={() => handleFilterChange('orderStatus', 'pending')}>
                     Pending
                   </DropdownMenuItem>
+
                   <DropdownMenuItem onClick={() => handleFilterChange('orderStatus', 'delivered')}>
                     Delivered
                   </DropdownMenuItem>
+
                   <DropdownMenuItem onClick={() => handleFilterChange('orderStatus', 'cancelled')}>
                     Cancelled
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* Payment Type Filter */}
+              {/* PAYMENT FILTER */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
                     size="sm"
-                    className="bg-white text-gray-700 border-gray-200"
+                    className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50 shadow-none"
                   >
                     <Filter className="w-4 h-4 mr-2" />
                     Payment: {paymentType || 'All'}
-                    <ChevronDown className="ml-2 w-4 h-4" />
+                    <ChevronDown className="w-4 h-4 ml-2" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuLabel>Filter by Payment</DropdownMenuLabel>
+
+                <DropdownMenuContent align="end" className="w-52">
+                  <DropdownMenuLabel>Filter by Payment Type</DropdownMenuLabel>
+
                   <DropdownMenuSeparator />
+
                   <DropdownMenuItem onClick={() => handleFilterChange('paymentType', '')}>
                     All Payments
                   </DropdownMenuItem>
+
                   <DropdownMenuItem onClick={() => handleFilterChange('paymentType', 'cod')}>
                     COD
                   </DropdownMenuItem>
+
                   <DropdownMenuItem onClick={() => handleFilterChange('paymentType', 'online')}>
                     Online
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* Clear Filters Button */}
+              {/* CLEAR FILTER */}
               {(orderStatus || paymentType) && (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={clearFilters}
-                  className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                  className="text-gray-500 hover:text-red-500 hover:bg-red-50"
                 >
                   <RotateCcw className="w-4 h-4 mr-2" />
                   Clear
@@ -228,126 +292,148 @@ export default function Orders() {
             </div>
           </div>
 
-          <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
+          {/* TABLE */}
+          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
             <div className="overflow-x-auto">
               <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="whitespace-nowrap">Order ID</TableHead>
-                    <TableHead className="whitespace-nowrap">Customer</TableHead>
-                    <TableHead className="whitespace-nowrap">Products</TableHead>
-                    <TableHead className="whitespace-nowrap">Amount</TableHead>
-                    <TableHead className="whitespace-nowrap">Status</TableHead>
-                    <TableHead className="whitespace-nowrap">Payment</TableHead>
-                    <TableHead className="whitespace-nowrap text-center">Order Date</TableHead>
-                    <TableHead className="whitespace-nowrap text-right">View</TableHead>
+                <TableHeader className="bg-gray-50">
+                  <TableRow className="border-b border-gray-200 hover:bg-gray-50">
+                    <TableHead className="h-14 px-6 text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap">
+                      Order ID
+                    </TableHead>
+
+                    <TableHead className="h-14 px-6 text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap">
+                      Customer
+                    </TableHead>
+
+                    <TableHead className="h-14 px-6 text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap">
+                      Products
+                    </TableHead>
+
+                    <TableHead className="h-14 px-6 text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap">
+                      Amount
+                    </TableHead>
+
+                    <TableHead className="h-14 px-6 text-center text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap">
+                      Order Status
+                    </TableHead>
+
+                    <TableHead className="h-14 px-6 text-center text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap">
+                      Payment Status
+                    </TableHead>
+
+                    <TableHead className="h-14 px-6 text-center text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap">
+                      Order Date
+                    </TableHead>
+
+                    <TableHead className="h-14 px-6 text-right text-xs font-semibold uppercase tracking-wide text-gray-500 whitespace-nowrap">
+                      Action
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
 
                 <TableBody>
                   {paginatedData.map((order: Order) => (
-                    <TableRow key={order._id}>
-                      <TableCell className="font-medium">#{order.orderUniqueId}</TableCell>
-                      <TableCell>
+                    <TableRow
+                      key={order._id}
+                      className="border-b border-gray-100 hover:bg-gray-50/60 transition-colors"
+                    >
+                      {/* ORDER ID */}
+                      <TableCell className="px-6 py-5 whitespace-nowrap">
+                        <span className="font-semibold text-gray-900">#{order.orderUniqueId}</span>
+                      </TableCell>
+
+                      {/* CUSTOMER */}
+                      <TableCell className="px-6 py-5 whitespace-nowrap">
                         <div className="flex flex-col">
-                          <span className="font-medium text-gray-900">
+                          <span className="text-sm font-semibold text-gray-900">
                             {order.userId.firstName} {order.userId.lastName}
                           </span>
-                          <span className="text-xs text-gray-500">{order.userId.email}</span>
+
+                          <span className="text-xs text-gray-500 mt-1">{order.userId.email}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="whitespace-nowrap">
-                        {order.items.length} items
+
+                      {/* PRODUCTS */}
+                      <TableCell className="px-6 py-5 whitespace-nowrap">
+                        <span className="text-sm font-medium text-gray-700">
+                          {order.items.length} items
+                        </span>
                       </TableCell>
-                      <TableCell className="whitespace-nowrap font-semibold">
-                        ${order.totalPrice.toFixed(2)}
+
+                      {/* AMOUNT */}
+                      <TableCell className="px-6 py-5 whitespace-nowrap">
+                        <span className="text-sm font-semibold text-gray-900">
+                          ${order.totalPrice.toFixed(2)}
+                        </span>
                       </TableCell>
-                      <TableCell>
+
+                      {/* ORDER STATUS */}
+                      <TableCell className="px-6 py-5 text-center whitespace-nowrap">
                         <Badge
-                          className={`capitalize whitespace-nowrap ${
-                            order.orderStatus === 'delivered'
-                              ? 'bg-green-100 text-green-700'
-                              : order.orderStatus === 'pending'
-                                ? 'bg-yellow-100 text-yellow-700'
-                                : 'bg-red-100 text-red-700'
-                          }`}
+                          className={cn(
+                            'capitalize rounded-full px-3 py-1 text-xs font-medium shadow-none',
+                            getOrderStatusClass(order.orderStatus),
+                          )}
                         >
                           {order.orderStatus}
                         </Badge>
                       </TableCell>
-                      <TableCell>
+
+                      {/* PAYMENT STATUS */}
+                      <TableCell className="px-6 py-5 text-center whitespace-nowrap">
                         <Badge
-                          className={`capitalize whitespace-nowrap ${
-                            order.paymentStatus === 'paid'
-                              ? 'bg-green-100 text-green-700'
-                              : order.paymentStatus === 'pending'
-                                ? 'bg-yellow-100 text-yellow-700'
-                                : 'bg-red-100 text-red-700'
-                          }`}
+                          className={cn(
+                            'capitalize rounded-full px-3 py-1 text-xs font-medium shadow-none',
+                            getPaymentStatusClass(order.paymentStatus),
+                          )}
                         >
                           {order.paymentStatus}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-center whitespace-nowrap">
-                        {new Date(order.purchaseDate).toLocaleDateString()}
+
+                      {/* ORDER DATE */}
+                      <TableCell className="px-6 py-5 text-center whitespace-nowrap">
+                        <span className="text-sm text-gray-700">
+                          {new Date(order.purchaseDate).toLocaleDateString()}
+                        </span>
                       </TableCell>
-                      <TableCell className="text-right whitespace-nowrap">
+
+                      {/* ACTION */}
+                      <TableCell className="px-6 py-5 text-right whitespace-nowrap">
                         <Button
                           size="sm"
                           variant="outline"
-                          className="bg-white text-black hover:bg-gray-100"
+                          className="border-gray-200 bg-white text-gray-700 hover:bg-gray-50 shadow-none"
                           onClick={() => viewOrder(order)}
                         >
-                          View
+                          View Details
                         </Button>
                       </TableCell>
                     </TableRow>
                   ))}
+
+                  {paginatedData.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={8} className="h-32 text-center text-sm text-gray-500">
+                        No orders found.
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </div>
           </div>
 
-          {/* Pagination */}
-          {totalPage > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-6">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-gray-600 hover:text-gray-900 bg-transparent"
-                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-              >
-                ←
-              </Button>
-              {Array.from({ length: totalPage }, (_, i) => i + 1).map((page) => (
-                <Button
-                  key={page}
-                  variant={currentPage === page ? 'default' : 'outline'}
-                  size="sm"
-                  className={
-                    currentPage === page
-                      ? 'bg-teal-600 text-white hover:bg-teal-700'
-                      : 'text-gray-600 bg-transparent'
-                  }
-                  onClick={() => handlePageChange(page)}
-                >
-                  {page}
-                </Button>
-              ))}
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-gray-600 hover:text-gray-900 bg-transparent"
-                onClick={() => handlePageChange(Math.min(totalPage, currentPage + 1))}
-                disabled={currentPage === totalPage}
-              >
-                →
-              </Button>
-            </div>
-          )}
+          {/* PAGINATION */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPage}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
+
       <OrdersModal modalOpen={modalOpen} onModalChange={setModalOpen} data={selectedOrder} />
     </main>
   );
