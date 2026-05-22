@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { Badge } from '@/components/ui/badge';
@@ -22,15 +23,18 @@ import {
 import { CheckCircle, ChevronDown, Clock, Filter, Loader2, RotateCcw, Send } from 'lucide-react';
 import { useState } from 'react';
 
-import { useAllSettlements } from '@/lib/hooks/usePaymentsttatment';
+import { useAllSettlements, useTransferPaymentToSupplier } from '@/lib/hooks/usePaymentsttatment';
 import { Analytics, Settlement } from '@/lib/types/paymentTransfer';
 import { cn } from '../../../lib/utils';
 import Pagination from '../../shared/Pagination';
+import { toast } from 'sonner';
 
 const PaymenTransfer = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [status, setStatus] = useState<string>('');
-  const { data: settlementResponse, isLoading, isError } = useAllSettlements();
+  const { data: settlementResponse, isLoading, isError, refetch } = useAllSettlements();
+
+  const { mutate: transferPayment, isPending: isTransferLoading } = useTransferPaymentToSupplier();
 
   const settlementsRaw = settlementResponse?.data ?? settlementResponse;
   console.log('this is response', settlementsRaw);
@@ -82,7 +86,17 @@ const PaymenTransfer = () => {
     : settlements;
 
   const handleTransaction = (settlement: Settlement) => {
-    console.log('Transaction details for settlement:', settlement);
+    transferPayment(settlement._id, {
+      onSuccess: (response) => {
+        toast.success(response?.message || 'Payment transferred successfully');
+
+        refetch();
+      },
+
+      onError: (error: any) => {
+        toast.error(error?.response?.data?.message || 'Failed to transfer payment');
+      },
+    });
   };
 
   return (
@@ -361,10 +375,18 @@ const PaymenTransfer = () => {
                         <TableCell className="px-6 py-5 text-center whitespace-nowrap">
                           <Button
                             onClick={() => handleTransaction(settlement)}
+                            disabled={isTransferLoading}
                             size="sm"
                             className="h-9 rounded-lg bg-[#086646] px-4 text-white hover:bg-[#06543f] shadow-none"
                           >
-                            Transfer Now
+                            {isTransferLoading ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Processing...
+                              </>
+                            ) : (
+                              'Transfer Now'
+                            )}
                           </Button>
                         </TableCell>
                       ) : (
