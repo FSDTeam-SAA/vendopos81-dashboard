@@ -1,22 +1,21 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import useAuth from "@/lib/hooks/useAuth";
-import { motion } from "framer-motion";
-import { Mail } from "lucide-react";
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import useAuth from '@/lib/hooks/useAuth';
+import { motion } from 'framer-motion';
+import { Mail } from 'lucide-react';
 
 export default function ForgetPassword() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const router = useRouter();
   const { loading, handleForgotPassword } = useAuth();
 
   const handleSendCode = async () => {
     const response = await handleForgotPassword(email);
-
     if (response.success && response.data?.data?.accessToken) {
       const accessToken = response.data.data.accessToken;
       router.push(`/verify-otp?token=${encodeURIComponent(accessToken)}`);
@@ -29,7 +28,7 @@ export default function ForgetPassword() {
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, ease: "easeOut" }}
+        transition={{ duration: 0.45, ease: 'easeOut' }}
         className="w-full max-w-lg bg-white rounded-2xl shadow-lg px-8 py-10"
       >
         {/* Heading */}
@@ -48,8 +47,7 @@ export default function ForgetPassword() {
           transition={{ delay: 0.15 }}
           className="text-[#6C757D] mt-1 text-sm text-center"
         >
-          Enter your email address and we’ll send you code to reset your
-          password.
+          Enter your email address and we’ll send you code to reset your password.
         </motion.p>
 
         {/* Form */}
@@ -74,10 +72,7 @@ export default function ForgetPassword() {
             <Label>Email Address</Label>
 
             <div className="relative mt-1">
-              <Mail
-                size={18}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              />
+              <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
 
               <Input
                 type="email"
@@ -96,7 +91,7 @@ export default function ForgetPassword() {
               onClick={handleSendCode}
               disabled={loading}
             >
-              {loading ? "Sending..." : "Send Code"}
+              {loading ? 'Sending...' : 'Send Code'}
             </Button>
           </motion.div>
         </motion.div>
