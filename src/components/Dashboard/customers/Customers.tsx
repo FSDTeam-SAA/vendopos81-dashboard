@@ -149,9 +149,9 @@ export default function Customers() {
                     Customer
                   </TableHead>
 
-                  <TableHead className="whitespace-nowrap text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  {/* <TableHead className="whitespace-nowrap text-xs font-semibold uppercase tracking-wide text-gray-500">
                     Contact
-                  </TableHead>
+                  </TableHead> */}
 
                   <TableHead className="whitespace-nowrap text-xs font-semibold uppercase tracking-wide text-gray-500">
                     Orders
@@ -185,7 +185,7 @@ export default function Customers() {
                       {/* Customer */}
                       <TableCell className="px-6 py-5">
                         <div className="flex items-start gap-3">
-                          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-700">
+                          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-md font-semibold text-gray-700">
                             {user.firstName?.charAt(0)}
                             {user.lastName?.charAt(0)}
                           </div>
@@ -195,18 +195,11 @@ export default function Customers() {
                               {user.firstName} {user.lastName}
                             </p>
 
-                            <p className="mt-1 text-xs text-gray-500">
-                              Member since {new Date(user.createdAt).toLocaleDateString()}
-                            </p>
+                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                              <Mail className="h-4 w-4 text-gray-400" />
+                              <span>{user.email}</span>
+                            </div>
                           </div>
-                        </div>
-                      </TableCell>
-
-                      {/* Contact */}
-                      <TableCell className="py-5">
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <Mail className="h-4 w-4 text-gray-400" />
-                          <span>{user.email}</span>
                         </div>
                       </TableCell>
 
