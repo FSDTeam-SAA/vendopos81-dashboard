@@ -270,8 +270,16 @@ export default function SupplierManagement() {
                       {/* Supplier */}
                       <TableCell className="py-5">
                         <div className="flex items-start gap-3">
-                          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gray-100">
-                            <Store className="h-5 w-5 text-gray-600" />
+                          <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl bg-gray-100">
+                            {supplier?.logo?.url ? (
+                              <img
+                                src={supplier.logo.url}
+                                alt={supplier.shopName || supplier.brandName}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <Store className="h-5 w-5 text-gray-600" />
+                            )}
                           </div>
 
                           <div>
@@ -303,9 +311,20 @@ export default function SupplierManagement() {
 
                       {/* Location */}
                       <TableCell className="py-5">
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <MapPin className="h-4 w-4 text-gray-400" />
-                          <span>{supplier.location || 'N/A'}</span>
+                        <div className="flex items-start gap-3">
+                          <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100">
+                            <MapPin className="h-4 w-4 text-gray-500" />
+                          </div>
+
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-gray-800">
+                              {supplier.street || 'No street address'}
+                            </p>
+
+                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                              <span>{supplier.postalCode || 'No postal code'}</span>
+                            </div>
+                          </div>
                         </div>
                       </TableCell>
 

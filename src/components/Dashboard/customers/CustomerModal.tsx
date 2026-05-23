@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useGetSingleCustomerData, useSuspendCustomer } from '@/lib/hooks/useUsers';
 import { User } from '@/lib/types/users';
-import { AlertTriangle, Calendar, Mail, MapPin, Phone } from 'lucide-react';
+import { AlertTriangle, Calendar, Mail, MapPin, Phone, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 
 interface CustomerModalProps {
@@ -23,121 +23,162 @@ const CustomerModal = ({ modalOpen, onModalChange, data }: CustomerModalProps) =
   if (!data) return null;
 
   const customer = customerResponse?.data || data;
-  const initials = customer.firstName?.charAt(0) + customer.lastName?.charAt(0);
+  const initials = (customer.firstName?.charAt(0) || '') + (customer.lastName?.charAt(0) || '');
 
-  // suspend handler with console.log
   const handleSuspend = () => {
-    console.log('Suspending user ID:', customer._id);
     suspendCustomer(customer._id);
   };
 
   return (
     <Dialog open={modalOpen} onOpenChange={onModalChange}>
-      <DialogContent className="max-w-[700px] p-0 overflow-hidden">
+      <DialogContent className="max-w-[720px] overflow-hidden rounded-2xl bg-white p-0 shadow-xl">
         {/* Header */}
-        <div className="px-6 py-4 border-b">
-          <h2 className="text-lg font-semibold">Customer Details</h2>
-        </div>
+        <div className="px-7 py-6">
+          <div className="flex items-start justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">Customer Details</h2>
+              <p className="mt-1 text-sm text-gray-500">Account information overview</p>
+            </div>
 
-        <div className="p-6 space-y-6">
-          {/* Profile Section */}
-          <div className="border rounded-xl p-5">
-            <div className="flex justify-between items-start">
-              <div className="flex gap-4 items-center">
-                {/* Avatar */}
-                <div className="w-12 h-12 rounded-full overflow-hidden bg-green-100 flex items-center justify-center font-semibold text-gray-700">
-                  {customer?.image?.url ? (
-                    <Image
-                      src={customer.image.url}
-                      alt="Customer"
-                      width={48}
-                      height={48}
-                      className="object-cover rounded-full"
-                    />
-                  ) : (
-                    initials
-                  )}
-                </div>
+            <Badge
+              className={`rounded-full px-3 py-1 text-xs font-medium transition-all border backdrop-blur-md shadow-sm ${
+                customer.isSuspended
+                  ? 'border-red-200/60 bg-red-50/70 text-red-700 shadow-red-100/40'
+                  : 'border-emerald-200/60 bg-emerald-50/70 text-emerald-700 shadow-emerald-100/40'
+              }`}
+            >
+              <span className="flex items-center gap-1.5">
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    customer.isSuspended ? 'bg-red-500' : 'bg-emerald-500'
+                  }`}
+                />
+                {customer.isSuspended ? 'Suspended' : 'Active'}
+              </span>
+            </Badge>
+          </div>
 
-                <div>
-                  <h3 className="font-semibold text-gray-900">
-                    {customer.firstName} {customer.lastName}
-                  </h3>
-
-                  <Badge
-                    className={`mt-1 text-xs ${
-                      customer.isSuspended
-                        ? 'bg-red-100 text-red-600'
-                        : 'bg-emerald-100 text-green-700'
-                    }`}
-                  >
-                    {customer.isSuspended ? 'Suspended' : 'Active'}
-                  </Badge>
-                </div>
+          {/* Profile */}
+          <div className="mt-6 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl bg-gray-100">
+                {customer?.image?.url ? (
+                  <Image src={customer.image.url} alt="Customer" fill className="object-cover" />
+                ) : (
+                  <span className="text-sm font-semibold text-gray-700 uppercase">{initials}</span>
+                )}
               </div>
 
-              {/* ID */}
-              <div className="text-right text-sm">
-                <p className="text-gray-500">Customer ID</p>
-                <p className="font-medium">#{customer._id.slice(-6)}</p>
+              <div>
+                <h3 className="text-base font-semibold text-gray-900">
+                  {customer.firstName} {customer.lastName}
+                </h3>
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <ShieldCheck className="h-4 w-4" />
+                  Customer Account
+                </div>
               </div>
             </div>
 
-            {/* Info Grid */}
-            <div className="grid grid-cols-2 gap-y-5 gap-x-10 mt-6 text-sm">
-              <div className="flex items-start gap-3 text-gray-600">
-                <Mail className="w-4 h-4 text-gray-400" />
-                <div>
-                  <p className="text-sm text-gray-400">Email</p>
-                  <p className="text-sm text-gray-900">{customer.email || 'N/A'}</p>
-                </div>
-              </div>
+            <div className="text-right">
+              <p className="text-xs font-medium text-gray-400 tracking-wide uppercase">
+                Customer ID
+              </p>
 
-              <div className="flex items-start gap-3 text-gray-600">
-                <Phone className="w-4 h-4 text-gray-400 mt-1" />
-                <div>
-                  <p className="text-sm text-gray-400">Phone</p>
-                  <p className="text-sm text-gray-900">{customer?.phone || 'N/A'}</p>
-                </div>
+              <div className="mt-1 inline-flex items-center gap-2 rounded-md border border-green-200 bg-white px-3 py-1.5">
+                <span className="font-mono text-sm font-medium text-gray-900">
+                  #{customer._id?.slice(-6)}
+                </span>
               </div>
+            </div>
+          </div>
+        </div>
 
-              <div className="flex items-center gap-3 text-gray-600 text-sm">
-                <Calendar className="w-4 h-4 text-gray-400" />
-                <div>
-                  <p className="text-sm text-gray-400">Join Date</p>
-                  <p className="text-sm text-gray-900">
-                    {customer?.createdAt
-                      ? new Date(customer.createdAt).toLocaleDateString()
-                      : 'N/A'}
-                  </p>
-                </div>
+        {/* Content */}
+        <div className="px-7 pb-6 space-y-5">
+          {/* Email */}
+          {/* Email */}
+          <div className="flex items-start gap-3">
+            <Mail className="h-4 w-4 text-gray-400 mt-1" />
+
+            <div className="w-full">
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Email</p>
+
+              <div className="mt-1 rounded-lg px-3 py-2">
+                <p className="text-sm font-medium text-gray-900 break-all">
+                  {customer.email || 'Not provided'}
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Shipping Address */}
-          <div className="border rounded-xl p-5 flex justify-between items-end">
-            <div>
-              <div className="flex items-center gap-1 font-medium text-gray-800">
-                <MapPin className="w-4 h-4 text-emerald-600" />
-                Address
+          {/* Phone */}
+          <div className="flex items-start gap-3">
+            <Phone className="h-4 w-4 text-gray-400 mt-1" />
+
+            <div className="w-full">
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Phone</p>
+
+              <div className="mt-1 rounded-lg px-3 py-2">
+                <p className="text-sm font-medium text-gray-900">
+                  {customer.phone || 'Not provided'}
+                </p>
               </div>
-
-              <p className="text-sm text-gray-600 mt-3 leading-relaxed">
-                {customer.street || 'Not provided'} <br />
-                {customer.location || 'Not provided'} <br />
-                {customer.postalCode || 'Not provided'}
-              </p>
             </div>
+          </div>
 
+          {/* Join Date */}
+          <div className="flex items-start gap-3">
+            <Calendar className="h-4 w-4 text-gray-400 mt-1" />
+
+            <div className="w-full">
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Joined</p>
+
+              <div className="mt-1 inline-flex items-center rounded-lg px-3 py-1.5">
+                <p className="text-sm font-medium text-gray-900">
+                  {customer?.createdAt
+                    ? new Date(customer.createdAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })
+                    : 'Not available'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Address */}
+          <div className="flex items-start gap-3">
+            <MapPin className="h-4 w-4 text-gray-400 mt-1" />
+
+            <div className="w-full">
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Address</p>
+
+              <div className="mt-1 rounded-lg px-3 py-2 space-y-1">
+                <p className="text-sm font-medium text-gray-900">
+                  {customer.street || 'Not provided'}
+                </p>
+
+                {customer.location && <p className="text-sm text-gray-600">{customer.location}</p>}
+
+                {customer.postalCode && (
+                  <p className="text-sm text-gray-600 font-mono">{customer.postalCode}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Action */}
+          <div className="pt-4 flex justify-end">
             {customer.isSuspended ? (
               <Button
                 size="sm"
                 onClick={handleSuspend}
                 disabled={isSuspending}
-                className="bg-green-800 hover:bg-green-900 text-white"
+                className="h-10 rounded-xl bg-emerald-600 px-5 text-white hover:bg-emerald-700"
               >
-                <AlertTriangle className="w-4 h-4 mr-1" />
+                <AlertTriangle className="mr-2 h-4 w-4" />
                 Unsuspend
               </Button>
             ) : (
@@ -145,9 +186,9 @@ const CustomerModal = ({ modalOpen, onModalChange, data }: CustomerModalProps) =
                 size="sm"
                 onClick={handleSuspend}
                 disabled={isSuspending}
-                className="bg-red-500 hover:bg-red-600 text-white"
+                className="h-10 rounded-sm bg-red-500 px-5 text-white hover:bg-red-600"
               >
-                <AlertTriangle className="w-4 h-4 mr-1" />
+                <AlertTriangle className="mr-2 h-4 w-4" />
                 Suspend
               </Button>
             )}

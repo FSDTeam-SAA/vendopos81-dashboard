@@ -39,7 +39,7 @@ const PaymenTransfer = () => {
   const { mutate: transferPayment } = useTransferPaymentToSupplier();
 
   const settlementsRaw = settlementResponse?.data ?? settlementResponse;
-  console.log('this is response', settlementsRaw);
+
   const settlements: Settlement[] = Array.isArray(settlementsRaw)
     ? settlementsRaw
     : Array.isArray(settlementsRaw?.data)
