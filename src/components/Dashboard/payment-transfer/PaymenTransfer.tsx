@@ -20,7 +20,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { CheckCircle, ChevronDown, Clock, Filter, Loader2, RotateCcw, Send } from 'lucide-react';
+import {
+  BadgeDollarSign,
+  CheckCircle,
+  ChevronDown,
+  Clock,
+  Filter,
+  Loader2,
+  RotateCcw,
+  Send,
+  Wallet,
+} from 'lucide-react';
 import { useState } from 'react';
 
 import { useAllSettlements, useTransferPaymentToSupplier } from '@/lib/hooks/usePaymentsttatment';
@@ -110,57 +120,93 @@ const PaymenTransfer = () => {
   return (
     <main className="min-h-screen bg-[#f8fafc]">
       <div className="container mx-auto p-6 space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          <Card className="border border-gray-200 bg-white rounded-2xl shadow-none">
-            <CardContent className="p-6 flex items-center justify-between">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <Card className="border border-gray-200 bg-white rounded-xl shadow-none">
+            <CardContent className="p-4 flex items-center justify-between">
               <div>
-                <CardTitle className="text-sm font-medium text-gray-500 mb-3">
+                <CardTitle className="text-xs font-medium text-gray-500 mb-2">
                   Total Transferred
                 </CardTitle>
 
-                <p className="text-3xl font-bold text-gray-900">
-                  ${analytics?.totalTransferred?.toLocaleString() || 0}
+                <p className="text-2xl font-bold text-gray-900">
+                  {analytics?.totalTransferred?.toLocaleString() || 0}
                 </p>
               </div>
 
-              <div className="w-14 h-14 rounded-2xl bg-[#086646]/10 flex items-center justify-center">
-                <CheckCircle className="w-7 h-7 text-[#086646]" />
+              <div className="w-11 h-11 rounded-xl bg-[#086646]/10 flex items-center justify-center">
+                <CheckCircle className="w-5 h-5 text-[#086646]" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border border-gray-200 bg-white rounded-2xl shadow-none">
-            <CardContent className="p-6 flex items-center justify-between">
+          <Card className="border border-gray-200 bg-white rounded-xl shadow-none">
+            <CardContent className="p-4 flex items-center justify-between">
               <div>
-                <CardTitle className="text-sm font-medium text-amber-600 mb-3">
+                <CardTitle className="text-xs font-medium text-amber-600 mb-2">
                   Total Pending
                 </CardTitle>
 
-                <p className="text-3xl font-bold text-amber-600">
-                  ${analytics?.totalPending?.toLocaleString() || 0}
+                <p className="text-2xl font-bold text-amber-600">
+                  {analytics?.totalPending?.toLocaleString() || 0}
                 </p>
               </div>
 
-              <div className="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center">
-                <Clock className="w-7 h-7 text-amber-600" />
+              <div className="w-11 h-11 rounded-xl bg-amber-100 flex items-center justify-center">
+                <Clock className="w-5 h-5 text-amber-600" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border border-gray-200 bg-white rounded-2xl shadow-none">
-            <CardContent className="p-6 flex items-center justify-between">
+          <Card className="border border-gray-200 bg-white rounded-xl shadow-none">
+            <CardContent className="p-4 flex items-center justify-between">
               <div>
-                <CardTitle className="text-sm font-medium text-blue-600 mb-3">
+                <CardTitle className="text-xs font-medium text-blue-600 mb-2">
                   Total Requested
                 </CardTitle>
 
-                <p className="text-3xl font-bold text-blue-600">
-                  ${analytics?.totalRequested?.toLocaleString() || 0}
+                <p className="text-2xl font-bold text-blue-600">
+                  {analytics?.totalRequested?.toLocaleString() || 0}
                 </p>
               </div>
 
-              <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center">
-                <Send className="w-7 h-7 text-blue-600" />
+              <div className="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center">
+                <Send className="w-5 h-5 text-blue-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border border-gray-200 bg-white rounded-xl shadow-none">
+            <CardContent className="p-4 flex items-center justify-between">
+              <div>
+                <CardTitle className="text-xs font-medium text-purple-600 mb-2">
+                  Transfer Amount
+                </CardTitle>
+
+                <p className="text-2xl font-bold text-purple-600">
+                  ${analytics?.totalTransferredAmount?.toLocaleString() || 0}
+                </p>
+              </div>
+
+              <div className="w-11 h-11 rounded-xl bg-purple-100 flex items-center justify-center">
+                <Wallet className="w-5 h-5 text-purple-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border border-gray-200 bg-white rounded-xl shadow-none">
+            <CardContent className="p-4 flex items-center justify-between">
+              <div>
+                <CardTitle className="text-xs font-medium text-[#086646] mb-2">
+                  Admin Commission
+                </CardTitle>
+
+                <p className="text-2xl font-bold text-[#086646]">
+                  ${analytics?.totalAdminCommission?.toLocaleString() || 0}
+                </p>
+              </div>
+
+              <div className="w-11 h-11 rounded-xl bg-green-100 flex items-center justify-center">
+                <BadgeDollarSign className="w-5 h-5 text-[#086646]" />
               </div>
             </CardContent>
           </Card>
@@ -196,26 +242,109 @@ const PaymenTransfer = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50 shadow-none"
+                    className="
+        h-10
+        px-4
+        bg-white
+        border-gray-200
+        text-gray-700
+        rounded-sm
+        hover:bg-gray-50
+        hover:border-gray-300
+        transition-all
+        duration-200
+      "
                   >
-                    <Filter className="w-4 h-4 mr-2" />
-                    Status: {status || 'All'}
-                    <ChevronDown className="ml-2 w-4 h-4" />
+                    <Filter className="w-4 h-4 mr-2 text-gray-500" />
+
+                    <span className="font-medium">Status: {status || 'All'}</span>
+
+                    <ChevronDown className="ml-2 w-4 h-4 text-gray-500" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-52">
-                  <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => handleStatusChange('')}>
+
+                <DropdownMenuContent
+                  align="end"
+                  className="
+      w-52
+      rounded-xl
+      border border-gray-200
+      bg-white
+      shadow-lg
+      p-2
+    "
+                >
+                  <DropdownMenuLabel className="text-xs font-semibold text-gray-500 px-2 pb-2">
+                    Filter by Status
+                  </DropdownMenuLabel>
+
+                  <DropdownMenuSeparator className="bg-gray-100" />
+
+                  <DropdownMenuItem
+                    onClick={() => handleStatusChange('')}
+                    className="
+        rounded-lg
+        px-3
+        py-2.5
+        text-sm
+        text-gray-700
+        cursor-pointer
+        focus:bg-gray-50
+        hover:bg-gray-50
+        transition-colors
+      "
+                  >
                     All Transfers
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleStatusChange('transferred')}>
-                    Transferred
+
+                  <DropdownMenuItem
+                    onClick={() => handleStatusChange('completed')}
+                    className="
+        rounded-lg
+        px-3
+        py-2.5
+        text-sm
+        text-gray-700
+        cursor-pointer
+        focus:bg-gray-50
+        hover:bg-gray-50
+        transition-colors
+      "
+                  >
+                    Completed
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleStatusChange('pending')}>
+
+                  <DropdownMenuItem
+                    onClick={() => handleStatusChange('pending')}
+                    className="
+        rounded-lg
+        px-3
+        py-2.5
+        text-sm
+        text-gray-700
+        cursor-pointer
+        focus:bg-gray-50
+        hover:bg-gray-50
+        transition-colors
+      "
+                  >
                     Pending
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleStatusChange('requested')}>
+
+                  <DropdownMenuItem
+                    onClick={() => handleStatusChange('requested')}
+                    className="
+        rounded-lg
+        px-3
+        py-2.5
+        text-sm
+        text-gray-700
+        cursor-pointer
+        focus:bg-gray-50
+        hover:bg-gray-50
+        transition-colors
+      "
+                  >
                     Requested
                   </DropdownMenuItem>
                 </DropdownMenuContent>
