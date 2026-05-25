@@ -28,6 +28,8 @@ export interface Analytics {
   totalPending: number;
   totalTransferred: number;
   totalRequested: number;
+  totalTransferredAmount: number;
+  totalAdminCommission: number;
 }
 
 export interface Meta {
