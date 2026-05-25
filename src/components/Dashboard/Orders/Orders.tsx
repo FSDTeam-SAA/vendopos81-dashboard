@@ -20,7 +20,6 @@ import {
   ShoppingBag,
   CheckCircle2,
   Clock3,
-  DollarSign,
 } from 'lucide-react';
 
 import {
@@ -31,7 +30,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-
 import OrdersModal from './OrdersModal';
 import { useAllOrders } from '@/lib/hooks/useOrder';
 import { Order, OrderAnalytics } from '@/lib/types/order';
@@ -136,13 +134,6 @@ export default function Orders() {
       iconBg: 'bg-amber-50',
       iconColor: 'text-amber-700',
     },
-    {
-      title: 'Total Sales',
-      value: `$${orderAnalytics?.totalSalesAmount?.toFixed(2) || '0.00'}`,
-      icon: DollarSign,
-      iconBg: 'bg-blue-50',
-      iconColor: 'text-blue-700',
-    },
   ];
 
   if (isLoading) {
@@ -245,7 +236,7 @@ export default function Orders() {
               </DropdownMenu>
 
               {/* PAYMENT FILTER */}
-              <DropdownMenu>
+              {/* <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
@@ -275,7 +266,7 @@ export default function Orders() {
                     Online
                   </DropdownMenuItem>
                 </DropdownMenuContent>
-              </DropdownMenu>
+              </DropdownMenu> */}
 
               {/* CLEAR FILTER */}
               {(orderStatus || paymentType) && (
